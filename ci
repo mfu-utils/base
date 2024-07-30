@@ -1,0 +1,125 @@
+#!.venv/bin/python
+import argparse
+import datetime
+import os
+
+from App.Core import Filesystem
+from App.helpers import platform, config, console, machine
+from config import ROOT
+from tools.build import static
+from tools.CILib.CI import CI
+from tools.build.fs import create_files_struct_recursive, copy_struct_to
+
+
+def get_build_ci_data(build_type: str, platform_name: str) -> dict:
+    platforms_path = os.path.join(ROOT, "tools", "build")
+
+    data = Filesystem.read_yaml(os.path.join(platforms_path, "build.yml"))
+    platform_data = Filesystem.read_yaml(os.path.join(platforms_path, platform_name, "build.yml"))
+
+    data = {
+        "version": {"build_date": datetime.datetime.now().strftime("%Y-%m-%d"), **data["version"]},
+        **data['buildTypes'][build_type],
+        **platform_data[build_type]
+    }
+
+    return data
+
+
+def create_build_item(build_type: str, platform_name: str, machine_name: str, test: bool, path: str = None):
+    struct = create_files_struct_recursive(build_type)
+    ci_data = get_build_ci_data(build_type, platform_name)
+
+    _dir = os.path.join(os.path.join(path, build_type))
+
+    build_logs = os.path.join(_dir, static.BUILD_LOGS_DIR)
+    os.makedirs(build_logs, exist_ok=True)
+
+    Filesystem.write_json(os.path.join(build_logs, static.STRUCT_FILE_NAME), struct, indent=4)
+
+    copy_struct_to(build_type, struct, _dir)
+
+    build_data = {
+        'test': test,
+        'ci': ci_data,
+        'source_path': ROOT,
+        'target_path': _dir,
+        'build_type': build_type,
+        'machine_name': machine_name,
+        'platform_name': platform_name,
+    }
+
+    Filesystem.write_json(os.path.join(build_logs, static.PARAMETERS_FILE_NAME), build_data, indent=4)
+
+    CI(build_data).build()
+
+
+def build_cmd(args: argparse.Namespace):
+    _test = args.test or False
+    platform_name = args.platform_ or platform().name
+    machine_name = args.machine_ or machine().name
+
+    types = [args.type] if args.type else (
+        static.PLATFORM_BUILD_TYPES if _test else static.AVAILABLE_PLATFORM_BUILD_TYPES[platform_name]
+    )
+
+    for _type in types:
+        create_build_item(_type, platform_name, machine_name, _test, args.dir)
+
+
+def info_cmd(args: argparse.Namespace):
+    current = args.current
+
+    console().header('Current platform:')
+    console().line(f'{platform().name}', indent=2)
+    console().endl()
+
+    console().header(f'Build types ({"platform" if current else "all"}):')
+    for _type in static.AVAILABLE_PLATFORM_BUILD_TYPES[platform().name] if current else static.PLATFORM_BUILD_TYPES:
+        console().line(f"- {_type}", indent=2)
+
+
+def main():
+    parser = argparse.ArgumentParser(description=f'{config("app.name")} Builder')
+    subparsers = parser.add_subparsers(dest='commands')
+
+    # Build
+    build_parser = subparsers.add_parser(
+        'generate', help='generate platform specific a package for building'
+    )
+    build_parser.add_argument(
+        '-t', '--build-type', dest="type", help='Build type', choices=static.PLATFORM_BUILD_TYPES
+    )
+    build_parser.add_argument(
+        '-o', '--output-dir', dest="dir", help='Output directory', default=static.BUILD_DIRECTORY
+    )
+    build_parser.add_argument(
+        '-p', '--cross-platform', dest="platform_", help='Name of target platform', choices=platform().list()
+    )
+    build_parser.add_argument(
+        '-m', '--cross-machine', dest="machine_", help='Name of target machine', choices=machine().list()
+    )
+    build_parser.add_argument(
+        '--test', action='store_true', dest='test', help='Available all build types for current platform'
+    )
+    build_parser.set_defaults(func=build_cmd)
+
+    # Info
+    info_parser = subparsers.add_parser('info', help='Info about ci')
+    info_parser.add_argument(
+        '--current-platform', action='store_true', dest='current', help='Available build types for current platform'
+    )
+    info_parser.set_defaults(func=info_cmd)
+
+    args = parser.parse_args()
+
+    if not vars(args):
+        parser.print_usage()
+    else:
+        args.func(args)
+
+    print()
+
+
+if __name__ == '__main__':
+    main()

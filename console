@@ -1,0 +1,11 @@
+#!.venv/bin/python
+
+from App.helpers import app
+
+
+def main():
+    app().get('console').init()
+
+
+if __name__ == '__main__':
+    main()

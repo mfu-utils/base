@@ -1,0 +1,11 @@
+#!.venv/bin/python
+
+from App import helpers
+
+
+def main():
+    helpers.start_server()
+
+
+if __name__ == "__main__":
+    main()

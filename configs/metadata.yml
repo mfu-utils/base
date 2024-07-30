@@ -1,0 +1,30 @@
+configs.services:
+  type: py
+  files:
+    - app
+    - cache
+    - logger
+    - rcl
+    - subprocesses
+    - db
+    #: BUILD_TYPE:server
+    - scan
+    - server
+    #: END:BUILD_TYPE:server
+    #: BUILD_TYPE:!server
+    - convertor
+    - client
+    #: END:BUILD_TYPE:!server
+    #: BUILD_TYPE:client-ui
+    - notifications
+    - langs
+    - ui
+    #: END:BUILD_TYPE:client-ui
+
+#: BUILD_TYPE:client-ui
+configs.ui:
+  type: json
+  files:
+    - menu
+    - shortcuts
+#: END:BUILD_TYPE:client-ui

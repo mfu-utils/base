@@ -1,0 +1,98 @@
+#!.venv/bin/python
+
+import argparse
+from typing import Optional
+
+from App import helpers
+from App.Core.Network.Client import ResponseDataPromise, ClientConfig
+from App.Core.Network.Protocol import CallRequest
+from App.Core.Network.Protocol.Responses import AbstractResponse
+from App.Core.Utils.Client import DocumentsRealSizes
+from App.helpers import config, logger, console
+import json
+
+
+class Context:
+    promise: Optional[ResponseDataPromise] = None
+
+
+context = Context()
+
+
+def success_get_scan(response: AbstractResponse):
+    with open('tests/scan.tiff', 'wb') as f:
+        f.write(response.data())
+
+
+def success_get_devices(response: Optional[AbstractResponse]):
+    if not response:
+        logger().info('No response')
+        return
+
+    logger().info(json.dumps(response.data(), indent=2))
+
+
+def scan_action(args: argparse.Namespace):
+    x, y = DocumentsRealSizes.size(args.size)
+
+    parameters = {'x': x, 'y': y}
+
+    if args.format:
+        parameters = {'format': args.format}
+
+    if args.device:
+        parameters = {'device': args.device}
+
+    context.promise = helpers.request(
+        CallRequest('scan', parameters=parameters),
+        ClientConfig.client()
+    ).then(lambda data: success_get_scan(data)).catch(lambda data: print(data))
+
+
+def devices_action(_: argparse.Namespace):
+    context.promise = helpers.request(
+        CallRequest('scan', ['devices']),
+        ClientConfig.client()
+    ).then(lambda x: success_get_devices(x)).catch(lambda x: print(x))
+
+
+def ping_action(_: argparse.Namespace):
+    context.promise = helpers.request(CallRequest('ping'), ClientConfig.client()).then(
+        lambda x: console().success_message(x.data())
+    ).catch(
+        lambda data: console().error_message(data)
+    )
+
+
+def main():
+    parser = argparse.ArgumentParser(description=config('app.name'))
+    subparsers = parser.add_subparsers(title='commands')
+
+    # Ping
+    ping_parser = subparsers.add_parser('ping', help="Ping the server")
+    ping_parser.set_defaults(func=ping_action)
+
+    # Scan document
+    scan_parser = subparsers.add_parser('scan', help='Scan document')
+    scan_parser.add_argument('-s', '--size', type=str, choices=DocumentsRealSizes.SIZES.keys(), default=DocumentsRealSizes.A4)
+    scan_parser.add_argument('-f', '--format', type=str, choices=['tiff', 'jpeg', 'png'], default='tiff')
+    scan_parser.add_argument('-d', '--device', type=str)
+    scan_parser.set_defaults(func=scan_action)
+
+    # List devices
+    scan_parser = subparsers.add_parser('devices', help='Scanners list')
+    scan_parser.set_defaults(func=devices_action)
+
+    args = parser.parse_args()
+
+    if not vars(args):
+        parser.print_usage()
+    else:
+        args.func(args)
+
+        while context.promise.status() == ResponseDataPromise.STATUS_WAIT:
+            continue
+
+
+if __name__ == "__main__":
+    main()

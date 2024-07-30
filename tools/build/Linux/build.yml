@@ -1,0 +1,22 @@
+server:
+  copy:
+    - [ 'Makefile.server', 'Makefile' ]
+    - [ '.env.server', 'var/.env.example' ]
+
+  files:
+    .gitignore:
+      - __pycache__
+      - .DS_Store
+      - "*/__pycache__"
+      - "*/.DS_Store"
+      - .idea
+      - .venv
+      - .vscode
+      - .fleet
+      - tmp*
+      - /dist
+      - /build
+      - /.build_logs
+
+    var/db/.gitignore:
+      - "*"

@@ -1,0 +1,25 @@
+version:
+  major: 0
+  minor: 0
+  patch: 0
+  number: 0
+  branch: Alpha
+  show: 2024.0 (Alpha 0)
+
+buildTypes:
+  client-ui:
+    app_name: MFU Client
+    license_name: GNU GPL V3
+    license_url: "https://github.com/mfu-utils/client-windows-ui/blob/master/LICENSE"
+    repo_name: Github
+    repo_url: "https://github.com/mfu-utils/client-windows-ui"
+
+  client:
+    app_name: MFU Client CLI
+
+  server:
+    app_name: MFU Server
+    license_name: GNU GPL V3
+    license_url: "https://github.com/mfu-utils/server/blob/master/LICENSE"
+    repo_name: Github
+    repo_url: "https://github.com/mfu-utils/server"

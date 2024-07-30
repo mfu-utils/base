@@ -1,0 +1,40 @@
+commands:
+  ping:
+    return: str
+
+  scan:
+    subcommands:
+      devices: # Get connected to server devices list
+        return: list
+        parameters:
+          update: # Server scan devices and set data to cache. This option ask server 'fresh' data about devices.
+            type: bool
+
+      queue:
+        return: list
+
+    return: bytes
+    parameters:
+      x:
+        type: int
+
+      y:
+        type: int
+
+      format:
+        type: str
+        default: tiff
+        variants:
+          - tiff
+          - jpeg
+          - png
+
+      mode:
+        type: str
+        variants:
+          - Lineart
+          - Gray
+          - Color
+
+      device:
+        type: str

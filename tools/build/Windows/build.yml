@@ -1,0 +1,60 @@
+# Build Information
+client-ui:
+  ffi:
+    source: file_version_info.txt
+    target: ffi.txt
+    company_name: Framework Team
+    file_description: MFU Client
+#    file_version: 0.0.0.0
+    internal_name: mfu-client
+    legal_copyright: Copyright © 2024 Framework Team.
+    original_filename: MFUClient.exe
+    product_name: MFU Client
+#    product_version: 0.0.0.0
+  spec:
+    source: build.spec
+    exe_name: MFUClient
+    build_script: client-ui
+    logo: logo.ico
+  copy:
+    - logo.ico
+    - [ 'requirements.txt', 'win_requirements.txt' ]
+    - [ 'settings.ini', 'var/settings.ini' ]
+    - [ '.env.client-ui', 'var/.env' ]
+  files:
+    upgrade.bat:
+      - "@echo off"
+      - set "ALEMBIC=.venv\Scripts\alembic.exe"
+      - call %ALEMBIC% upgrade head
+      - call console.bat seed
+
+    build.bat:
+      - "@echo off"
+      - set "VENV_NAME=.venv"
+      - set "BUILD_LOGS=.build_logs"
+      - set "SCRIPTS=.\%VENV_NAME%\Scripts"
+      - set "PY=%SCRIPTS%\python.exe"
+      - set "PYI=%SCRIPTS%\pyinstaller.exe"
+      - set "SPEC_FILE=build.spec"
+      - set "WORKDIR=.build_logs"
+      -
+      - echo CREATE VENV ^> %BUILD_LOGS%\venv_log.txt
+      - call python -m venv %VENV_NAME% > "%BUILD_LOGS%\venv_log.txt"
+      -
+      - echo CREATE UPGRADE PIP ^> %BUILD_LOGS%\pip_log.txt
+      - call %PY% -m pip install --upgrade pip > "%BUILD_LOGS%\pip_log.txt"
+      -
+      - echo INSTALL REQUIREMENTS ^> %BUILD_LOGS%\req_log.txt
+      - call %PY% -m pip install -r requirements.txt > "%BUILD_LOGS%\req_log.txt"
+      - call %PY% -m pip install -r win_requirements.txt >> "%BUILD_LOGS%\req_log.txt"
+      -
+      - echo UPDATE DB ^> %BUILD_LOGS%\upgrade_db_log.txt
+      - call upgrade.bat > "%BUILD_LOGS%\upgrade_db_log.txt" 2>&1
+      -
+      - echo BUILD ^> %BUILD_LOGS%\build_log.txt
+      - call %PYI% %SPEC_FILE% --workpath %WORKDIR% --distpath . > "%BUILD_LOGS%\build_log.txt" 2>&1
+
+    create_archive.bat:
+      - "@echo off"
+      - echo CREATE ARCHIVE...
+      - tar -cf archive.zip tests var LICENSE MFUClient.exe

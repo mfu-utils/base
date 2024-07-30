@@ -1,0 +1,12 @@
+PyYAML==6.0.1
+alembic~=1.13.1
+SQLAlchemy==2.0.31
+#: BUILD_TYPE:client-ui
+PySide6==6.7.1
+PySide6_Addons==6.7.1
+PySide6_Essentials==6.7.1
+shiboken6==6.7.1
+#: END:BUILD_TYPE:client-ui
+#: BUILD_TYPE:server
+redis==5.0.3
+#: END:BUILD_TYPE:server
