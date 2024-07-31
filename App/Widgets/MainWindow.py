@@ -128,6 +128,11 @@ class MainWindow(QMainWindow):
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
         if watched == self:
+            if event.type() == QEvent.Type.Close:
+                event.ignore()
+                self.hide()
+                return True
+
             if event.type() == QEvent.Type.NonClientAreaMouseButtonPress:
                 self.__pressed = True
 

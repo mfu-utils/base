@@ -3,6 +3,7 @@ import sys
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPalette, QColor
 
+from App.Widgets.Tray import Tray
 from App.helpers import platform
 from PySide6.QtWidgets import QApplication
 from App.Widgets import MainWindow
@@ -62,6 +63,9 @@ def main():
 
     # jump_list.add_category(custom_category)
     # jump_list.update()
+
+    tray = Tray(app, w)
+    tray.show()
 
     app.exec()
 

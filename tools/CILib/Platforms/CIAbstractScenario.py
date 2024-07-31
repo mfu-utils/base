@@ -14,7 +14,7 @@ class CIAbstractScenario(ABC):
         self._target_path: str = config['target_path']
         self._source_path: str = config['source_path']
         self._machine_name: str = config['machine_name']
-        self._config: dict = config['CILib']
+        self._config: dict = config['ci']
         self._test: bool = config['test']
 
     @abstractmethod

@@ -10,3 +10,4 @@ tmp*
 /dist
 /build
 *.exe
+ci.yaml

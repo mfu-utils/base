@@ -1,4 +1,7 @@
 server:
+  repo_name: Github
+  license_url: "https://github.com/mfu-utils/server/blob/master/LICENSE"
+  repo_url: "https://github.com/mfu-utils/server"
   copy:
     - [ 'Makefile.server', 'Makefile' ]
     - [ '.env.server', 'var/.env.example' ]

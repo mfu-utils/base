@@ -143,6 +143,8 @@ DISABLED_BUILD_ITEMS = {
         ".DS_Store": "*",
         "tools": ROOT,
         "ci": ROOT,
+        "ci.yaml": ROOT,
+        "ci.yaml.example": ROOT,
         "README.md": ROOT,
         "build": ROOT,
         ".venv": ROOT,

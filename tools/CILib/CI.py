@@ -26,7 +26,7 @@ class CI:
         self._target_path: str = config['target_path']
         self._source_path: str = config['source_path']
         self._machine_name: str = config['machine_name']
-        self._config: dict = config['CILib']
+        self._config: dict = config['ci']
         self._scenario = PLATFORM_SCENARIO[self._platform](config)
 
     def __create_config_py(self):

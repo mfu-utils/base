@@ -28,6 +28,7 @@ class CIWindowsScenario(CIAbstractScenario):
         version = self.get_version_data()
 
         ffi = self._config['ffi']
+        company = self._config['company']
 
         major = str(version.major)
         minor = str(version.minor)
@@ -37,18 +38,18 @@ class CIWindowsScenario(CIAbstractScenario):
         str_version = '.'.join([major, minor, patch, number])
 
         self.copy_platform_file(ffi['source'], ffi.get('target') or ffi['source'], {
-            'vMajor': major,
-            'vMinor': minor,
-            'vPatch': patch,
-            'vNumber': number,
-            'FileVersion': ffi.get('file_version') or str_version,
-            'ProductVersion': ffi.get('product_version') or str_version,
-            'CompanyName': ffi['company_name'],
-            'LegalCopyright': ffi['legal_copyright'],
-            'FileDescription': ffi['file_description'],
-            'InternalName': ffi['internal_name'],
-            'OriginalFilename': ffi['original_filename'],
-            'ProductName': ffi['product_name'],
+            'V_MAJOR': major,
+            'V_MINOR': minor,
+            'V_PATCH': patch,
+            'V_NUMBER': number,
+            'FILE_VERSION': ffi.get('file_version') or str_version,
+            'PRODUCT_VERSION': ffi.get('product_version') or str_version,
+            'COMPANY_NAME': company['name'],
+            'COPYRIGHT': company['copyright'],
+            'FILE_DESCRIPTION': ffi['file_description'],
+            'INTERNAL_NAME': ffi['internal_name'],
+            'ORIGINAL_FILENAME': ffi['original_filename'],
+            'PRODUCT_NAME': ffi['product_name'],
         })
 
     def __client_ui_scenario(self):

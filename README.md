@@ -1,4 +1,4 @@
-# mfu-utils
+# MFU Utils (Base)
 Client-server apps for wireless scanning and printing.
 
 !!! Develop repository.

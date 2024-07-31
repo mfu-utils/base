@@ -1,13 +1,14 @@
 # Build Information
 client-ui:
+  repo_name: Github
+  license_url: "https://github.com/mfu-utils/client-windows-ui/blob/master/LICENSE"
+  repo_url: "https://github.com/mfu-utils/client-windows-ui"
   ffi:
     source: file_version_info.txt
     target: ffi.txt
-    company_name: Framework Team
     file_description: MFU Client
 #    file_version: 0.0.0.0
     internal_name: mfu-client
-    legal_copyright: Copyright © 2024 Framework Team.
     original_filename: MFUClient.exe
     product_name: MFU Client
 #    product_version: 0.0.0.0
@@ -27,6 +28,10 @@ client-ui:
       - set "ALEMBIC=.venv\Scripts\alembic.exe"
       - call %ALEMBIC% upgrade head
       - call console.bat seed
+
+    create_archive.bat:
+      - "@echo off"
+      - tar -cf archive.zip tests var LICENSE MFUClient.exe
 
     build.bat:
       - "@echo off"
@@ -53,8 +58,6 @@ client-ui:
       -
       - echo BUILD ^> %BUILD_LOGS%\build_log.txt
       - call %PYI% %SPEC_FILE% --workpath %WORKDIR% --distpath . > "%BUILD_LOGS%\build_log.txt" 2>&1
-
-    create_archive.bat:
-      - "@echo off"
-      - echo CREATE ARCHIVE...
-      - tar -cf archive.zip tests var LICENSE MFUClient.exe
+      -
+      - echo CREATE ARCHIVE ^> %BUILD_LOGS%\create_archive_log.txt
+      - call create_archive.bat > "%BUILD_LOGS%\create_archive_log.txt"
