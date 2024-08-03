@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QLabel, QPushButton
 
 from App.Widgets.Components.DrawableWidget import DrawableWidget
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 from App.Widgets.Components.Notifications.NotificationItem import NotificationItem
 from App.helpers import events, styles, lc
 
@@ -16,9 +16,9 @@ class NotificationList(DrawableWidget):
         self.setStyleSheet(styles(["notificationsList", "scrollBar"]))
         self.setFixedWidth(width)
 
-        self.__central_layout = UiHelpers.v_layout((5, 5, 2, 5), 5)
+        self.__central_layout = UIHelpers.v_layout((5, 5, 2, 5), 5)
 
-        self.__header_layout = UiHelpers.h_layout((2, 2, 2, 2), 1)
+        self.__header_layout = UIHelpers.h_layout((2, 2, 2, 2), 1)
 
         self.__title = QLabel(lc("notifications.listWidget.title"), self)
         self.__title.setObjectName("NotificationsListTittle")
@@ -36,14 +36,14 @@ class NotificationList(DrawableWidget):
 
         self.__central_layout.addLayout(self.__header_layout)
 
-        self.__scroll_area = UiHelpers.create_scroll(self, 'NotificationsListScrollArea')
+        self.__scroll_area = UIHelpers.create_scroll(self, 'NotificationsListScrollArea')
 
         self.__scroll_area_widget = QWidget(self.__scroll_area)
         self.__scroll_area_widget.setObjectName('NotificationsList')
 
-        self.__scroll_area_layout = UiHelpers.v_layout((0, 0, 5, 0), 0)
+        self.__scroll_area_layout = UIHelpers.v_layout((0, 0, 5, 0), 0)
 
-        self.__content_layout = UiHelpers.v_layout((0, 0, 0, 0), 5)
+        self.__content_layout = UIHelpers.v_layout((0, 0, 0, 0), 5)
 
         self.__scroll_area_layout.addLayout(self.__content_layout)
 

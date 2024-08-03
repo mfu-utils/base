@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QMainWindow, QWidget, QLabel, QLayout, QVBoxLayout
 from App.helpers import platform, pixmap
 
 
-class UiHelpers:
+class UIHelpers:
     @staticmethod
     def setup_modal(widget: QMainWindow):
         if platform().is_darwin():
@@ -31,7 +31,7 @@ class UiHelpers:
 
     @staticmethod
     def set_disabled_parent_recursive(widget: QWidget, name: str, disabled: bool) -> bool:
-        if widget := UiHelpers.find_parent_recursive(widget, name):
+        if widget := UIHelpers.find_parent_recursive(widget, name):
             widget.setDisabled(disabled)
 
         return bool(widget)
@@ -66,21 +66,21 @@ class UiHelpers:
     @staticmethod
     def g_layout(margins: tuple = (10, 10, 10, 10), spacing: int = 10) -> QGridLayout:
         layout = QGridLayout()
-        UiHelpers.layout(layout, margins, spacing)
+        UIHelpers.layout(layout, margins, spacing)
 
         return layout
 
     @staticmethod
     def v_layout(margins: tuple = (10, 10, 10, 10), spacing: int = 10) -> QVBoxLayout:
         layout = QVBoxLayout()
-        UiHelpers.layout(layout, margins, spacing)
+        UIHelpers.layout(layout, margins, spacing)
 
         return layout
 
     @staticmethod
     def h_layout(margins: tuple = (10, 10, 10, 10), spacing: int = 10) -> QHBoxLayout:
         layout = QHBoxLayout()
-        UiHelpers.layout(layout, margins, spacing)
+        UIHelpers.layout(layout, margins, spacing)
 
         return layout
 
@@ -106,9 +106,9 @@ class UiHelpers:
     @staticmethod
     def layout_for_grid(direction: str) -> QLayout:
         if direction == 'vertical':
-            layout = UiHelpers.v_layout((0, 0, 0, 0))
+            layout = UIHelpers.v_layout((0, 0, 0, 0))
         elif direction == 'horizontal':
-            layout = UiHelpers.h_layout((0, 0, 0, 0))
+            layout = UIHelpers.h_layout((0, 0, 0, 0))
         else:
             raise ValueError(f'Unknown direction: {direction}')
 
@@ -116,21 +116,21 @@ class UiHelpers:
 
     @staticmethod
     def spacing_for_grid(size: int, direction: str) -> QHBoxLayout:
-        layout = UiHelpers.layout_for_grid(direction)
+        layout = UIHelpers.layout_for_grid(direction)
         layout.addSpacing(size)
 
         return layout
 
     @staticmethod
     def stretch_for_grid(direction: str) -> QHBoxLayout:
-        layout = UiHelpers.layout_for_grid(direction)
+        layout = UIHelpers.layout_for_grid(direction)
         layout.addStretch()
 
         return layout
 
     @staticmethod
     def to_center_screen(widget: QWidget):
-        gm = UiHelpers.find_parent_recursive(widget, 'MainWindow').screen().geometry()
+        gm = UIHelpers.find_parent_recursive(widget, 'MainWindow').screen().geometry()
 
         widget.move(
             int(gm.x() + gm.width() / 2 - widget.width() / 2),
@@ -162,10 +162,10 @@ class UiHelpers:
         if not platform().is_windows():
             return child
 
-        UiHelpers.create_shadow(child, 20, 0, size)
+        UIHelpers.create_shadow(child, 20, 0, size)
 
         widget = QWidget(parent)
-        layout = UiHelpers.v_layout((size, size, size, size), 0)
+        layout = UIHelpers.v_layout((size, size, size, size), 0)
 
         layout.addWidget(child)
 

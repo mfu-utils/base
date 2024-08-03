@@ -13,7 +13,7 @@ from App.Widgets.Components.PaginatorContainer import PaginatorContainer
 from App.Widgets.Components.PreferencesControls import PreferencesControls
 from App.Widgets.Components.ScanListWidget import ScanListWidget
 from App.Widgets.Modals.AbstractModal import AbstractModal
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import lc, styles, platform
 
 
@@ -37,9 +37,9 @@ class ScanListModal(AbstractModal):
         self.__current_page = 1
         self.__total_count = 0
 
-        self.__central_layout = UiHelpers.h_layout((0, 0, 0, 0))
+        self.__central_layout = UIHelpers.h_layout((0, 0, 0, 0))
 
-        self.__filters_layout = UiHelpers.v_layout((0, 0, 0, 0), 10)
+        self.__filters_layout = UIHelpers.v_layout((0, 0, 0, 0), 10)
 
         self.__filters_widget = PreferencesControls(lc("scanListWidget.filters.title"), self)
         self.__filters_widget.setFixedWidth(400)
@@ -51,7 +51,7 @@ class ScanListModal(AbstractModal):
         self.__filters_buttons_widget = QWidget(self)
         self.__filters_buttons_widget.setFixedWidth(400)
 
-        self.__filters_buttons_layout = UiHelpers.h_layout()
+        self.__filters_buttons_layout = UIHelpers.h_layout()
         self.__filters_buttons_layout.addStretch()
 
         self.__filter_button = QPushButton(lc('scanListWidget.filter_button'), self)
@@ -70,9 +70,9 @@ class ScanListModal(AbstractModal):
         self.__content_widget = QWidget(self)
         self.__content_widget.setObjectName('ScanListContentContainer')
 
-        self.__content_layout = UiHelpers.v_layout((0, 0, 0, 0), 10)
+        self.__content_layout = UIHelpers.v_layout((0, 0, 0, 0), 10)
 
-        self.__scroll_bar = UiHelpers.create_scroll(self, "ScanListScrollArea")
+        self.__scroll_bar = UIHelpers.create_scroll(self, "ScanListScrollArea")
 
         self.__list_widget = ScanListWidget("ScanList", self.__filter, {"stub_title": lc("scanListWidget.empty")}, self)
         self.__scroll_bar.setWidget(self.__list_widget)
@@ -90,7 +90,7 @@ class ScanListModal(AbstractModal):
 
         self.centralWidget().setLayout(self.__central_layout)
 
-        UiHelpers.to_center_screen(self)
+        UIHelpers.to_center_screen(self)
 
         self.installEventFilter(self)
 

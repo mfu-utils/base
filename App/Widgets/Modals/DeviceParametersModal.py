@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QWidget
 
 from App.Widgets.Components.ParameterViewItem import ParameterViewItem
 from App.Widgets.Modals.AbstractModal import AbstractModal
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import lc
 
@@ -17,11 +17,11 @@ class DeviceParametersModal(AbstractModal):
 
         self.__parameters = parameters
 
-        self.__parameters_layout = UiHelpers.v_layout((20, 10, 20, 20), 15)
+        self.__parameters_layout = UIHelpers.v_layout((20, 10, 20, 20), 15)
 
-        image_layout = UiHelpers.h_layout()
+        image_layout = UIHelpers.h_layout()
         image_layout.addStretch()
-        image_layout.addWidget(UiHelpers.image('device_128x128@2x.png', self))
+        image_layout.addWidget(UIHelpers.image('device_128x128@2x.png', self))
         image_layout.addStretch()
 
         self.__parameters_layout.addLayout(image_layout)
@@ -35,7 +35,7 @@ class DeviceParametersModal(AbstractModal):
 
         self.show()
 
-        UiHelpers.to_center(self, UiHelpers.find_parent_recursive(self, "MainWindow"))
+        UIHelpers.to_center(self, UIHelpers.find_parent_recursive(self, "MainWindow"))
 
     def create_parameter(self, name: str, value: str):
         self.__parameters_layout.addWidget(ParameterViewItem(name, value, self))

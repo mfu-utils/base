@@ -5,7 +5,7 @@ from PySide6.QtGui import QKeyEvent
 from PySide6.QtWidgets import QWidget, QPushButton, QSizePolicy, QScrollArea, QApplication
 
 from App.Widgets.Components.DrawableWidget import DrawableWidget
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import styles, config, platform
 
 
@@ -29,9 +29,9 @@ class DropDown(DrawableWidget):
         self.__indexes: Dict[int, str] = {}
         self.__focus_index: Optional[int] = None
 
-        self.__central_layout = UiHelpers.v_layout((0, 0, 0, 0), 0)
+        self.__central_layout = UIHelpers.v_layout((0, 0, 0, 0), 0)
 
-        self.__scroll_area = UiHelpers.create_scroll(self, 'MultiselectScrollArea')
+        self.__scroll_area = UIHelpers.create_scroll(self, 'MultiselectScrollArea')
         self.__scroll_area.setContentsMargins(0, 0, 0, 0)
         self.__scroll_area.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
@@ -40,7 +40,7 @@ class DropDown(DrawableWidget):
         self.__scroll_area_widget.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.__scroll_area_widget.setObjectName('MultiselectList')
 
-        self._list_layout = UiHelpers.v_layout(
+        self._list_layout = UIHelpers.v_layout(
             (self.padding, self.padding, self.padding + 5, self.padding),
             spacing=self.spacing
         )
@@ -51,7 +51,7 @@ class DropDown(DrawableWidget):
 
         self.setLayout(self.__central_layout)
 
-        UiHelpers.create_shadow(self, 20 if platform().is_windows() else 0, 0, config('ui.shadow-offset'))
+        UIHelpers.create_shadow(self, 20 if platform().is_windows() else 0, 0, config('ui.shadow-offset'))
 
         self.installEventFilter(self)
 
@@ -109,7 +109,7 @@ class DropDown(DrawableWidget):
             int(self.__items[self.__focus_index].pos().y() - self.__scroll_area.height() / 2 - self.item_height / 2)
         )
 
-        UiHelpers.update_style(self)
+        UIHelpers.update_style(self)
 
     def next_focus_item(self):
         if len(self.__items) == 0:

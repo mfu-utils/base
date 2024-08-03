@@ -8,7 +8,7 @@ from config import VERSION_SHOW, VERSION_DETAILED, VERSION_BUILD_DATE, STATIC_LI
 from config import STATIC_REPO_URL, STATIC_REPO_NAME, STATIC_LICENSE_NAME, RCL_PROTOCOL_VERSION
 from App.Core import Filesystem
 from App.Widgets.Modals.AbstractModal import AbstractModal
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import config, styles, platform, lc, machine
 from config import ROOT
 
@@ -16,7 +16,7 @@ from config import ROOT
 class AboutModal(AbstractModal):
     def __init__(self, parent: QWidget = None):
         super(AboutModal, self).__init__(parent)
-        self.__central_layout = UiHelpers.h_layout()
+        self.__central_layout = UIHelpers.h_layout()
         self.setFixedSize(470, 250)
         self.setWindowTitle(lc("aboutModal.title"))
 
@@ -27,9 +27,9 @@ class AboutModal(AbstractModal):
 
         self.setStyleSheet(styles(_styles))
 
-        self.__image = UiHelpers.image('logo.png', self, (64, 64))
+        self.__image = UIHelpers.image('logo.png', self, (64, 64))
 
-        self.__image_layout = UiHelpers.v_layout((0, 0, 0, 0), 0)
+        self.__image_layout = UIHelpers.v_layout((0, 0, 0, 0), 0)
         self.__image_layout.addSpacing(10)
         self.__image_layout.addWidget(self.__image)
         self.__image_layout.addStretch()
@@ -67,4 +67,4 @@ class AboutModal(AbstractModal):
 
         self.show()
 
-        UiHelpers.to_center(self, UiHelpers.find_parent_recursive(self, "MainWindow"))
+        UIHelpers.to_center(self, UIHelpers.find_parent_recursive(self, "MainWindow"))

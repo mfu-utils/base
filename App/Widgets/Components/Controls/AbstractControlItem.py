@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QWidget, QLabel, QSizePolicy, QHBoxLayout
 
 from App.Core.Utils.Str import Str
 from App.Widgets.Components.DrawableWidget import DrawableWidget
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import cache, styles, config
 from hashlib import md5
@@ -38,7 +38,7 @@ class AbstractControlItem(DrawableWidget):
         self._check_prev_value_enabled = True
 
         self._setups_layouts: Dict[str, Dict[str, Union[List[str], str]]] = self._setups()
-        self._grid_layout = UiHelpers.g_layout((10, 0, 0, 0), 0)
+        self._grid_layout = UIHelpers.g_layout((10, 0, 0, 0), 0)
         self._grid_items = self._grid()
 
         self.__description_widget: Optional[QLabel] = None
@@ -91,7 +91,7 @@ class AbstractControlItem(DrawableWidget):
         self._widget.setProperty('danger', enable)
         self._current_error = message_key
 
-        UiHelpers.update_style(self._widget)
+        UIHelpers.update_style(self._widget)
 
     def error_disable(self):
         self.error_enable(None)
@@ -106,11 +106,11 @@ class AbstractControlItem(DrawableWidget):
 
     def _set_primary_enabled(self, enable: bool):
         self._widget.setProperty('primary', enable)
-        UiHelpers.update_style(self._widget)
+        UIHelpers.update_style(self._widget)
 
         if self._title_widget:
             self._title_widget.setProperty('primary', enable)
-            UiHelpers.update_style(self._title_widget)
+            UIHelpers.update_style(self._title_widget)
 
     # noinspection PyMethodMayBeStatic
     def __create_style(self, params: dict) -> str:
@@ -184,15 +184,15 @@ class AbstractControlItem(DrawableWidget):
                     self._grid_layout.addWidget(self.__create_description_widget(), i, j)
 
                 if _type == 'spacing':
-                    self._grid_layout.addLayout(UiHelpers.spacing_for_grid(int(parameters[1]), parameters[2]), i, j)
+                    self._grid_layout.addLayout(UIHelpers.spacing_for_grid(int(parameters[1]), parameters[2]), i, j)
 
                 if _type == 'stretch':
-                    self._grid_layout.addLayout(UiHelpers.stretch_for_grid(parameters[1]), i, j)
+                    self._grid_layout.addLayout(UIHelpers.stretch_for_grid(parameters[1]), i, j)
 
     def __fill_layout(self, name) -> QHBoxLayout:
         setup = self._setups()[name]
 
-        layout = UiHelpers.layout_for_grid(setup['direction'])
+        layout = UIHelpers.layout_for_grid(setup['direction'])
 
         for item in setup['layout']:
             parameters = item.split('|')

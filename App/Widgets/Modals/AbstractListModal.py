@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QWidget, QScrollArea, QLineEdit, QPushButton, QSiz
 
 from App.Widgets.Components.ListItem import ListItem
 from App.Widgets.Modals.AbstractModal import AbstractModal
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import styles, icon, lc
 from App.Widgets.Modals.ConfirmModal import ConfirmModal
 
@@ -19,9 +19,9 @@ class AbstractListModal(AbstractModal):
         self.setWindowTitle(title)
         self.setStyleSheet(styles(["listContainer", "listItem", "contextMenu", "scrollBar"]))
 
-        self.__central_layout = UiHelpers.v_layout((0, 0, 0, 0), 0)
+        self.__central_layout = UIHelpers.v_layout((0, 0, 0, 0), 0)
 
-        self.__add_item_layout = UiHelpers.h_layout((10, 10, 10, 10), 5)
+        self.__add_item_layout = UIHelpers.h_layout((10, 10, 10, 10), 5)
 
         self.__create_name_line_edit = QLineEdit(self)
         self.__create_name_line_edit.setFixedHeight(24)
@@ -55,7 +55,7 @@ class AbstractListModal(AbstractModal):
         self.__scroll_area_widget = QWidget(self.__scroll_area)
         self.__scroll_area_widget.setObjectName('List')
 
-        self._list_layout = UiHelpers.v_layout((5, 5, 5, 5), 0)
+        self._list_layout = UIHelpers.v_layout((5, 5, 5, 5), 0)
         self._init_list()
         self._list_layout.addStretch()
 
@@ -72,7 +72,7 @@ class AbstractListModal(AbstractModal):
 
         self._disable_all_parents()
 
-        UiHelpers.to_center(self, UiHelpers.find_parent_recursive(self, "MainWindow"))
+        UIHelpers.to_center(self, UIHelpers.find_parent_recursive(self, "MainWindow"))
 
     def set_error(self, text: str):
         self.__error_widget.setText(text)

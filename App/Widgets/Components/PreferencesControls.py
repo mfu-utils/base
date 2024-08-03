@@ -10,7 +10,7 @@ from App.Widgets.Components.Controls.LineEditControl import LineEditControl
 from App.Widgets.Components.Controls.MultiselectControl import MultiselectControl
 from App.Widgets.Components.Controls.SpinBoxControl import SpinBoxControl
 from App.Widgets.Components.DrawableWidget import DrawableWidget
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import styles
 from App.Widgets.Components.Controls.ComboBoxControl import ComboBoxControl
@@ -27,21 +27,21 @@ class PreferencesControls(DrawableWidget):
 
         self.__items: List[AbstractControlItem] = []
 
-        self.__layout = UiHelpers.h_layout((0, 0, 0, 0), 0)
+        self.__layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
 
-        self.__scroll_area = UiHelpers.create_scroll(self, 'ControlsScrollArea')
+        self.__scroll_area = UIHelpers.create_scroll(self, 'ControlsScrollArea')
 
         self.__scroll_area_widget = QWidget(self.__scroll_area)
         self.__scroll_area_widget.setObjectName('Controls')
 
-        self.__scroll_area_layout = UiHelpers.v_layout((0, 0, 0, 0), 0)
+        self.__scroll_area_layout = UIHelpers.v_layout((0, 0, 0, 0), 0)
         label = QLabel(name, self)
-        label.setFont(UiHelpers.font(16, QFont.Weight.DemiBold))
+        label.setFont(UIHelpers.font(16, QFont.Weight.DemiBold))
         label.setObjectName('ControlsTitle')
         label.setContentsMargins(10, 10, 10, 10)
         self.__scroll_area_layout.addWidget(label)
 
-        self.__widgets_layout = UiHelpers.v_layout()
+        self.__widgets_layout = UIHelpers.v_layout()
 
     def completed(self) -> bool:
         for control in self.__items:

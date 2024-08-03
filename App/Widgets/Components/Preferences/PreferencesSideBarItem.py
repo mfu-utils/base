@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
 
 from App.Widgets.Components.DrawableWidget import DrawableWidget
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import styles
 
@@ -29,8 +29,8 @@ class PreferencesSideBarItem(DrawableWidget):
 
     def set_enabled(self, enabled: bool):
         self.setProperty('primary', enabled)
-        UiHelpers.update_style(self)
-        UiHelpers.update_style(self.__label)
+        UIHelpers.update_style(self)
+        UIHelpers.update_style(self.__label)
 
     def mouseReleaseEvent(self, event):
         self.__callback()

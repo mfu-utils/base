@@ -7,7 +7,7 @@ from App.Services.Client.Ui.UiDocConvertorService import UiDocConvertorService
 from App.Services.Client.Ui.UiScanService import UiScanService
 from App.Widgets.Components.Controls.CheckBoxControl import CheckBoxControl
 from App.Widgets.Modals.AbstractSettingsModal import AbstractSettingsModal
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import lc, ini, config, platform
 
@@ -23,7 +23,7 @@ class PreferencesModal(AbstractSettingsModal):
         self.setWindowTitle(lc("preferencesModal.title"))
         self.setObjectName("PreferencesModal")
 
-        UiHelpers.to_center(self, UiHelpers.find_parent_recursive(self, 'MainWindow'))
+        UIHelpers.to_center(self, UIHelpers.find_parent_recursive(self, 'MainWindow'))
 
         self._disable_all_parents()
 

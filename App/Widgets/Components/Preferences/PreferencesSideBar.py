@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QWidget, QScrollArea
 
 from App.Widgets.Components.DrawableWidget import DrawableWidget
 from App.Widgets.Components.Preferences.PreferencesSideBarItem import PreferencesSideBarItem
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import styles
 
@@ -20,14 +20,14 @@ class PreferencesSideBar(DrawableWidget):
 
         self.__sidebar_items: Dict[str, PreferencesSideBarItem] = {}
 
-        self.__layout = UiHelpers.h_layout((0, 0, 0, 0), 0)
+        self.__layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
 
-        self.__scroll_area = UiHelpers.create_scroll(self, 'PreferencesSideBarScrollArea')
+        self.__scroll_area = UIHelpers.create_scroll(self, 'PreferencesSideBarScrollArea')
 
         self.__scroll_area_widget = QWidget(self.__scroll_area)
         self.__scroll_area_widget.setObjectName('PreferencesSideBar')
 
-        self.__scroll_area_layout = UiHelpers.v_layout((5, 5, 5, 5), 0)
+        self.__scroll_area_layout = UIHelpers.v_layout((5, 5, 5, 5), 0)
 
     def create_item(self, key: str, name: str, callback: callable):
         item = PreferencesSideBarItem(name, callback)

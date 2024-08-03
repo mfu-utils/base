@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QWidget
 from App.Widgets.Components.DevicePreview import DevicePreview
 from App.Widgets.Components.NoDevicesStub import NoDevicesStub
 from App.Widgets.Modals.AbstractModal import AbstractModal
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import styles
 
@@ -20,7 +20,7 @@ class DevicesModal(AbstractModal):
         self.setObjectName('DevicesModal')
         self.setStyleSheet(styles('devicesModal'))
 
-        self.__central_layout = UiHelpers.h_layout()
+        self.__central_layout = UIHelpers.h_layout()
         self.__devices: List[DevicePreview] = []
 
         if devices is not None and len(devices):
@@ -35,7 +35,7 @@ class DevicesModal(AbstractModal):
 
         self.show()
 
-        UiHelpers.to_center(self, UiHelpers.find_parent_recursive(self, "MainWindow"))
+        UIHelpers.to_center(self, UIHelpers.find_parent_recursive(self, "MainWindow"))
 
     def __create_device(self, params: dict) -> DevicePreview:
         device = DevicePreview(params, self)

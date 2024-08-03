@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget, QLabel
 
 from App.Widgets.Components.DrawableWidget import DrawableWidget
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import styles
 
 from config import VERSION_DETAILED
@@ -14,7 +14,7 @@ class StatusBar(DrawableWidget):
         self.setObjectName('StatusBar')
         self.setStyleSheet(styles(['statusBar']))
 
-        self.__central_layout = UiHelpers.h_layout((10, 2, 10, 2), 2)
+        self.__central_layout = UIHelpers.h_layout((10, 2, 10, 2), 2)
 
         self.__version_widget = QLabel(f"v. {VERSION_DETAILED}", self)
         self.__version_widget.setObjectName('StatusBarVersion')

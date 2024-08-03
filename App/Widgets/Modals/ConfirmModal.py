@@ -2,7 +2,7 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QWidget, QLabel, QPushButton, QSizePolicy
 
 from App.Widgets.Modals.AbstractModal import AbstractModal
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import lc, styles
 
 
@@ -16,17 +16,17 @@ class ConfirmModal(AbstractModal):
         self.setStyleSheet(styles(["confirmModal", "windowlessTitle"]))
         self.centralWidget().setObjectName("ConfirmModal")
 
-        self.__central_layout = UiHelpers.v_layout()
+        self.__central_layout = UIHelpers.v_layout()
         self.__central_layout.addWidget(self._create_title(title, 'WindowlessTitle'))
 
-        self.__content_layout = UiHelpers.v_layout((0, 0, 0, 0), 10)
+        self.__content_layout = UIHelpers.v_layout((0, 0, 0, 0), 10)
 
         self.__ask = QLabel(ask, self)
         self.__ask.setObjectName("ConfirmModalAsk")
         self.__ask.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.__content_layout.addWidget(self.__ask)
 
-        self.__buttons_layout = UiHelpers.h_layout((0, 0, 0, 0), 10)
+        self.__buttons_layout = UIHelpers.h_layout((0, 0, 0, 0), 10)
         self.__buttons_layout.addWidget(self._create_button("cancel", "ConfirmModalCancelButton", self._on_cancel))
         self.__buttons_layout.addWidget(self._create_button("confirm", "ConfirmModalConfirmButton", self._on_confirm))
 
@@ -38,7 +38,7 @@ class ConfirmModal(AbstractModal):
 
         self.show()
 
-        UiHelpers.to_center(self, UiHelpers.find_parent_recursive(self, "MainWindow"))
+        UIHelpers.to_center(self, UIHelpers.find_parent_recursive(self, "MainWindow"))
 
         self._disable_all_parents(disabled_object_name)
 

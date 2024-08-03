@@ -4,7 +4,7 @@ from typing import Optional
 from PySide6.QtCore import Qt, QVariantAnimation, QSize, QEasingCurve
 from PySide6.QtWidgets import QWidget, QLabel
 
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import styles
 from App.Widgets.Modals.AbstractModal import AbstractModal
@@ -29,12 +29,12 @@ class LoadingModal(AbstractModal):
 
         self.centralWidget().setObjectName('Loading')
 
-        self.__central_layout = UiHelpers.h_layout()
+        self.__central_layout = UIHelpers.h_layout()
         self.__central_layout.addStretch()
 
-        self.__content_layout = UiHelpers.v_layout()
+        self.__content_layout = UIHelpers.v_layout()
 
-        self.__container_layout = UiHelpers.h_layout((0, 0, 0, 0), 0)
+        self.__container_layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
         self.__container_layout.addStretch()
         self.__container_layout.addWidget(self.__create_animated_widget())
         self.__container_layout.addStretch()
@@ -56,9 +56,9 @@ class LoadingModal(AbstractModal):
         self.show()
 
         if not parent:
-            UiHelpers.to_center_screen(self)
+            UIHelpers.to_center_screen(self)
         else:
-            UiHelpers.to_center(self)
+            UIHelpers.to_center(self)
 
     def __create_animated_widget(self) -> QWidget:
         container = QWidget(self)

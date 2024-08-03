@@ -6,7 +6,7 @@ from App.Services.Client.DocConvertorService import DocConvertorService
 from App.Widgets.Components.DrawableWidget import DrawableWidget
 from App.Widgets.Helpers.WindowsHelpers import WindowsHelpers
 from App.Widgets.Modals.ConfirmModal import ConfirmModal
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import icon, lc
 from App.Services.Client.Ui.FileManagerService import FileManagerService
@@ -33,13 +33,13 @@ class ScanItem(DrawableWidget):
         self.__title = parameters[self.PARAMETER_TITLE]
         self.__on_delete = self.__parameters.get(self.PARAMETER_ACTION_ON_DELETE)
 
-        self.__central_layout = UiHelpers.h_layout((5, 3, 5, 3), 5)
+        self.__central_layout = UIHelpers.h_layout((5, 3, 5, 3), 5)
 
-        self.__central_layout.addWidget(UiHelpers.image("scan_32x32@2x.png", self))
+        self.__central_layout.addWidget(UIHelpers.image("scan_32x32@2x.png", self))
 
-        self.__text_layout = UiHelpers.v_layout((0, 0, 0, 0), 3)
+        self.__text_layout = UIHelpers.v_layout((0, 0, 0, 0), 3)
 
-        self.__headers_layout = UiHelpers.h_layout((0, 0, 0, 0), 3)
+        self.__headers_layout = UIHelpers.h_layout((0, 0, 0, 0), 3)
 
         if parameters[self.PARAMETER_TYPE]:
             self.__type = self.__create_label(parameters[self.PARAMETER_TYPE], "HistoryItemType")
@@ -52,7 +52,7 @@ class ScanItem(DrawableWidget):
 
         self.__text_layout.addLayout(self.__headers_layout)
 
-        self.__params_layout = UiHelpers.h_layout((0, 0, 0, 0), 0)
+        self.__params_layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
 
         self.__datetime = self.__create_label(parameters[self.PARAMETER_DATETIME], "HistoryItemDatetime")
         self.__datetime.setFixedWidth(102)
@@ -77,7 +77,7 @@ class ScanItem(DrawableWidget):
         self.__central_layout.addLayout(self.__text_layout)
         self.__central_layout.addStretch()
 
-        self.__buttons_layout = UiHelpers.h_layout((0, 0, 0, 0), 0)
+        self.__buttons_layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
 
         if on_link := self.__parameters.get(self.PARAMETER_ACTION_ON_LINK):
             self.__create_button("link.png", "HistoryItemLinkButton", on_link)
@@ -95,7 +95,7 @@ class ScanItem(DrawableWidget):
     def __create_link_callback(self, doc: Document):
         def callback():
             if not FileManagerService.show(doc.path):
-                WindowsHelpers.file_not_found(doc.path, parent=UiHelpers.find_parent_recursive(self, "MainWindow"))
+                WindowsHelpers.file_not_found(doc.path, parent=UIHelpers.find_parent_recursive(self, "MainWindow"))
 
         return callback
 
@@ -141,14 +141,14 @@ class ScanItem(DrawableWidget):
         menu.show()
 
         self.setProperty("primary", True)
-        UiHelpers.update_style(self)
+        UIHelpers.update_style(self)
         menu.installEventFilter(self)
 
     def eventFilter(self, watched: QObject, event: QEvent) -> bool:
         if watched.objectName() == "ScanItemContextMenu":
             if event.type() == QEvent.Type.Close:
                 self.setProperty("primary", False)
-                UiHelpers.update_style(self)
+                UIHelpers.update_style(self)
 
         return super().eventFilter(watched, event)
 

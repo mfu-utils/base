@@ -11,7 +11,7 @@ from App.Widgets.Components.DrawableWidget import DrawableWidget
 from App.Widgets.Components.ScanItem import ScanItem
 from App.Widgets.Helpers.WindowsHelpers import WindowsHelpers
 from App.Widgets.Modals.ShowDocumentModal import ShowDocumentModal
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 
 class ScanListWidget(DrawableWidget):
@@ -23,8 +23,8 @@ class ScanListWidget(DrawableWidget):
 
         self.__items_callback = items_callback
 
-        self.__central_layout = UiHelpers.v_layout((0, 0, 0, 0), 0)
-        self.__items_layout = UiHelpers.v_layout((5, 5, 5, 5), 0)
+        self.__central_layout = UIHelpers.v_layout((0, 0, 0, 0), 0)
+        self.__items_layout = UIHelpers.v_layout((5, 5, 5, 5), 0)
 
         self.update_items()
 
@@ -63,7 +63,7 @@ class ScanListWidget(DrawableWidget):
         return callback
 
     def __create_not_found_file_error(self, path: str):
-        WindowsHelpers.file_not_found(path, parent=UiHelpers.find_parent_recursive(self, 'MainWindow'))
+        WindowsHelpers.file_not_found(path, parent=UIHelpers.find_parent_recursive(self, 'MainWindow'))
 
     def __create_link_callback(self, scan: Scan):
         def callback():

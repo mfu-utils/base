@@ -8,7 +8,7 @@ from PySide6.QtWidgets import QWidget, QSizePolicy, QLineEdit, QPushButton, QApp
 from App.Widgets.Components.Controls.AbstractControlItem import AbstractControlItem
 from App.Widgets.Components.Controls.Multiselect.Item import Item
 from App.Widgets.Components.Controls.Multiselect.DropDown import DropDown
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import icon
 
 
@@ -128,9 +128,9 @@ class MultiselectControl(AbstractControlItem):
         self._widget.setObjectName("MultiselectControl")
         self._widget.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.MinimumExpanding)
 
-        self.__widget_layout = UiHelpers.v_layout((0, 0, 0, 0), 0)
+        self.__widget_layout = UIHelpers.v_layout((0, 0, 0, 0), 0)
 
-        self.__controls_layout = UiHelpers.h_layout((4, 4, 4, 4), 2)
+        self.__controls_layout = UIHelpers.h_layout((4, 4, 4, 4), 2)
 
         self.__line_edit = QLineEdit(self)
         self.__line_edit.setObjectName("MultiselectLineEdit")
@@ -150,7 +150,7 @@ class MultiselectControl(AbstractControlItem):
 
         self.__widget_layout.addLayout(self.__controls_layout)
 
-        self.__content_layout = UiHelpers.v_layout((5, 5, 5, 5), 0)
+        self.__content_layout = UIHelpers.v_layout((5, 5, 5, 5), 0)
 
         for key, value in self.__items.items():
             if key in self._value:

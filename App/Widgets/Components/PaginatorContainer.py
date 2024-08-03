@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QWidget
 
 from App.Widgets.Components.Paginator import Paginator
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 
 class PaginatorContainer(QWidget):
@@ -9,7 +9,7 @@ class PaginatorContainer(QWidget):
         super(PaginatorContainer, self).__init__(parent)
         self.setFixedHeight(50)
 
-        self.__paginator_layout = UiHelpers.h_layout(spacing=0)
+        self.__paginator_layout = UIHelpers.h_layout(spacing=0)
         self.__paginator_layout.addStretch()
 
         self.__paginator = Paginator(total_pages, page, self)

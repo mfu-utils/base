@@ -4,7 +4,7 @@ from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QPushButton, QWidget
 
 from App.Widgets.Components.DrawableWidget import DrawableWidget
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import styles
 
 
@@ -21,7 +21,7 @@ class Paginator(DrawableWidget):
 
         self.__current_page = (page or 1) if page < total_pages else self.__end_range
 
-        self.__central_layout = UiHelpers.h_layout((0, 0, 0, 0), 2)
+        self.__central_layout = UIHelpers.h_layout((0, 0, 0, 0), 2)
 
         self.__init_buttons()
 
@@ -34,7 +34,7 @@ class Paginator(DrawableWidget):
         btn.clicked.connect(lambda: self.__clicked(i))
         btn.setProperty('primary', i == self.__current_page)
 
-        UiHelpers.update_style(btn)
+        UIHelpers.update_style(btn)
 
         self.__central_layout.addWidget(btn)
 
@@ -82,5 +82,5 @@ class Paginator(DrawableWidget):
             i += 1
 
             itm.widget().setProperty('primary', page == i)
-            UiHelpers.update_style(itm.widget())
+            UIHelpers.update_style(itm.widget())
 

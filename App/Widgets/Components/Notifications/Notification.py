@@ -5,7 +5,7 @@ from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QWidget, QLabel, QPushButton
 
 from App.Widgets.Components.DrawableWidget import DrawableWidget
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import lc
 
 
@@ -27,9 +27,9 @@ class Notification(DrawableWidget):
         self.setObjectName('Notification')
         self.setProperty(_type.value, True)
 
-        self.__central_layout = UiHelpers.v_layout((5, 5, 5, 5), 0)
+        self.__central_layout = UIHelpers.v_layout((5, 5, 5, 5), 0)
 
-        self.__header_layout = UiHelpers.h_layout((0, 0, 0, 0), 1)
+        self.__header_layout = UIHelpers.h_layout((0, 0, 0, 0), 1)
 
         self.__title = QLabel(lc("notifications.notify.title"), self)
         self.__title.setObjectName("NotificationTitle")
@@ -54,4 +54,4 @@ class Notification(DrawableWidget):
 
         self.setLayout(self.__central_layout)
 
-        UiHelpers.update_style(self)
+        UIHelpers.update_style(self)

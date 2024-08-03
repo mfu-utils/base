@@ -44,10 +44,7 @@ class Connection(Thread):
             if self.__wait_receive():
                 self.__socket.sendall(self.__handler.handle(self.__received_data))
 
-                self.__flush()
-
-    def __flush(self):
-        self.__received_data = b""
+                self.close()
 
     def __wait_receive(self) -> bool:
         try:

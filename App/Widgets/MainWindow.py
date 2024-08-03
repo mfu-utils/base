@@ -13,15 +13,16 @@ from App.Widgets.Modals.PreferencesModal import PreferencesModal
 from App.Widgets.Modals.ScanListModal import ScanListModal
 from App.Widgets.Modals.ScanTypesListModal import ScanTypesListModal
 from App.Widgets.Modals.TagsListModal import TagsListModal
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.Tray import Tray
+from App.Widgets.UIHelpers import UIHelpers
 from App.Widgets.Components.Tools.ScanTools import ScanTools
 from App.Widgets.Components.Notifications.NotificationList import NotificationList
 
-from App.helpers import config, ini, styles, icon, screens, events, platform
+from App.helpers import config, ini, styles, icon, screens, events
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    def __init__(self, app: QApplication):
         self.__notify_block: Optional[NotificationTransparentBlock] = None
 
         super(MainWindow, self).__init__(None)
@@ -38,9 +39,9 @@ class MainWindow(QMainWindow):
 
         self.__central_widget = QWidget(self)
 
-        self.__central_layout = UiHelpers.v_layout((0, 0, 0, 0), 0)
+        self.__central_layout = UIHelpers.v_layout((0, 0, 0, 0), 0)
 
-        self.__content_layout = UiHelpers.h_layout((0, 0, 0, 0), 0)
+        self.__content_layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
 
         # ToolBar
         self.__content_layout.addWidget(ToolBar(self.__central_widget))
@@ -62,12 +63,15 @@ class MainWindow(QMainWindow):
         self.__notify_block.hide()
 
         if not self.__reset_screen_parameters():
-            UiHelpers.to_center_screen(self)
+            UIHelpers.to_center_screen(self)
 
         self.__moved = False
         self.__pressed = False
 
         self.installEventFilter(self)
+
+        self.__tray = Tray(app, self)
+        self.__tray.show()
 
     def __checkout_notifications(self):
         visible = self.__notifications_widget.isVisible()
@@ -81,22 +85,44 @@ class MainWindow(QMainWindow):
         self.__update_screen_parameters()
 
     def __update_screen_parameters(self):
-        name = QApplication.primaryScreen().name()
+        primaryScreen = QApplication.primaryScreen()
+
+        for screen in QApplication.screens():
+            if screen.availableGeometry().contains(self.pos()):
+                primaryScreen = screen
+
+                break
+
+        geometry = primaryScreen.geometry()
 
         notifications = self.__notifications_widget
 
         width = self.width() - (notifications.width() if notifications.isVisible() else 0)
 
-        screens().set_screen_parameters(name, (self.x(), self.y()), (width, self.height()))
+        screens().set_screen_parameters(
+            primaryScreen.name(),
+            (self.x() - geometry.x(), self.y() - geometry.y()), (width, self.height())
+        )
 
     def __reset_screen_parameters(self) -> bool:
-        name = QApplication.primaryScreen().name()
+        primaryScreen = None
+        currentName = screens().get_current_screen_name()
 
-        if parameters := screens().get_screen_parameters(name):
+        for screen in QApplication.screens():
+            if screen.name() == currentName:
+                primaryScreen = screen
+                break
+
+        if not primaryScreen:
+            return False
+
+        geometry = primaryScreen.availableGeometry()
+
+        if parameters := screens().get_screen_parameters(currentName):
             pos = parameters['pos']
             size = parameters['size']
 
-            self.move(pos[0], pos[1] + (28 if platform().is_darwin() else 0))
+            self.move(pos[0] + geometry.x(), pos[1] + geometry.y())
             self.resize(size[0], size[1])
 
             return True
@@ -130,6 +156,7 @@ class MainWindow(QMainWindow):
         if watched == self:
             if event.type() == QEvent.Type.Close:
                 event.ignore()
+                self.__tray.close_tray_modals()
                 self.hide()
                 return True
 

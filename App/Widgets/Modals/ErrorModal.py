@@ -1,7 +1,7 @@
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QWidget, QTextBrowser, QPushButton
 
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import styles
 from App.Widgets.Modals.AbstractModal import AbstractModal
@@ -15,14 +15,14 @@ class ErrorModal(AbstractModal):
 
         self.centralWidget().setObjectName('ErrorModal')
 
-        self.__central_layout = UiHelpers.v_layout()
+        self.__central_layout = UIHelpers.v_layout()
 
         self.__central_layout.addWidget(self._create_title(title, "WindowlessTitle"))
 
-        self.__content_layout = UiHelpers.h_layout((0, 0, 0, 0), 10)
+        self.__content_layout = UIHelpers.h_layout((0, 0, 0, 0), 10)
 
-        self.__icon_layout = UiHelpers.v_layout((0, 0, 0, 0), 0)
-        self.__icon_layout.addWidget(UiHelpers.image('error_32x32@2x.png', self))
+        self.__icon_layout = UIHelpers.v_layout((0, 0, 0, 0), 0)
+        self.__icon_layout.addWidget(UIHelpers.image('error_32x32@2x.png', self))
         self.__icon_layout.addStretch()
         self.__content_layout.addLayout(self.__icon_layout)
 
@@ -34,7 +34,7 @@ class ErrorModal(AbstractModal):
 
         self.__central_layout.addLayout(self.__content_layout)
 
-        self.__button_layout = UiHelpers.h_layout((0, 0, 0, 0), 0)
+        self.__button_layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
 
         close_button = QPushButton('Close')
         close_button.setObjectName('ErrorModalCloseButton')
@@ -49,6 +49,6 @@ class ErrorModal(AbstractModal):
 
         self.show()
 
-        UiHelpers.to_center(self)
+        UIHelpers.to_center(self)
 
         self._disable_all_parents()

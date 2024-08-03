@@ -1,11 +1,12 @@
+from PySide6.QtCore import QObject
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QWidget, QSystemTrayIcon, QMenu
 from App.helpers import icon
 
 
-class TrayButton:
+class TrayButton(QObject):
     def __init__(self, _icon: str, parent: QWidget = None):
-        self._parent = parent
+        super().__init__(parent)
 
         self._tray = QSystemTrayIcon(icon(_icon), parent)
         self._tray.setVisible(True)

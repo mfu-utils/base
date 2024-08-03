@@ -3,7 +3,7 @@ from typing import Union
 from PySide6.QtWidgets import QWidget
 
 from App.Widgets.Components.Notifications.Notification import Notification
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import later, events, styles, ini
 
 
@@ -15,7 +15,7 @@ class NotificationTransparentBlock(QWidget):
         self.setStyleSheet(styles(["notification"]))
         self.setMinimumWidth(200)
 
-        self.__central_layout = UiHelpers.v_layout((0, 0, 0, 0), self.spacing)
+        self.__central_layout = UIHelpers.v_layout((0, 0, 0, 0), self.spacing)
 
         self.setLayout(self.__central_layout)
 

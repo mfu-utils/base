@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QWidget, QPushButton
 from App.Widgets.Components.PreferencesControls import PreferencesControls
 from App.Widgets.Components.Preferences.PreferencesSideBar import PreferencesSideBar
 from App.Widgets.Modals.AbstractModal import AbstractModal
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import ini, lc, styles
 
@@ -31,8 +31,8 @@ class AbstractSettingsModal(AbstractModal):
         self._controls_tabs: Dict[str, PreferencesControls] = {}
         self.__sidebar_widget = PreferencesSideBar(self)
 
-        self.__central_layout = UiHelpers.v_layout((0, 0, 0, 0), 0)
-        self.__content_layout = UiHelpers.h_layout((0, 0, 0, 0), 0)
+        self.__central_layout = UIHelpers.v_layout((0, 0, 0, 0), 0)
+        self.__content_layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
 
         self.__content_layout.addWidget(self.__sidebar_widget)
 
@@ -45,7 +45,7 @@ class AbstractSettingsModal(AbstractModal):
 
         self.__central_layout.addLayout(self.__content_layout)
 
-        self.__buttons_layout = UiHelpers.h_layout((10, 10, 10, 10), 10)
+        self.__buttons_layout = UIHelpers.h_layout((10, 10, 10, 10), 10)
         self.__buttons_layout.addStretch()
 
         self.buttons()

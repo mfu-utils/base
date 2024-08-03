@@ -10,7 +10,7 @@ from App.Services.Client.ScanTypeService import ScanTypeService
 from App.Widgets.Components.ResizableImageWidget import ResizableImageWidget
 from App.Widgets.Modals.AbstractModal import AbstractModal
 from App.Widgets.Modals.ErrorModal import ErrorModal
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 from App.Widgets.Components.PreferencesControls import PreferencesControls
 from App.helpers import styles, lc, ini, in_thread, platform
 from App.Services.Client.Ui.UiDocConvertorService import UiDocConvertorService
@@ -34,7 +34,7 @@ class DocumentModal(AbstractModal):
         self.__format = _format
         self.__image_bytes = image
 
-        self.__central_layout = UiHelpers.h_layout()
+        self.__central_layout = UIHelpers.h_layout()
 
         self.__image = ResizableImageWidget(image)
         self.__central_layout.addWidget(self.__image)
@@ -49,7 +49,7 @@ class DocumentModal(AbstractModal):
         self.__ok_button.setDisabled(True)
         self.__ok_button.setFixedWidth(70)
 
-        self.__controls_layout = UiHelpers.v_layout((0, 0, 0, 0), 10)
+        self.__controls_layout = UIHelpers.v_layout((0, 0, 0, 0), 10)
 
         self.__controls = PreferencesControls(self.__lc("title"), self)
         self.__controls.setFixedWidth(self.PARAMETERS_WIDTH)
@@ -68,7 +68,7 @@ class DocumentModal(AbstractModal):
 
         self.__buttons_widget = QWidget(self)
         self.__buttons_widget.setFixedWidth(self.PARAMETERS_WIDTH)
-        self.__buttons_layout = UiHelpers.h_layout((0, 0, 0, 0), 10)
+        self.__buttons_layout = UIHelpers.h_layout((0, 0, 0, 0), 10)
         self.__buttons_layout.addStretch()
 
         self.__buttons_layout.addWidget(self.__ok_button)
@@ -83,7 +83,7 @@ class DocumentModal(AbstractModal):
 
         self.show()
 
-        UiHelpers.to_center(self, UiHelpers.find_parent_recursive(self, "MainWindow"))
+        UIHelpers.to_center(self, UIHelpers.find_parent_recursive(self, "MainWindow"))
 
     def __create_button(self, name: str, title: str, callback: callable) -> QPushButton:
         button = QPushButton(title, self)

@@ -7,7 +7,7 @@ from App.Widgets.Components.Tools.ScanTools import ScanTools
 from App.Widgets.Modals.PreferencesModal import PreferencesModal
 from App.Widgets.Modals.ScanListModal import ScanListModal
 from App.Widgets.Modals.TagsListModal import TagsListModal
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import icon, styles, lc, events
 from App.Widgets.Modals.ScanTypesListModal import ScanTypesListModal
@@ -19,7 +19,7 @@ class ToolBar(DrawableWidget):
         self.setObjectName('ToolBar')
         self.setStyleSheet(styles('toolBar'))
 
-        self.__central_layout = UiHelpers.v_layout((5, 5, 5, 5), 5)
+        self.__central_layout = UIHelpers.v_layout((5, 5, 5, 5), 5)
 
         # Top
         self.__create_tool_button('create.png', 'ToolBarScanNewButton', lc('toolBar.new_scan'), self.create_scan)

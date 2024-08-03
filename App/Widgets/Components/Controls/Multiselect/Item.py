@@ -2,7 +2,7 @@ from PySide6.QtCore import Signal, Qt
 from PySide6.QtWidgets import QWidget, QLabel, QSizePolicy, QPushButton
 
 from App.Widgets.Components.DrawableWidget import DrawableWidget
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 
 class Item(DrawableWidget):
@@ -15,7 +15,7 @@ class Item(DrawableWidget):
         self.__key = key
         self.__value = value
 
-        self.__central_layout = UiHelpers.h_layout((2, 2, 2, 2), 2)
+        self.__central_layout = UIHelpers.h_layout((2, 2, 2, 2), 2)
 
         self.__label = QLabel(value, self)
         self.__label.setObjectName("MultiselectItemLabel")

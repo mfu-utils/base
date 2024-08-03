@@ -8,7 +8,7 @@ from App.Services.Client.DeviceService import DeviceService
 from App.Widgets.Helpers.QSignalObject import QSignalObject
 from App.Widgets.Modals.ErrorModal import ErrorModal
 from App.Widgets.Modals.LoadingModal import LoadingModal
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import lc, notification
 
@@ -23,12 +23,12 @@ class ScanHelpers:
 
         self.__loading: Optional[LoadingModal] = None
 
-        self.__main_window = UiHelpers.find_parent_recursive(self.__widget, 'MainWindow')
+        self.__main_window = UIHelpers.find_parent_recursive(self.__widget, 'MainWindow')
 
         self.__config = _config = ClientConfig.client_ui()
 
     def __create_loading_modal(self, loadig_text: Optional[str] = None):
-        self.__loading = LoadingModal(loadig_text, UiHelpers.find_parent_recursive(self.__widget, 'MainWindow'))
+        self.__loading = LoadingModal(loadig_text, UIHelpers.find_parent_recursive(self.__widget, 'MainWindow'))
         self.__loading.show()
         self.__loading.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
 
@@ -51,7 +51,7 @@ class ScanHelpers:
         title = lc('errorModal.titles.network')
         text = text.strip()
 
-        ErrorModal(title, text, UiHelpers.find_parent_recursive(widget, "MainWindow"))
+        ErrorModal(title, text, UIHelpers.find_parent_recursive(widget, "MainWindow"))
         notification().error(title, text)
 
     def __create_success_signal_callback(self, on_success) -> callable:

@@ -4,7 +4,7 @@ from PySide6.QtWidgets import QWidget
 
 from App.Widgets.Components.ResizableImageWidget import ResizableImageWidget
 from App.Widgets.Modals.AbstractModal import AbstractModal
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import platform
 
 
@@ -22,7 +22,7 @@ class ShowDocumentModal(AbstractModal):
         self.setWindowTitle(title)
         self.setMinimumSize(self.DOC_WIDTH * 2, self.DOC_HEIGHT * 2)
 
-        self.__central_layout = UiHelpers.h_layout()
+        self.__central_layout = UIHelpers.h_layout()
 
         self.__image = ResizableImageWidget(image)
         self.__central_layout.addWidget(self.__image)

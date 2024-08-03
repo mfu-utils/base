@@ -21,7 +21,7 @@ class DotPathAccessor:
         data_item = self._data
 
         for segment in dot_path:
-            data_item = data_item[segment]
+            data_item = data_item.get(segment)
 
             if data_item is None:
                 return data_item

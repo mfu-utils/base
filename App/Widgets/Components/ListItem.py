@@ -6,7 +6,7 @@ from PySide6.QtGui import QKeyEvent
 from PySide6.QtWidgets import QWidget, QLabel, QPushButton, QSizePolicy, QLineEdit
 
 from App.Widgets.Components.DrawableWidget import DrawableWidget
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import icon, lc
 
 
@@ -28,9 +28,9 @@ class ListItem(DrawableWidget):
         self.__mode = self.Mode.VIEW
         self.__error: Optional[str] = None
 
-        self.__central_layout = UiHelpers.h_layout((10, 3, 3, 3), 5)
+        self.__central_layout = UIHelpers.h_layout((10, 3, 3, 3), 5)
 
-        self.__content_layout = UiHelpers.v_layout((0, 0, 0, 0), 0)
+        self.__content_layout = UIHelpers.v_layout((0, 0, 0, 0), 0)
 
         self.__label = QLabel(text, self)
         self.__label.setObjectName("ListItemLabel")
@@ -100,7 +100,7 @@ class ListItem(DrawableWidget):
             self.__cancel_button.setVisible(True)
             self.setProperty('primary', True)
 
-        UiHelpers.update_style(self)
+        UIHelpers.update_style(self)
         self.changedMode.emit(mode)
 
     def __drop_error(self):

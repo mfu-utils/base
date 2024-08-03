@@ -8,5 +8,5 @@ __CONFIG__ = {
     "name": "MfuUtils (Develop)" if debug else STATIC_APP_NAME,
 
     # Enable debug mode
-    "debug": bool(env("APP_DEBUG", False)),
+    "debug": debug,
 }

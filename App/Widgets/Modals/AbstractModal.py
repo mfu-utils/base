@@ -4,7 +4,7 @@ from PySide6.QtCore import QObject, QEvent
 from PySide6.QtGui import QKeyEvent, Qt, QMouseEvent
 from PySide6.QtWidgets import QMainWindow, QWidget, QLabel
 
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import styles, config
 
@@ -12,7 +12,7 @@ from App.helpers import styles, config
 class AbstractModal(QMainWindow):
     def __init__(self, parent: QWidget = None):
         super(AbstractModal, self).__init__(parent)
-        UiHelpers.setup_modal(self)
+        UIHelpers.setup_modal(self)
 
         self.__disabled_widget: Optional[QWidget] = None
 
@@ -55,14 +55,14 @@ class AbstractModal(QMainWindow):
 
     def __create_central_widget(self):
         if self.__frameless and config('ui.shadow-enabled'):
-            self.setCentralWidget(UiHelpers.create_shadow_container(self, self.__central_widget, self.__shadow_size))
+            self.setCentralWidget(UIHelpers.create_shadow_container(self, self.__central_widget, self.__shadow_size))
 
             return
 
         self.setCentralWidget(self.__central_widget)
 
     def _disable_all_parents(self, object_name: str = 'MainWindow'):
-        self.__disabled_widget = UiHelpers.find_parent_recursive(self, object_name)
+        self.__disabled_widget = UIHelpers.find_parent_recursive(self, object_name)
         self.__disabled_widget.setDisabled(True)
         self.setDisabled(False)
 

@@ -3,7 +3,7 @@ from typing import Union
 from PySide6.QtWidgets import QWidget, QLabel
 
 from App.Widgets.Components.DrawableWidget import DrawableWidget
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import styles, lc
 
@@ -15,7 +15,7 @@ class ParameterViewItem(DrawableWidget):
         self.setStyleSheet(styles('deviceParameterItem'))
         self.setFixedHeight(30)
 
-        self.__layout = UiHelpers.v_layout((0, 0, 0, 0), 0)
+        self.__layout = UIHelpers.v_layout((0, 0, 0, 0), 0)
 
         name = QLabel(lc(f'deviceParametersModal.{name}'), self)
         name.setObjectName('DeviceParameterName')

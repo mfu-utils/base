@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QWidget
 from App.Services.Client.Ui.UiScanService import UiScanService
 from App.Widgets.Components.DrawableWidget import DrawableWidget
 from App.Widgets.Components.ScanListWidget import ScanListWidget
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 from App.helpers import styles, events, platform, lc
 
@@ -20,9 +20,9 @@ class History(DrawableWidget):
 
         self.setStyleSheet(styles(_styles))
 
-        self.__central_layout = UiHelpers.v_layout((0, 0, 0, 0), 10)
+        self.__central_layout = UIHelpers.v_layout((0, 0, 0, 0), 10)
 
-        self.__scroll_area = UiHelpers.create_scroll(self, 'HistoryScrollArea')
+        self.__scroll_area = UIHelpers.create_scroll(self, 'HistoryScrollArea')
 
         self.__history_list = ScanListWidget('History', self.__get_last, {'stub_title': lc('history.empty')}, self)
 

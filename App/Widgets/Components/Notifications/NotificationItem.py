@@ -5,7 +5,7 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtWidgets import QWidget, QPushButton, QLabel, QSizePolicy
 
 from App.Widgets.Components.DrawableWidget import DrawableWidget
-from App.Widgets.UiHelpers import UiHelpers
+from App.Widgets.UIHelpers import UIHelpers
 
 
 class NotificationItem(DrawableWidget):
@@ -27,11 +27,11 @@ class NotificationItem(DrawableWidget):
         self.setObjectName("NotificationItem")
         self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
-        self.__central_layout = UiHelpers.v_layout((5, 5, 5, 5), 5)
+        self.__central_layout = UIHelpers.v_layout((5, 5, 5, 5), 5)
 
-        self.__header_layout = UiHelpers.h_layout((0, 0, 0, 0), 1)
+        self.__header_layout = UIHelpers.h_layout((0, 0, 0, 0), 1)
 
-        self.__sign = UiHelpers.image(self.TYPE_ICON[_type], self, (20, 20))
+        self.__sign = UIHelpers.image(self.TYPE_ICON[_type], self, (20, 20))
         self.__sign.setObjectName("NotificationItemSign")
         self.__header_layout.addWidget(self.__sign)
 
