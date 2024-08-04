@@ -14,6 +14,7 @@ class PrintModal(AbstractModal):
         super(PrintModal, self).__init__(parent)
         self._frameless_window(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
         self._d8d(False)
+        self.set_shadow_enabled(False)
         self.setFixedSize(200, 200)
         self.centralWidget().setObjectName("PrintModal")
         self.setStyleSheet(styles("printModal"))

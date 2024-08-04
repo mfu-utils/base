@@ -3,7 +3,7 @@ import sys
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPalette, QColor
 
-from App.helpers import platform
+from App.helpers import platform, logger
 from PySide6.QtWidgets import QApplication
 from App.Widgets import MainWindow
 
@@ -63,7 +63,10 @@ def main():
     # jump_list.add_category(custom_category)
     # jump_list.update()
 
-    app.exec()
+    try:
+        app.exec()
+    except BaseException as e:
+        logger().error(str(e))
 
 
 if __name__ == "__main__":

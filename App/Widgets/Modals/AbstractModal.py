@@ -26,9 +26,13 @@ class AbstractModal(QMainWindow):
         self.__shadow_size = config('ui.shadow-offset')
         self.__movable_offset = config('ui.frameless-drawable-top-offset')
 
+        self.__shadow_enable = True
         self.__prev_pos = None
         self.__movable = False
         self.__dd = False
+
+    def set_shadow_enabled(self, enable: bool):
+        self.__shadow_enable = enable
 
     def _create_title(self, title: str, name: str):
         title = QLabel(title, self)
@@ -54,7 +58,7 @@ class AbstractModal(QMainWindow):
             self.setAttribute(attr)
 
     def __create_central_widget(self):
-        if self.__frameless and config('ui.shadow-enabled'):
+        if self.__frameless and config('ui.shadow-enabled') and self.__shadow_enable:
             self.setCentralWidget(UIHelpers.create_shadow_container(self, self.__central_widget, self.__shadow_size))
 
             return

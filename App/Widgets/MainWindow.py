@@ -85,40 +85,40 @@ class MainWindow(QMainWindow):
         self.__update_screen_parameters()
 
     def __update_screen_parameters(self):
-        primaryScreen = QApplication.primaryScreen()
+        primary_screen = QApplication.primaryScreen()
 
         for screen in QApplication.screens():
             if screen.availableGeometry().contains(self.pos()):
-                primaryScreen = screen
+                primary_screen = screen
 
                 break
 
-        geometry = primaryScreen.geometry()
+        geometry = primary_screen.geometry()
 
         notifications = self.__notifications_widget
 
         width = self.width() - (notifications.width() if notifications.isVisible() else 0)
 
         screens().set_screen_parameters(
-            primaryScreen.name(),
+            primary_screen.name(),
             (self.x() - geometry.x(), self.y() - geometry.y()), (width, self.height())
         )
 
     def __reset_screen_parameters(self) -> bool:
-        primaryScreen = None
-        currentName = screens().get_current_screen_name()
+        primary_screen = None
+        current_name = screens().get_current_screen_name()
 
         for screen in QApplication.screens():
-            if screen.name() == currentName:
-                primaryScreen = screen
+            if screen.name() == current_name:
+                primary_screen = screen
                 break
 
-        if not primaryScreen:
+        if not primary_screen:
             return False
 
-        geometry = primaryScreen.availableGeometry()
+        geometry = primary_screen.availableGeometry()
 
-        if parameters := screens().get_screen_parameters(currentName):
+        if parameters := screens().get_screen_parameters(current_name):
             pos = parameters['pos']
             size = parameters['size']
 
