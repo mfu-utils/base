@@ -2,7 +2,7 @@ from typing import Optional
 
 from PySide6.QtWidgets import QWidget, QFileDialog
 
-from App.Core.Utils.Client import DocumentsRealSizes
+from App.Core.Utils import DocumentMediaType
 from App.Models.Client.Scan import Format
 from App.Services.Client.DocConvertorService import DOC_PATHS
 from App.Widgets.Helpers.ScanHelpers import ScanHelpers
@@ -31,7 +31,7 @@ class ScanTools:
             self.open_document_modal_debug()
             return
 
-        self.__scan_helpers.load_document(device, DocumentsRealSizes.A4, lambda x: self.open_document_modal(x, Format.TIFF))
+        self.__scan_helpers.load_document(device, DocumentMediaType.A4, lambda x: self.open_document_modal(x, Format.TIFF))
 
     def open_document_modal(self, image: bytes, _format: Format):
         DocumentModal(self.__debug_mode, _format, image, self.parent)

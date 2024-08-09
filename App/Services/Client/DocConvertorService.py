@@ -8,7 +8,7 @@ from App.Models.Client.Language import Language
 from App.Models.Client.Scan import Scan
 from App.Services.Client.AbstractServiceError import AbstractServiceError
 from App.Services.Client.AbstractServiceWarning import AbstractServiceWarning
-from App.Subprocesses.Client import OCR
+from App.Subprocesses import OCR
 from App.helpers import platform, config, logger
 from App.Services.Client.DocumentService import DocumentService
 from config import HOME

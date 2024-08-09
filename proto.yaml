@@ -2,6 +2,76 @@ commands:
   ping:
     return: str
 
+  printing:
+    device:
+      type: int
+      required: true
+
+    copies:
+      type: int
+
+    # See https://www.cups.org/doc/options.html
+    #
+    # Letter - US Letter (8.5x11 inches, or 216x279mm)
+    # Legal - US Legal (8.5x14 inches, or 216x356mm)
+    # A4 - ISO A4 (8.27x11.69 inches, or 210x297mm)
+    # COM10 - US #10 Envelope (9.5x4.125 inches, or 241x105mm)
+    # DL - ISO DL Envelope (8.66x4.33 inches, or 220x110mm)
+    # Transparency - Transparency media type or source
+    # Upper - Upper paper tray
+    # Lower - Lower paper tray
+    # MultiPurpose - Multi-purpose paper tray
+    # LargeCapacity - Large capacity paper tray
+    media:
+      type: str
+      default: A4
+      number: "*"
+      variants:
+        - Letter
+        - Legal
+        - A4
+        - COM10
+        - DL
+        - Transparency
+        - Upper
+        - MultiPurpose
+        - LargeCapacity
+
+    pages:
+      type: int
+      number: "*"
+
+    # See https://www.cups.org/doc/options.html
+    #
+    # none - Do not produce a banner page.
+    # classified - A banner page with a "classified" label at the top and bottom.
+    # confidential - A banner page with a "confidential" label at the top and bottom.
+    # secret - A banner page with a "secret" label at the top and bottom.
+    # standard - A banner page with no label at the top and bottom.
+    # topsecret - A banner page with a "top secret" label at the top and bottom.
+    # unclassified - A banner page with an "unclassified" label at the top and bottom.
+    banner:
+      type: str
+      variants:
+        - Classified
+        - Confidential
+        - Secret
+        - Standard
+        - Topsecret
+        - Unclassified
+
+    mirror:
+      type: bool
+
+    order:
+      type: str
+      variants:
+        - normal
+        - reverse
+
+    landscape:
+      type: bool
+
   scan:
     subcommands:
       devices: # Get connected to server devices list
@@ -15,11 +85,15 @@ commands:
 
     return: bytes
     parameters:
-      x:
-        type: int
-
-      y:
-        type: int
+      media:
+        type: str
+        default: A4
+        variants:
+          - Letter
+          - Legal
+          - A4
+          - COM10
+          - DL
 
       format:
         type: str

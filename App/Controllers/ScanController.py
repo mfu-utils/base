@@ -1,4 +1,4 @@
-from App.Subprocesses.Server.ScanImage import ScanImage
+from App.Subprocesses.ScanImage import ScanImage
 from App.Core import Config
 from App.Core.Logger import Log
 
