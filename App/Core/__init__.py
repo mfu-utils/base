@@ -4,6 +4,7 @@ from .Filesystem import Filesystem
 from .Platform import Platform
 from .Machine import Machine
 from .Event import Event
+from .MimeType import MimeType
 
 __all__ = [
     'Filesystem',
@@ -12,4 +13,5 @@ __all__ = [
     'Platform',
     'Machine',
     'Event',
+    'MimeType',
 ]
