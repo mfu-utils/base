@@ -103,7 +103,6 @@ DISABLED_CLIENT = {
         os.path.join(ROOT, "db", "seeders"),
         os.path.join(ROOT, "App", "Commands"),
         os.path.join(ROOT, "App", "Core", "Utils"),
-        os.path.join(ROOT, "App", "Subprocesses"),
     ],
 
     # Configs
@@ -123,7 +122,6 @@ DISABLED_SERVER = {
     "Controllers": os.path.join(ROOT, "App"),
     "Server": [
         os.path.join(ROOT, "App", "Core", "Network"),
-        os.path.join(ROOT, "App", "Subprocesses"),
     ],
     "Handlers": os.path.join(ROOT, "App", "Core", "Network"),
     "AbstractReceiveDataHandler.py": os.path.join(ROOT, "App", "Core", "Abstract"),

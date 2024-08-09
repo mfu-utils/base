@@ -4,13 +4,17 @@ from typing import Optional
 from App.Core import Config, Filesystem
 from App.Core.Abstract import AbstractSubprocess
 from App.Core.Logger import Log
+from App.Core.Utils import DocumentsRealSizes, DocumentMediaType
 from config import CWD
 
 
 class ScanImage(AbstractSubprocess):
-    OUTPUT_PARAMETER_NAME = 'output'
-    FORMAT_DEVICE_LIST_PARAMETER_NAME = 'formatted-device-list'
-    DONT_SCAN_PARAMETER_NAME = 'dont-scan'
+    SCANIMAGE_PARAMETER_OUTPUT = 'output'
+    SCANIMAGE_PARAMETER_FORMAT_DEVICE_LIST = 'formatted-device-list'
+    SCANIMAGE_PARAMETER_DONT_SCAN = 'dont-scan'
+    SCANIMAGE_PARAMETER_X = 'x'
+    SCANIMAGE_PARAMETER_Y = 'y'
+    SCANIMAGE_PARAMETER_MEDIA = 'media'
 
     def __init__(self, log: Log, config: Config):
         super().__init__(log, config, 'scanimage')
@@ -20,19 +24,38 @@ class ScanImage(AbstractSubprocess):
 
         self.set_multi_character_parameters_delimiter('=')
 
+    def __resolve_media_type(self, parameters: dict) -> dict:
+        if not (media := parameters.get(ScanImage.SCANIMAGE_PARAMETER_MEDIA)):
+            return parameters
+
+        media = DocumentMediaType(media)
+
+        x, y = DocumentsRealSizes.size(media)
+        parameters.pop(ScanImage.SCANIMAGE_PARAMETER_MEDIA)
+
+        parameters.update({
+            self.SCANIMAGE_PARAMETER_X: x,
+            self.SCANIMAGE_PARAMETER_Y: y,
+        })
+
+        return parameters
+
+    def __create_scan_tmp_dir(self):
+        if not Filesystem.exists(_dir := os.path.dirname(self.__file_path)):
+            self._log.warning(f"Create scan tmp directory '{_dir}'")
+            os.makedirs(os.path.dirname(self.__file_path), exist_ok=True)
+
     def scan(self, parameters: dict) -> Optional[bytes]:
+        parameters.update({ScanImage.SCANIMAGE_PARAMETER_OUTPUT: self.__file_path})
+
+        ok, message = self.run([], self.__resolve_media_type(parameters))
+
         if self.__scan_debug:
             self._log.warning(f'Scan debug mode enabled. Return test data. Scanning parameters: {parameters}')
 
             return Filesystem.read_file(str(os.path.join(CWD, "tests", "images", f"demo.{parameters['format']}")), True)
 
-        if not Filesystem.exists(_dir := os.path.dirname(self.__file_path)):
-            self._log.warning(f"Create scan tmp directory '{_dir}'")
-            os.makedirs(os.path.dirname(self.__file_path), exist_ok=True)
-
-        parameters.update({ScanImage.OUTPUT_PARAMETER_NAME: self.__file_path})
-
-        ok, message = self.run([], parameters)
+        self.__create_scan_tmp_dir()
 
         if ok:
             return Filesystem.read_file(self.__file_path, True)
@@ -43,8 +66,8 @@ class ScanImage(AbstractSubprocess):
 
     def device_list(self) -> list:
         ok, content = self.run(parameters={
-            self.DONT_SCAN_PARAMETER_NAME: True,
-            self.FORMAT_DEVICE_LIST_PARAMETER_NAME: ','.join([
+            self.SCANIMAGE_PARAMETER_DONT_SCAN: True,
+            self.SCANIMAGE_PARAMETER_FORMAT_DEVICE_LIST: ','.join([
                 '%i', '%d', '%v', '%m', '%t%n'
             ])
         })

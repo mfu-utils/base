@@ -85,7 +85,7 @@ class AbstractSubprocess(ABC):
 
         return formated
 
-    def run(self, subcommands: Optional[list] = None, parameters: Optional[dict] = None) -> Tuple[bool, str]:
+    def run(self, subcommands: Optional[list] = None, parameters: Optional[dict] = None, additional: list = None) -> Tuple[bool, str]:
         if subcommands is None:
             subcommands = []
 
@@ -102,7 +102,7 @@ class AbstractSubprocess(ABC):
             return False, ""
 
         result = subprocess.run(
-            [self._command, *subcommands, *self.__create_parameters(parameters)],
+            [self._command, *subcommands, *self.__create_parameters(parameters), *additional],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )

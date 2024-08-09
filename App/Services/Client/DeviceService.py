@@ -2,7 +2,7 @@ from typing import Optional
 
 from App.Core.Network.Client import ClientConfig
 from App.Core.Network.Protocol import CallRequest
-from App.Core.Utils.Client import DocumentsRealSizes
+from App.Core.Utils import DocumentMediaType
 
 from App.helpers import request
 
@@ -11,10 +11,8 @@ class DeviceService:
     def __init__(self,  config: ClientConfig):
         self.config = config
 
-    def get_document(self, on_success: callable, on_error: callable, size: str, device: Optional[str] = None):
-        x, y = DocumentsRealSizes.size(size)
-
-        parameters = {'x': x, 'y': y}
+    def get_document(self, on_success: callable, on_error: callable, media: DocumentMediaType, device: Optional[str] = None):
+        parameters = {'media': media.name}
 
         if device is not None:
             parameters['device'] = device

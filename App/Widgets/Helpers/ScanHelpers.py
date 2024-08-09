@@ -4,6 +4,7 @@ from PySide6.QtWidgets import QWidget, QSizePolicy
 
 from App.Core.Network.Client import ResponseDataPromise, ClientConfig
 from App.Core.Network.Protocol.Responses import AbstractResponse
+from App.Core.Utils import DocumentMediaType
 from App.Services.Client.DeviceService import DeviceService
 from App.Widgets.Helpers.QSignalObject import QSignalObject
 from App.Widgets.Modals.ErrorModal import ErrorModal
@@ -79,12 +80,12 @@ class ScanHelpers:
             update
         )
 
-    def load_document(self, device: Optional[str], size: str, on_success: callable):
+    def load_document(self, device: Optional[str], media: DocumentMediaType, on_success: callable):
         self.__create_loading_modal(lc('loading.scanDocument'))
 
         return DeviceService(self.__config).get_document(
             self.__create_success_signal_callback(on_success),
             self.__create_error_signal_callback(),
-            size,
+            media,
             device
         )

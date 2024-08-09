@@ -1,8 +1,6 @@
 import os
 import pathlib
-#: BUILD_TYPE:!server
 import sys
-#: END:BUILD_TYPE:!server
 from os.path import dirname, abspath
 
 ROOT = dirname(abspath(__file__))
