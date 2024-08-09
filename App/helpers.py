@@ -10,6 +10,7 @@ from App.Core.Logger import Log
 from App.Core import Platform, Machine
 from App import Application
 from App.Core import Event
+from App.Core import MimeType
 #: BUILD_TYPE:client-ui
 from PySide6.QtGui import QImage, QIcon, QPixmap
 from App.Core.Ui import Ini
@@ -95,6 +96,10 @@ def platform() -> Platform:
 
 def machine() -> Machine:
     return app().get('machine')
+
+
+def mime() -> MimeType:
+    return app().get('mime')
 
 
 #: BUILD_TYPE:server

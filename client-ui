@@ -1,14 +1,16 @@
 #!/.venv/bin/python
+
 import sys
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPalette, QColor
 
-from App.helpers import platform, logger
+from App.helpers import logger
 from PySide6.QtWidgets import QApplication
 from App.Widgets import MainWindow
 
-# import os
 # from thirdParty.jumplists.jumplists import JumpList, JumpListItemLink, JumpListCustomCategory
+
+from App.helpers import platform
 
 
 def windows_dark_mode_palette(_app: QApplication):

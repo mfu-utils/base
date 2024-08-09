@@ -2,6 +2,7 @@ from PySide6.QtCore import Qt, Signal
 from PySide6.QtGui import QDropEvent, QDragLeaveEvent, QDragEnterEvent
 from PySide6.QtWidgets import QWidget, QLabel, QPushButton
 
+from App.Services.Client.Ui.MimeService import MimeService
 from App.Widgets.Modals.AbstractModal import AbstractModal
 from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import styles, lc
@@ -23,7 +24,7 @@ class PrintModal(AbstractModal):
 
         self.__headers = UIHelpers.h_layout((0, 0, 0, 0), 3)
 
-        self.__close_button = QPushButton("X")
+        self.__close_button = QPushButton("\u2715")
         self.__close_button.setFixedSize(16, 16)
         self.__close_button.setObjectName("PrintModalCloseButton")
         self.__close_button.clicked.connect(self.close)
@@ -53,9 +54,7 @@ class PrintModal(AbstractModal):
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls():
-            urls = event.mimeData().urls()
-            print(urls)
-            print(event.mimeData().formats())
+            print(",".join(map(lambda x: x.toLocalFile(), MimeService.filter_printing_types(event.mimeData().urls()))))
         # TODO: Create transparent layer with info
         super(PrintModal, self).dragEnterEvent(event)
 

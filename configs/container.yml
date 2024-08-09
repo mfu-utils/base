@@ -104,6 +104,9 @@ services:
     singleton: true
     alias: machine
 
+  App.Core.MimeType~:
+    alias: mime
+
   # Network
   #: BUILD_TYPE:server
   App.Core.Network.Handlers.ConnectionHandler~:
