@@ -4,7 +4,7 @@ import sys
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPalette, QColor
 
-from App.helpers import logger
+from App.helpers import logger, ini
 from PySide6.QtWidgets import QApplication
 from App.Widgets import MainWindow
 
@@ -50,7 +50,8 @@ def main():
 
     w = MainWindow(app)
 
-    w.show()
+    if ini('app.show_on_start', bool):
+        w.show()
 
     # args = []
 

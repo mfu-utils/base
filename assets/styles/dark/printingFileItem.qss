@@ -1,0 +1,28 @@
+#PrintingFileItem {
+    background-color: transparent;
+    border: none;
+    border-radius: 10px;
+}
+
+#PrintingFileItem:hover {
+    background-color: #4E5157;
+}
+
+#PrintingFileItemIndex {
+    font-size: 16px;
+}
+
+#PrintingFileItemTitle {
+    color: white;
+    font-size: 13px;
+}
+
+#PrintingFileItemMime {
+	background-color: transparent;
+	border: 1px solid #828EBA;
+	border-radius: 3px;
+	padding-left: 3px;
+	padding-right: 3px;
+	color: #828EBA;
+	font-size: 12px;
+}

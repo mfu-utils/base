@@ -17,6 +17,10 @@ class UIHelpers:
         widget.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowCloseButtonHint)
 
     @staticmethod
+    def get_main_window(widget: QWidget) -> QWidget:
+        return UIHelpers.find_parent_recursive(widget, 'MainWindow')
+
+    @staticmethod
     def find_parent_recursive(widget: QWidget, name: str) -> Optional[QWidget]:
         if widget.objectName() == name:
             return widget
@@ -130,7 +134,7 @@ class UIHelpers:
 
     @staticmethod
     def to_center_screen(widget: QWidget):
-        gm = UIHelpers.find_parent_recursive(widget, 'MainWindow').screen().geometry()
+        gm = UIHelpers.get_main_window(widget).screen().geometry()
 
         widget.move(
             int(gm.x() + gm.width() / 2 - widget.width() / 2),

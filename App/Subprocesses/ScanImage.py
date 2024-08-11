@@ -16,6 +16,8 @@ class ScanImage(AbstractSubprocess):
     SCANIMAGE_PARAMETER_Y = 'y'
     SCANIMAGE_PARAMETER_MEDIA = 'media'
 
+    FORMAT = ','.join(['%i', '%d', '%v', '%m', '%t%n'])
+
     def __init__(self, log: Log, config: Config):
         super().__init__(log, config, 'scanimage')
 
@@ -67,9 +69,7 @@ class ScanImage(AbstractSubprocess):
     def device_list(self) -> list:
         ok, content = self.run(parameters={
             self.SCANIMAGE_PARAMETER_DONT_SCAN: True,
-            self.SCANIMAGE_PARAMETER_FORMAT_DEVICE_LIST: ','.join([
-                '%i', '%d', '%v', '%m', '%t%n'
-            ])
+            self.SCANIMAGE_PARAMETER_FORMAT_DEVICE_LIST: self.FORMAT
         })
 
         devices = []

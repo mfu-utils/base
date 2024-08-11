@@ -8,6 +8,7 @@ configs.services:
     - subprocesses
     - db
     - mime
+    - printing
     #: BUILD_TYPE:server
     - scan
     - server

@@ -2,6 +2,7 @@
 lang = en
 width = 600
 height = 500
+show_on_start = False
 
 [network]
 port = 9587

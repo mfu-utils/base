@@ -4,9 +4,10 @@ from .Color import Color
 from .Str import Str
 from .ExecLater import ExecLater
 from .Wrapper import Wrapper
-from .DocumentBanners import DocumentBanners
+from .DocumentBanner import DocumentBanner
 from .DocumentMediaType import DocumentMediaType
 from .DocumentsRealSizes import DocumentsRealSizes
+from .DocumentOrder import DocumentOrder
 
 __all__ = {
     "DotPathAccessor",
@@ -15,7 +16,8 @@ __all__ = {
     "Str",
     "ExecLater",
     "Wrapper",
-    "DocumentBanners",
+    "DocumentBanner",
     "DocumentMediaType",
     "DocumentsRealSizes",
+    "DocumentOrder",
 }

@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class DocumentBanners(Enum):
+class DocumentBanner(Enum):
     Classified = "classified"
     Confidential = "confidential"
     Secret = "secret"

@@ -27,7 +27,7 @@ class ScanItem(DrawableWidget):
 
     def __init__(self, parameters: dict, parent: QWidget = None):
         super(ScanItem, self).__init__(parent)
-        self.setObjectName("HistoryItem")
+        self.setObjectName("ScanItem")
 
         self.__parameters = parameters
         self.__title = parameters[self.PARAMETER_TITLE]
@@ -42,10 +42,10 @@ class ScanItem(DrawableWidget):
         self.__headers_layout = UIHelpers.h_layout((0, 0, 0, 0), 3)
 
         if parameters[self.PARAMETER_TYPE]:
-            self.__type = self.__create_label(parameters[self.PARAMETER_TYPE], "HistoryItemType")
+            self.__type = self.__create_label(parameters[self.PARAMETER_TYPE], "ScanItemType")
             self.__headers_layout.addWidget(self.__type)
 
-        self.__title_widget = self.__create_label(self.__title, "HistoryItemTitle")
+        self.__title_widget = self.__create_label(self.__title, "ScanItemTitle")
         self.__headers_layout.addWidget(self.__title_widget)
 
         self.__headers_layout.addStretch()
@@ -54,19 +54,19 @@ class ScanItem(DrawableWidget):
 
         self.__params_layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
 
-        self.__datetime = self.__create_label(parameters[self.PARAMETER_DATETIME], "HistoryItemDatetime")
+        self.__datetime = self.__create_label(parameters[self.PARAMETER_DATETIME], "ScanItemDatetime")
         self.__datetime.setFixedWidth(102)
         self.__params_layout.addWidget(self.__datetime)
         self.__params_layout.addSpacing(10)
 
-        self.__format = self.__create_label(parameters[self.PARAMETER_FORMAT].name, "HistoryItemFormat")
+        self.__format = self.__create_label(parameters[self.PARAMETER_FORMAT].name, "ScanItemFormat")
         self.__params_layout.addWidget(self.__format)
         self.__params_layout.addSpacing(10)
 
         self.__tags = []
 
         for tag in parameters[self.PARAMETER_TAGS]:
-            tag = self.__create_label(tag, "HistoryItemTag")
+            tag = self.__create_label(tag, "ScanItemTag")
             self.__params_layout.addWidget(tag)
             self.__tags.append(tag)
 
@@ -80,13 +80,13 @@ class ScanItem(DrawableWidget):
         self.__buttons_layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
 
         if on_link := self.__parameters.get(self.PARAMETER_ACTION_ON_LINK):
-            self.__create_button("link.png", "HistoryItemLinkButton", on_link)
+            self.__create_button("link.png", "ScanItemLinkButton", on_link)
 
         if on_show := self.__parameters.get(self.PARAMETER_ACTION_ON_SHOW):
-            self.__create_button("visible.png", "HistoryItemShowButton", on_show)
+            self.__create_button("visible.png", "ScanItemShowButton", on_show)
 
         if self.__on_delete:
-            self.__create_button("bin.png", "HistoryItemDeleteButton", self._deleted_button_clicked)
+            self.__create_button("bin.png", "ScanItemDeleteButton", self._deleted_button_clicked)
 
         self.__central_layout.addLayout(self.__buttons_layout)
 

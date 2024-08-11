@@ -4,6 +4,11 @@
     border: 1px solid #464749;
 }
 
+#PrintModalImage {
+	background-color: transparent;
+	border: none;
+}
+
 #PrintModalMessage {
 	background-color: transparent;
 	border: none;
@@ -15,7 +20,7 @@
 	border: none;
 	border-radius: 5px;
 	color: white;
-	font-size: 11px;
+	font-size: 14px;
 }
 
 #PrintModalCloseButton:hover {

@@ -1,3 +1,5 @@
 {
-    "message": "Drop file to printing."
+    "instruction": "Drop file to printing.",
+    "upload_message": "Upload to printing.",
+    "error_message": "Cannot upload this file(s)."
 }

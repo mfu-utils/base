@@ -39,7 +39,7 @@ class Notification(DrawableWidget):
 
         self.__header_layout.addStretch()
 
-        self.__close_button = QPushButton("x")
+        self.__close_button = QPushButton("\u2715")
         self.__close_button.setObjectName("NotificationCloseButton")
         self.__close_button.setFixedSize(16, 16)
         self.__close_button.clicked.connect(self.deleted.emit)
