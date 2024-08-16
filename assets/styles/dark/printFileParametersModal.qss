@@ -1,0 +1,24 @@
+#PrintFileParametersModal {}
+
+#PrintFileParametersScrollArea {
+	background-color: transparent;
+}
+
+#PrintFileParametersControls {
+	border-bottom: 1px solid #1E1F22;
+}
+
+#PrintFileParametersCancelButton, #PrintFileParametersSaveButton {
+	background-color: transparent;
+    border-radius: 5px;
+    border: 1px solid #43454A;
+    padding: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: white;
+}
+
+#PrintFileParametersSaveButton {
+	background-color: #3574F0;
+    border-color: #3574F0;
+}

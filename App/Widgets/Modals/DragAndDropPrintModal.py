@@ -80,6 +80,7 @@ class DragAndDropPrintModal(AbstractModal):
         self.centralWidget().setLayout(self.__central_Layout)
 
         self.__urls: List[QUrl] = []
+        self.__accepted_urls: List[QUrl] = []
         self.setAcceptDrops(True)
 
         self.show()
@@ -104,13 +105,15 @@ class DragAndDropPrintModal(AbstractModal):
         self.__cross_image.hide()
         self.__message.setText(self.__instruction)
         self.__urls = []
+        self.__accepted_urls = []
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls():
-            self.__urls = MimeService.filter_printing_types(event.mimeData().urls())
+            self.__urls = event.mimeData().urls()
+            self.__accepted_urls = MimeService.filter_printing_types(self.__urls)
             self.__show_accept_drop_message()
 
-            if self.__urls:
+            if self.__accepted_urls:
                 event.acceptProposedAction()
 
         super(DragAndDropPrintModal, self).dragEnterEvent(event)
@@ -121,7 +124,7 @@ class DragAndDropPrintModal(AbstractModal):
         super(DragAndDropPrintModal, self).dragLeaveEvent(event)
 
     def dropEvent(self, event: QDropEvent):
-        PrintingTools.open_printing_parameters_modal(self.__urls, self)
+        PrintingTools.open_printing_parameters_modal(self.__urls, self.__accepted_urls, self)
 
         self.__hide_accept_drop_message()
         self.hide()

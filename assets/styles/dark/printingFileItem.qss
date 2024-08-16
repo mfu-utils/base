@@ -4,7 +4,11 @@
     border-radius: 10px;
 }
 
-#PrintingFileItem:hover {
+#PrintingFileItem[warning="true"] {
+	background-color: rgba(225, 173, 96, 0.1);
+}
+
+#PrintingFileItem:hover[warning="false"] {
     background-color: #4E5157;
 }
 
@@ -25,4 +29,35 @@
 	padding-right: 3px;
 	color: #828EBA;
 	font-size: 12px;
+}
+
+#PrintingFileItemMime:disabled,
+#PrintingFileItemIndex:disabled,
+#PrintingFileItemIndex:disabled,
+#PrintingFileItemParametersButton:disabled {
+    color: #7A7A7A;
+    border-color: #7A7A7A;
+}
+
+#PrintingFileItemErrorTypeIcon {
+	border: none;
+}
+
+#PrintingFileItemErrorTypeMessage {
+	color: #7A7A7A;
+	background-color: transparent;
+	border: none;
+}
+
+#PrintingFileItemDeleteButton, #PrintingFileItemParametersButton {
+	background-color: transparent;
+	border-radius: 10px;
+}
+
+#PrintingFileItemDeleteButton:hover {
+	background-color: #ED5157;
+}
+
+#PrintingFileItemParametersButton:hover {
+	background-color: #0E76F8;
 }

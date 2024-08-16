@@ -13,7 +13,7 @@ class PrintingOptionsSubprocess(AbstractSubprocess):
     PARAMETER_PAPER_SIZE = "PageSize/Paper Size"
     PARAMETER_PAPER_TYPE = "MediaType/Paper Type"
     PARAMETER_CONTRAST = "secContrast Adjustment Levels Contrast"
-     PARAMETER_QUALITY = "Quality/Quality"
+    PARAMETER_QUALITY = "Quality/Quality"
 
     PARAMETER_KEY_EDGE_ENHANCEMENT = "edge_enhancement"
     PARAMETER_KEY_SKIP_BLANK_PAGES = "skip_blank_pages"

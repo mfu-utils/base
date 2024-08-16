@@ -31,7 +31,7 @@ client-ui:
 
     create_archive.bat:
       - "@echo off"
-      - tar -cf archive.zip tests var LICENSE MFUClient.exe
+      - tar -cf archive.tar tests var LICENSE MFUClient.exe
 
     build.bat:
       - "@echo off"
@@ -41,7 +41,6 @@ client-ui:
       - set "PY=%SCRIPTS%\python.exe"
       - set "PYI=%SCRIPTS%\pyinstaller.exe"
       - set "SPEC_FILE=build.spec"
-      - set "WORKDIR=.build_logs"
       -
       - echo CREATE VENV ^> %BUILD_LOGS%\venv_log.txt
       - call python -m venv %VENV_NAME% > "%BUILD_LOGS%\venv_log.txt"
@@ -57,7 +56,7 @@ client-ui:
       - call upgrade.bat > "%BUILD_LOGS%\upgrade_db_log.txt" 2>&1
       -
       - echo BUILD ^> %BUILD_LOGS%\build_log.txt
-      - call %PYI% %SPEC_FILE% --workpath %WORKDIR% --distpath . > "%BUILD_LOGS%\build_log.txt" 2>&1
+      - call %PYI% %SPEC_FILE% --workpath %BUILD_LOGS% --distpath . > "%BUILD_LOGS%\build_log.txt" 2>&1
       -
       - echo CREATE ARCHIVE ^> %BUILD_LOGS%\create_archive_log.txt
       - call create_archive.bat > "%BUILD_LOGS%\create_archive_log.txt"

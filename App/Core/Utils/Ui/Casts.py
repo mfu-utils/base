@@ -1,8 +1,16 @@
 import json
-from typing import List
+from typing import List, Type, Dict
+from enum import Enum
 
 
 class Casts:
+    @staticmethod
+    def enum2dict(enum: Type[Enum], names: Dict[str, str] = None) -> dict:
+        if not names:
+            names = {}
+
+        return dict(map(lambda x: (x.value, names.get(x.value) or x.name), enum))
+
     @staticmethod
     def str2bool(value: str) -> bool:
         value = value.lower()
@@ -13,6 +21,10 @@ class Casts:
             return False
 
         raise ValueError(f'Value {value} is not a boolean')
+
+    @staticmethod
+    def bool2str(value: bool) -> str:
+        return "True" if value else "False"
 
     @staticmethod
     def str2int(value: str) -> int:

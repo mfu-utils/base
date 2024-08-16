@@ -76,6 +76,7 @@ commands:
 
     order:
       type: str
+      default: normal
       variants:
         - normal
         - reverse
