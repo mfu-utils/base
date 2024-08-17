@@ -2,6 +2,7 @@ from PySide6.QtWidgets import QWidget, QLabel, QPushButton
 
 from App.Core.Utils import DocumentMediaType, DocumentOrder
 from App.Core.Utils.Ui.PrintingPagePolicy import PrintingPagePolicy
+from App.Services.Client.MimeConvertor import MimeConvertor
 from App.Widgets.Components.DrawableWidget import DrawableWidget
 from App.Widgets.Modals.PrintFileParametersModal import PrintFileParametersModal
 from App.Widgets.UIHelpers import UIHelpers
@@ -26,11 +27,12 @@ class PrintingFileItem(DrawableWidget):
         PrintFileParametersModal.PARAMETER_LANDSCAPE: "False",
     }
 
-    def __init__(self, parameters: dict,  parent: QWidget = None):
+    def __init__(self, parameters: dict, parent: QWidget = None):
         super(PrintingFileItem, self).__init__(parent)
         self.setObjectName('PrintingFileItem')
 
         self.__parameters = parameters
+        self.__mime_convertor_service = MimeConvertor()
 
         type_error = parameters.get(self.PARAMETER_TYPE_ERROR) or False
 
@@ -96,7 +98,12 @@ class PrintingFileItem(DrawableWidget):
         UIHelpers.update_style(self)
 
     def __open_parameters_modal(self):
-        PrintFileParametersModal(self.__parameters[self.PARAMETER_PATH], self.PRINTING_PARAMETERS, self)
+        path = self.__parameters[self.PARAMETER_PATH]
+
+        tmp_path = self.__mime_convertor_service.get_pdf(path)
+        print(tmp_path)
+
+        PrintFileParametersModal(path, tmp_path, self.PRINTING_PARAMETERS, self)
 
     def path(self) -> str:
         return self.__parameters[self.PARAMETER_PATH]

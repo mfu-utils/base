@@ -1,7 +1,9 @@
 from typing import Any, Union, Dict, Optional
 
 from PySide6.QtCore import Qt
-from PySide6.QtWidgets import QWidget, QPushButton
+from PySide6.QtPdf import QPdfDocument
+from PySide6.QtPdfWidgets import QPdfView
+from PySide6.QtWidgets import QWidget, QPushButton, QTreeView
 
 from App.Core.Utils import DocumentMediaType, DocumentOrder
 from App.Core.Utils.PaperTray import PaperTray
@@ -26,7 +28,7 @@ class PrintFileParametersModal(AbstractModal):
     PARAMETER_PAGES = "pages"
     PARAMETER_ORDER = "order"
 
-    def __init__(self, path: str, parameters: dict, parent: QWidget = None):
+    def __init__(self, path: str, tmp_path: str, parameters: dict, parent: QWidget = None):
         super(PrintFileParametersModal, self).__init__(parent)
         self.setWindowFlag(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
         self.setObjectName("PrintFileParametersModal")
@@ -37,7 +39,15 @@ class PrintFileParametersModal(AbstractModal):
 
         self.setWindowTitle(self.__lc("title") % path.split("\\" if platform().is_windows() else "/")[-1])
 
-        self.__central_layout = UIHelpers.v_layout((0, 0, 0, 0), 5)
+        self.__central_layout = UIHelpers.h_layout((0, 0, 0, 0), 5)
+
+        self.__document = QPdfDocument()
+        self.__document.load(tmp_path)
+
+        self.__doc_view = QPdfView()
+        self.__doc_view.setDocument(self.__document)
+
+        self.__central_layout.addWidget(self.__doc_view)
 
         self.__scroll_area = UIHelpers.create_scroll(self, "PrintFileParametersScrollArea")
 

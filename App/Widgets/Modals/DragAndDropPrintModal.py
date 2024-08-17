@@ -4,7 +4,7 @@ from PySide6.QtCore import Qt, Signal, QUrl
 from PySide6.QtGui import QDropEvent, QDragLeaveEvent, QDragEnterEvent
 from PySide6.QtWidgets import QWidget, QLabel, QPushButton
 
-from App.Services.Client.Ui.MimeService import MimeService
+from App.Services.Client.MimeFilters import MimeService
 from App.Widgets.Components.Tools.PrintingTools import PrintingTools
 from App.Widgets.Modals.AbstractModal import AbstractModal
 from App.Widgets.UIHelpers import UIHelpers
