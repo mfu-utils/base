@@ -72,11 +72,11 @@ class ScanListModal(AbstractModal):
 
         self.__content_layout = UIHelpers.v_layout((0, 0, 0, 0), 10)
 
-        self.__scroll_bar = UIHelpers.create_scroll(self, "ScanListScrollArea")
+        self.__scroll_widget = UIHelpers.create_scroll(self, "ScanListScrollArea")
 
         self.__list_widget = ScanListWidget("ScanList", self.__filter, {"stub_title": lc("scanListWidget.empty")}, self)
-        self.__scroll_bar.setWidget(self.__list_widget)
-        self.__content_layout.addWidget(self.__scroll_bar)
+        self.__scroll_widget.setWidget(self.__list_widget)
+        self.__content_layout.addWidget(self.__scroll_widget)
 
         self.__paginator_container = PaginatorContainer(0, parent=self)
         self.__paginator = self.__paginator_container.paginator()

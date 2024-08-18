@@ -1,7 +1,6 @@
 import hashlib
 import os
 import tempfile
-from datetime import datetime
 
 import img2pdf
 import docx2pdf
@@ -18,26 +17,23 @@ class MimeConvertor:
         self.__doc_mime_types = self.__mime_config["doc_mime_types"]
         self.__images_mime_types = self.__mime_config["images_mime_types"]
 
-    @staticmethod
-    def __get_unique_filename(extension: str) -> str:
-        seed = str(datetime.now().timestamp()).replace('.', '')
+    def __get_unique_filename(self, path: str, extension: str) -> str:
+        _hash = str(hashlib.md5((f := open(path, 'rb')).read()).hexdigest())
+        f.close()
 
-        return hashlib.md5(seed.encode()).hexdigest() + f".{extension}"
+        return os.path.join(self.__tmp_path, _hash + f".{extension}")
 
     def __get_converted_image_to_pdf(self, file: str) -> str:
-        data = img2pdf.convert(img := PILImage.open(file).filename)
-        img.close()
-
-        path = self.__get_unique_filename("pdf")
-
-        Filesystem.write_file(path, data)
+        if not os.path.exists(path := self.__get_unique_filename(file, "pdf")):
+            data = img2pdf.convert(img := PILImage.open(file).filename)
+            img.close()
+            Filesystem.write_file(path, data)
 
         return path
 
     def __get_converted_doc(self, path_from: str, to: str) -> str:
-        path_to = os.path.join(self.__tmp_path, self.__get_unique_filename(to))
-
-        docx2pdf.convert(path_from, path_to)
+        if not os.path.exists(path_to := self.__get_unique_filename(path_from, to)):
+            docx2pdf.convert(path_from, path_to)
 
         return path_to
 

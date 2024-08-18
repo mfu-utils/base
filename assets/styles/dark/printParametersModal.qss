@@ -4,5 +4,5 @@
 
 #PrintParametersScrollArea, #PrintParametersScrollWidget {
 	background-color: transparent;
-	border: none;
+    border: none;
 }

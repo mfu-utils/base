@@ -6,7 +6,7 @@ from PySide6.QtCore import QUrl, Qt
 from App.Widgets.Components.PrintingFileItem import PrintingFileItem
 from App.Widgets.Modals.AbstractModal import AbstractModal
 from App.Widgets.UIHelpers import UIHelpers
-from App.helpers import styles, mime, lc, platform
+from App.helpers import styles, mime, lc, platform, config
 
 
 class PrintParametersModal(AbstractModal):
@@ -19,6 +19,7 @@ class PrintParametersModal(AbstractModal):
         self.setStyleSheet(styles(["printParametersModal", "printingFileItem"]))
 
         self.__accepted = accepted
+        self.__view_types: dict = config(f'mime.view_types')
 
         self.__error_type_message = lc("printingParametersModal.error_type_file")
 
@@ -60,7 +61,7 @@ class PrintParametersModal(AbstractModal):
 
             self.__files_layout.addWidget(PrintingFileItem({
                 PrintingFileItem.PARAMETER_PATH: path.replace(":/", ":\\").replace("/", "\\") if is_windows else path,
-                PrintingFileItem.PARAMETER_MIME: mime().get_mime(path),
+                PrintingFileItem.PARAMETER_MIME: self.__view_types[mime().get_mime(path)],
                 PrintingFileItem.PARAMETER_INDEX: i,
                 PrintingFileItem.PARAMETER_TYPE_ERROR: False if file in self.__accepted else self.__error_type_message,
             }, self))

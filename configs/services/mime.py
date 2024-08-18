@@ -24,4 +24,13 @@ __CONFIG__ = {
         "image/png",
         "image/jpeg",
     ],
+
+    "view_types": {
+        "application/pdf": "pdf",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
+        "text/plain": "plain text",
+        "image/tiff": "tiff",
+        "image/png": "png",
+        "image/jpeg": "jpeg",
+    }
 }

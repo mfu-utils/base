@@ -100,10 +100,7 @@ class PrintingFileItem(DrawableWidget):
     def __open_parameters_modal(self):
         path = self.__parameters[self.PARAMETER_PATH]
 
-        tmp_path = self.__mime_convertor_service.get_pdf(path)
-        print(tmp_path)
-
-        PrintFileParametersModal(path, tmp_path, self.PRINTING_PARAMETERS, self)
+        PrintFileParametersModal(path, self.__mime_convertor_service.get_pdf(path), self.PRINTING_PARAMETERS, self)
 
     def path(self) -> str:
         return self.__parameters[self.PARAMETER_PATH]

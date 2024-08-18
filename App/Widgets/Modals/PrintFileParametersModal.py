@@ -3,7 +3,7 @@ from typing import Any, Union, Dict, Optional
 from PySide6.QtCore import Qt
 from PySide6.QtPdf import QPdfDocument
 from PySide6.QtPdfWidgets import QPdfView
-from PySide6.QtWidgets import QWidget, QPushButton, QTreeView
+from PySide6.QtWidgets import QWidget, QPushButton
 
 from App.Core.Utils import DocumentMediaType, DocumentOrder
 from App.Core.Utils.PaperTray import PaperTray
@@ -39,15 +39,19 @@ class PrintFileParametersModal(AbstractModal):
 
         self.setWindowTitle(self.__lc("title") % path.split("\\" if platform().is_windows() else "/")[-1])
 
-        self.__central_layout = UIHelpers.h_layout((0, 0, 0, 0), 5)
+        self.__central_layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
 
         self.__document = QPdfDocument()
         self.__document.load(tmp_path)
 
         self.__doc_view = QPdfView()
+        self.__doc_view.setPageMode(QPdfView.PageMode.MultiPage)
+        self.__doc_view.setZoomMode(QPdfView.ZoomMode.FitInView)
         self.__doc_view.setDocument(self.__document)
 
         self.__central_layout.addWidget(self.__doc_view)
+
+        self.__parameters_layout = UIHelpers.v_layout((0, 0, 0, 0), 5)
 
         self.__scroll_area = UIHelpers.create_scroll(self, "PrintFileParametersScrollArea")
 
@@ -60,7 +64,7 @@ class PrintFileParametersModal(AbstractModal):
 
         self.__scroll_area.setWidget(self.__controls)
 
-        self.__central_layout.addWidget(self.__scroll_area)
+        self.__parameters_layout.addWidget(self.__scroll_area)
 
         self.__buttons_layout = UIHelpers.h_layout(spacing=5)
         self.__buttons_layout.addStretch()
@@ -75,8 +79,8 @@ class PrintFileParametersModal(AbstractModal):
         self.__cancel_button.clicked.connect(self.close)
         self.__buttons_layout.addWidget(self.__cancel_button)
 
-        self.__central_layout.addLayout(self.__buttons_layout)
-        self.__central_layout.addSpacing(10)
+        self.__parameters_layout.addLayout(self.__buttons_layout)
+        self.__central_layout.addLayout(self.__parameters_layout)
 
         self.centralWidget().setLayout(self.__central_layout)
 
