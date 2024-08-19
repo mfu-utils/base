@@ -2,6 +2,7 @@ import datetime
 from typing import Union, Any, Optional
 from App.Core.Cache import CacheManager
 
+from App.Services.MimeConvertor import MimeConvertor
 from App.Core.Utils.ExecLater import ExecLater
 from App.Core.Network import NetworkManager
 from App.Core.Console import Output
@@ -100,6 +101,10 @@ def machine() -> Machine:
 
 def mime() -> MimeType:
     return app().get('mime')
+
+
+def mime_convertor() -> MimeConvertor:
+    return app().get('mime.convertor')
 
 
 #: BUILD_TYPE:server

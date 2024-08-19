@@ -21,6 +21,10 @@
     font-size: 13px;
 }
 
+#PrintingFileItemTitle:disabled {
+	color: #7A7A7A;
+}
+
 #PrintingFileItemMime {
 	background-color: transparent;
 	border: 1px solid #828EBA;

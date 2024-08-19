@@ -28,34 +28,28 @@ class PrintFileParametersModal(AbstractModal):
     PARAMETER_PAGES = "pages"
     PARAMETER_ORDER = "order"
 
-    def __init__(self, path: str, tmp_path: str, parameters: dict, parent: QWidget = None):
+    def __init__(self, path: str, tmp_path: Optional[str], parameters: dict, parent: QWidget = None):
         super(PrintFileParametersModal, self).__init__(parent)
         self.setWindowFlag(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
         self.setObjectName("PrintFileParametersModal")
-        self.setMinimumSize(600, 500)
+        self.setMinimumSize(800, 570)
         self.setStyleSheet(styles("printFileParametersModal"))
 
         self.__parameters = parameters.copy()
 
-        self.setWindowTitle(self.__lc("title") % path.split("\\" if platform().is_windows() else "/")[-1])
+        self.setWindowTitle(self.__lc("title") % path)
 
         self.__central_layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
 
-        self.__document = QPdfDocument()
-        self.__document.load(tmp_path)
-
-        self.__doc_view = QPdfView()
-        self.__doc_view.setPageMode(QPdfView.PageMode.MultiPage)
-        self.__doc_view.setZoomMode(QPdfView.ZoomMode.FitInView)
-        self.__doc_view.setDocument(self.__document)
-
-        self.__central_layout.addWidget(self.__doc_view)
+        if tmp_path:
+            self.__create_document(tmp_path)
 
         self.__parameters_layout = UIHelpers.v_layout((0, 0, 0, 0), 5)
 
         self.__scroll_area = UIHelpers.create_scroll(self, "PrintFileParametersScrollArea")
+        self.__scroll_area.setFixedWidth(400)
 
-        self.__controls = PreferencesControls(path, self)
+        self.__controls = PreferencesControls(path.split("\\" if platform().is_windows() else "/")[-1], self)
         self.__controls.setObjectName("PrintFileParametersControls")
         self.__controls.add_get_value_callback(self.__get_value)
         self.__controls.add_set_value_callback(self.__set_value)
@@ -67,7 +61,6 @@ class PrintFileParametersModal(AbstractModal):
         self.__parameters_layout.addWidget(self.__scroll_area)
 
         self.__buttons_layout = UIHelpers.h_layout(spacing=5)
-        self.__buttons_layout.addStretch()
 
         self.__cancel_button = QPushButton(lc("printFileParameters.cancel_button"), self)
         self.__cancel_button.setObjectName("PrintFileParametersCancelButton")
@@ -80,6 +73,10 @@ class PrintFileParametersModal(AbstractModal):
         self.__buttons_layout.addWidget(self.__cancel_button)
 
         self.__parameters_layout.addLayout(self.__buttons_layout)
+
+        if not platform().is_windows():
+            self.__parameters_layout.addSpacing(10)
+
         self.__central_layout.addLayout(self.__parameters_layout)
 
         self.centralWidget().setLayout(self.__central_layout)
@@ -89,6 +86,17 @@ class PrintFileParametersModal(AbstractModal):
         UIHelpers.to_center_screen(self)
 
         self.raise_()
+
+    def __create_document(self, path: str):
+        self.__document = QPdfDocument()
+        self.__document.load(path)
+
+        self.__doc_view = QPdfView()
+        self.__doc_view.setPageMode(QPdfView.PageMode.MultiPage)
+        self.__doc_view.setZoomMode(QPdfView.ZoomMode.FitInView)
+        self.__doc_view.setDocument(self.__document)
+
+        self.__central_layout.addWidget(self.__doc_view)
 
     def __get_value(self, name: str) -> Any:
         return self.__parameters.get(name)
@@ -109,7 +117,7 @@ class PrintFileParametersModal(AbstractModal):
 
     def __init_controls(self):
         label_width = 140
-        target_width = 300
+        target_width = 200
 
         # DEVICE
         device = self.__controls.create_combo_box(self.PARAMETER_DEVICE, self.__clc(self.PARAMETER_DEVICE, "title"), {

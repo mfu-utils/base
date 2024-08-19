@@ -1,9 +1,11 @@
-from .OCR import OCR
 from .PrintingSubprocess import PrintingSubprocess
 from .ScanImage import ScanImage
+from .LibreofficePdfConvert import LibreofficePdfConvert
+from .AsposeConvert import AsposeConvert
 
 __all__ = [
-    'OCR',
     'PrintingSubprocess',
     'ScanImage',
+    'LibreofficePdfConvert',
+    'AsposeConvert'
 ]

@@ -2,9 +2,10 @@ from typing import Any
 
 from PySide6.QtWidgets import QWidget
 
-from App.Core.Utils.Ui import Patterns
+from App.Core.Utils.Ui import Patterns, Casts
 from App.Services.Client.Ui.UiDocConvertorService import UiDocConvertorService
 from App.Services.Client.Ui.UiScanService import UiScanService
+from App.Services.MimeConvertor import MimeConvertor
 from App.Widgets.Components.Controls.CheckBoxControl import CheckBoxControl
 from App.Widgets.Modals.AbstractSettingsModal import AbstractSettingsModal
 from App.Widgets.UIHelpers import UIHelpers
@@ -35,6 +36,12 @@ class PreferencesModal(AbstractSettingsModal):
 
         if key == "recognition.dir":
             return self._convertor_service.get_doc_dir()
+
+        if key == "printing.view_tool":
+            if (suit := super(PreferencesModal, self)._get_value(key)) not in MimeConvertor.suits_values():
+                return MimeConvertor.OfficeSuit.NONE.value
+
+            return suit
 
         return super(PreferencesModal, self)._get_value(key)
 
@@ -69,6 +76,10 @@ class PreferencesModal(AbstractSettingsModal):
     @staticmethod
     def scans_lc(name: str) -> str:
         return PreferencesModal.__lc(f"scans.{name}")
+
+    @staticmethod
+    def printing_lc(name: str) -> str:
+        return PreferencesModal.__lc(f"printing.{name}")
 
     def app_tab(self):
         tab = self._create_tab('app', self.app_lc('title'))
@@ -177,6 +188,25 @@ class PreferencesModal(AbstractSettingsModal):
         _dir.pattern_set("dir", self.__dir_pattern(), self.scans_lc("dir.pattern_error"))
         _dir.pattern_enable("dir")
 
+    def printing_tab(self):
+        tab = self._create_tab("printing", self.printing_lc("title"))
+
+        _view_tool = tab.create_combo_box(
+            "printing.view_tool",
+            self.printing_lc("view_tool.title"),
+            Casts.enum2dict(MimeConvertor.suits(), {
+                MimeConvertor.OfficeSuit.NONE.value: self.printing_lc("view_tool.none_item"),
+                **MimeConvertor.OFFICE_SUIT_NAMES
+            })
+        )
+        _view_tool.set_description(self.printing_lc("view_tool.description"))
+        _view_tool.set_grid_items([
+            ["title", "stretch|horizontal"],
+            ["spacing|10|vertical"],
+            ["widget"],
+            ["description"],
+        ])
+
     def controls(self):
         self.app_tab()
         self.network_tab()
@@ -184,5 +214,6 @@ class PreferencesModal(AbstractSettingsModal):
         self.ocr_tab()
         self.recognition_tab()
         self.scans_tab()
+        self.printing_tab()
 
         self.checkout_tab("app")

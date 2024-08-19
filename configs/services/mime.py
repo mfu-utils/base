@@ -26,11 +26,11 @@ __CONFIG__ = {
     ],
 
     "view_types": {
-        "application/pdf": "pdf",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
-        "text/plain": "plain text",
-        "image/tiff": "tiff",
-        "image/png": "png",
-        "image/jpeg": "jpeg",
+        "application/pdf": "Adobe PDF",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "Microsoft Word",
+        "text/plain": "Plain text",
+        "image/tiff": "TIFF image",
+        "image/png": "PNG image",
+        "image/jpeg": "JPEG image",
     }
 }

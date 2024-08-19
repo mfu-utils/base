@@ -1,11 +1,11 @@
 import json
-from typing import List, Type, Dict
+from typing import List, Type, Dict, Union
 from enum import Enum
 
 
 class Casts:
     @staticmethod
-    def enum2dict(enum: Type[Enum], names: Dict[str, str] = None) -> dict:
+    def enum2dict(enum: Union[Type[Enum], List[Enum]], names: Dict[str, str] = None) -> dict:
         if not names:
             names = {}
 

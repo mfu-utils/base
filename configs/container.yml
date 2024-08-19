@@ -107,6 +107,9 @@ services:
   App.Core.MimeType~:
     alias: mime
 
+  App.Services.MimeConvertor~:
+    alias: mime.convertor
+
   # Network
   #: BUILD_TYPE:server
   App.Core.Network.Handlers.ConnectionHandler~:

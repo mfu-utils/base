@@ -69,5 +69,13 @@
             "description": "Scans saving directory",
             "pattern_error": "Please type valid directory path"
         }
+    },
+    "printing": {
+        "title": "Printing",
+        "view_tool": {
+            "title": "Use tool for MS Word view:",
+            "description": "Using for display 'docx' document in preview.",
+            "none_item": "None"
+        }
     }
 }

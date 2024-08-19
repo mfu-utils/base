@@ -13,10 +13,10 @@ class AbstractSubprocess(ABC):
         self._log = log
         self._config = config.get('subprocesses')
 
-        self._multi_character_parameters_delimiter = ' '
+        self._multi_character_parameters_delimiter = None
         self._multi_character_parameters_prefix = '--'
         
-        self._once_character_parameters_delimiter = ' '
+        self._once_character_parameters_delimiter = None
         self._once_character_parameters_prefix = '-'
 
     def set_multi_character_parameters_delimiter(self, delimiter: str):
@@ -94,27 +94,31 @@ class AbstractSubprocess(ABC):
         if parameters is None:
             parameters = {}
 
-        cmd = ' '.join([self._command, *subcommands, *self.__create_parameters(parameters)])
+        cmd = [self._command, *subcommands, *self.__create_parameters(parameters), *(options.get('additional') or [])]
 
-        self._log.debug(f"Running subprocess: '{cmd}'")
+        self._log.debug(f"Running subprocess: '{' '.join(cmd)}'", {'object': self})
 
         if self._config['debug']:
             self._log.warning(f'Subprocess debug mode enabled. Command NOT EXECUTED!!!.')
 
             return False, ""
 
-        result = subprocess.run(
-            [self._command, *subcommands, *self.__create_parameters(parameters), *(options.get('additional') or [])],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            input=options.get('input'),
-        )
+        result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=options.get('input'))
 
-        data = result.__getattribute__('stderr' if result.returncode > 0 else 'stdout').decode("utf-8").strip()
+        out_name = options.get("output")
+
+        if out_name == "join":
+            out = result.stdout.decode("utf-8").strip()
+            err = result.stderr.decode("utf-8").strip()
+            data = f"\n@Stdout:\n{out}\n\n@Stderr:\n{err}"
+        else:
+            data = result.__getattribute__(
+                out_name or 'stderr' if result.returncode > 0 else 'stdout'
+            ).decode("utf-8").strip()
 
         if result.returncode > 0:
-            self._log.debug('Success', {'object': self})
+            self._log.error(f'Error. {data}', {'object': self})
             return False, data
 
-        self._log.debug(data, {'object': self})
+        self._log.success(f"Success process. '{' '.join(cmd)}'", {'object': self})
         return True, data

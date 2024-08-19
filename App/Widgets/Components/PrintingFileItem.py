@@ -1,12 +1,15 @@
+from typing import Optional
+
 from PySide6.QtWidgets import QWidget, QLabel, QPushButton
 
 from App.Core.Utils import DocumentMediaType, DocumentOrder
 from App.Core.Utils.Ui.PrintingPagePolicy import PrintingPagePolicy
-from App.Services.Client.MimeConvertor import MimeConvertor
+from App.Services.MimeConvertor import MimeConvertor
 from App.Widgets.Components.DrawableWidget import DrawableWidget
+from App.Widgets.Components.LoadingAnimation import LoadingAnimation
 from App.Widgets.Modals.PrintFileParametersModal import PrintFileParametersModal
 from App.Widgets.UIHelpers import UIHelpers
-from App.helpers import icon
+from App.helpers import icon, mime_convertor, ini, styles, in_thread
 
 
 class PrintingFileItem(DrawableWidget):
@@ -32,15 +35,21 @@ class PrintingFileItem(DrawableWidget):
         self.setObjectName('PrintingFileItem')
 
         self.__parameters = parameters
-        self.__mime_convertor_service = MimeConvertor()
+        self.__converted_path: Optional[str] = self.__parameters[self.PARAMETER_PATH][:]
 
         type_error = parameters.get(self.PARAMETER_TYPE_ERROR) or False
+
+        self.__need_converting = False
+
+        if ini('printing.view_tool') in MimeConvertor.suits_values(False):
+            self.__need_converting = True
 
         self.__central_layout = UIHelpers.h_layout((10, 3, 10, 3), 5)
 
         self.__index_widget = QLabel(f"{str(parameters[self.PARAMETER_INDEX])}.", self)
         self.__index_widget.setObjectName("PrintingFileItemIndex")
         self.__central_layout.addWidget(self.__index_widget)
+        self.__central_layout.addSpacing(10)
 
         self.__content_layout = UIHelpers.v_layout((0, 0, 0, 0), 5)
 
@@ -66,6 +75,10 @@ class PrintingFileItem(DrawableWidget):
             self.__error_type_message.setObjectName("PrintingFileItemErrorTypeMessage")
             self.__error_type_message.setDisabled(True)
             self.__parameters_layout.addWidget(self.__error_type_message)
+            self.__loading_block = None
+        else:
+            self.__loading_block = self.__create_loading_block()
+            self.__parameters_layout.addWidget(self.__loading_block)
 
         self.__mime_widget = QLabel(parameters[self.PARAMETER_MIME], self)
         self.__mime_widget.setObjectName('PrintingFileItemMime')
@@ -95,12 +108,42 @@ class PrintingFileItem(DrawableWidget):
         self.setLayout(self.__central_layout)
 
         self.setProperty("warning", bool(type_error))
-        UIHelpers.update_style(self)
+
+        if not type_error:
+            self.setDisabled(True)
+
+            if self.__need_converting:
+                self.__start_converting()
+
+            UIHelpers.update_style(self)
+
+    def __create_loading_block(self) -> QWidget:
+        widget = DrawableWidget(self)
+
+        layout = UIHelpers.h_layout((0, 0, 10, 0), 5)
+
+        animation = LoadingAnimation((16, 16), (4, 4), widget)
+        animation.setStyleSheet(styles("loadingAnimation"))
+        layout.addWidget(animation)
+
+        layout.setSpacing(5)
+
+        label = QLabel(self)
+        label.setObjectName("PrintingFileItemLoadingText")
+        label.setText("Loading...")
+        layout.addWidget(label)
+
+        widget.setLayout(layout)
+
+        return widget
 
     def __open_parameters_modal(self):
-        path = self.__parameters[self.PARAMETER_PATH]
-
-        PrintFileParametersModal(path, self.__mime_convertor_service.get_pdf(path), self.PRINTING_PARAMETERS, self)
+        PrintFileParametersModal(
+            self.__parameters[self.PARAMETER_PATH],
+            self.__converted_path,
+            self.PRINTING_PARAMETERS,
+            self
+        )
 
     def path(self) -> str:
         return self.__parameters[self.PARAMETER_PATH]
@@ -118,3 +161,16 @@ class PrintingFileItem(DrawableWidget):
             button.clicked.connect(callback)
 
         return button
+
+    def __start_converting(self):
+        def _worker():
+            suit = MimeConvertor.OfficeSuit(ini('printing.view_tool'))
+
+            self.__converted_path = mime_convertor().get_pdf(self.__parameters[self.PARAMETER_PATH], suit)
+            self.setEnabled(True)
+
+            self.__loading_block.deleteLater()
+
+            UIHelpers.update_style(self)
+
+        in_thread(_worker)

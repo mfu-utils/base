@@ -61,7 +61,7 @@ class PrintParametersModal(AbstractModal):
 
             self.__files_layout.addWidget(PrintingFileItem({
                 PrintingFileItem.PARAMETER_PATH: path.replace(":/", ":\\").replace("/", "\\") if is_windows else path,
-                PrintingFileItem.PARAMETER_MIME: self.__view_types[mime().get_mime(path)],
+                PrintingFileItem.PARAMETER_MIME: self.__view_types.get(mime().get_mime(path)) or "?",
                 PrintingFileItem.PARAMETER_INDEX: i,
                 PrintingFileItem.PARAMETER_TYPE_ERROR: False if file in self.__accepted else self.__error_type_message,
             }, self))

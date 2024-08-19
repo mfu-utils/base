@@ -32,3 +32,6 @@ dir =
 timeout = 5
 popup = true
 use_system = true
+
+[printing]
+view_tool = aspose_lib
