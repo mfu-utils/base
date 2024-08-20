@@ -1,36 +1,45 @@
+MIME_MS_WORD = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+MIME_PDF = "application/pdf"
+
+MIME_TEXT = "text/plain"
+
+MIME_TIFF = "image/tiff"
+MIME_PNG = "image/png"
+MIME_JPEG = "image/jpeg"
+
 __CONFIG__ = {
     # Available mime types for printing
     "available_printing_types": {
         # Document types
-        "application/pdf",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        MIME_PDF,
+        MIME_MS_WORD,
 
         # Text types
-        "text/plain",
+        MIME_TEXT,
 
         # Image types
-        "image/tiff",
-        "image/png",
-        "image/jpeg",
+        MIME_TIFF,
+        MIME_PNG,
+        MIME_JPEG,
     },
 
     "doc_mime_types": [
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "application/pdf",
+        MIME_MS_WORD,
+        MIME_PDF,
     ],
 
     "images_mime_types": [
-        "image/tiff",
-        "image/png",
-        "image/jpeg",
+        MIME_TIFF,
+        MIME_PNG,
+        MIME_JPEG,
     ],
 
     "view_types": {
-        "application/pdf": "Adobe PDF",
-        "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "Microsoft Word",
-        "text/plain": "Plain text",
-        "image/tiff": "TIFF image",
-        "image/png": "PNG image",
-        "image/jpeg": "JPEG image",
+        MIME_PDF: "Adobe PDF",
+        MIME_MS_WORD: "Microsoft Word",
+        MIME_TEXT: "Plain text",
+        MIME_TIFF: "TIFF image",
+        MIME_PNG: "PNG image",
+        MIME_JPEG: "JPEG image",
     }
 }

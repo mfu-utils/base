@@ -33,7 +33,7 @@ class PrintFileParametersModal(AbstractModal):
         self.setWindowFlag(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
         self.setObjectName("PrintFileParametersModal")
         self.setMinimumSize(800, 570)
-        self.setStyleSheet(styles("printFileParametersModal"))
+        self.setStyleSheet(styles(["printFileParametersModal", "scrollBar"]))
 
         self.__parameters = parameters.copy()
 
@@ -92,6 +92,7 @@ class PrintFileParametersModal(AbstractModal):
         self.__document.load(path)
 
         self.__doc_view = QPdfView()
+        self.__doc_view.setObjectName("PrintFileParametersPDFView")
         self.__doc_view.setPageMode(QPdfView.PageMode.MultiPage)
         self.__doc_view.setZoomMode(QPdfView.ZoomMode.FitInView)
         self.__doc_view.setDocument(self.__document)

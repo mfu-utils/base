@@ -3,7 +3,8 @@ from App.Core.Abstract import AbstractSubprocess
 from App.Core.Logger import Log
 
 
-class PrintingOptionsSubprocess(AbstractSubprocess):
+#: TODO: Create options list for printer
+class LPOptionsSubprocess(AbstractSubprocess):
     PARAMETER_EDGE_ENHANCEMENT = "JCLEdgeEnhance/Edge Enhancement"
     PARAMETER_SKIP_BLANK_PAGES = "JCLSkipBlankPages/Skip Blank Pages"
     PARAMETER_PAPER_SOURCE = "InputSlot/Paper Source"
@@ -40,6 +41,6 @@ class PrintingOptionsSubprocess(AbstractSubprocess):
     }
 
     def __init__(self, log: Log, config: Config):
-        super(PrintingOptionsSubprocess, self).__init__(log, config, "lpoptions")
+        super(LPOptionsSubprocess, self).__init__(log, config, "lpoptions")
 
 

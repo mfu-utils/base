@@ -1,3 +1,4 @@
+import platform
 from typing import Union, Optional, List
 from App.Core import Config
 
@@ -23,11 +24,14 @@ class MimeType:
     def get_mime(file: Union[str, bytes]) -> Optional[str]:
         _type = None
 
-        if isinstance(file, str):
-            _type = magic.from_file(file, mime=True)
-
         if isinstance(file, bytes):
             _type = magic.from_buffer(file, mime=True)
+
+        if platform.system() == 'Windows':
+            with open(file, 'rb') as f:
+                _type = magic.from_buffer(f.read(), mime=True)
+        elif isinstance(file, str):
+            _type = magic.from_file(file, mime=True)
 
         return _type
 

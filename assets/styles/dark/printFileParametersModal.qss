@@ -2,10 +2,17 @@
 
 #PrintFileParametersScrollArea {
 	background-color: transparent;
+	border: none;
 }
 
 #PrintFileParametersControls {
 	border-bottom: 1px solid #1E1F22;
+}
+
+#PrintFileParametersPDFView {
+    background-color: transparent;
+    border: none;
+    border-right: 1px solid #1E1F22;
 }
 
 #PrintFileParametersCancelButton, #PrintFileParametersSaveButton {

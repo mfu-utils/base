@@ -1,5 +1,5 @@
 #!/.venv/bin/python
-
+import os
 import sys
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPalette, QColor
@@ -41,6 +41,7 @@ def windows_dark_mode_palette(_app: QApplication):
 
 def main():
     app = QApplication(sys.argv)
+    os.system('cls')
 
     if platform().is_windows():
         app.setPalette(windows_dark_mode_palette(app))
