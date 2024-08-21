@@ -83,7 +83,7 @@ DISABLED_UI = {
 
     # Services
     "ui.py": os.path.join(ROOT, "configs", "services"),
-    "convertor.py": os.path.join(ROOT, "configs", "services"),
+    "ocr_convertor.py": os.path.join(ROOT, "configs", "services"),
     "langs.py": os.path.join(ROOT, "configs", "services"),
     "notification.py": os.path.join(ROOT, "configs", "services"),
 

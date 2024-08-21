@@ -7,7 +7,15 @@ import subprocess
 
 
 class AbstractSubprocess(ABC):
-    def __init__(self, log: Log, config: Config, command: str):
+    TARGET_PLATFORM_CMD_HOST = 'host'
+    TARGET_PLATFORM_CMD_WSL = 'wsl'
+
+    TARGETS_PLATFORMS_CMD = [
+        TARGET_PLATFORM_CMD_HOST,
+        TARGET_PLATFORM_CMD_WSL,
+    ]
+
+    def __init__(self, log: Log, config: Config, command: str, remote_cmd: bool = True):
         self._command = command
 
         self._log = log
@@ -18,6 +26,15 @@ class AbstractSubprocess(ABC):
         
         self._once_character_parameters_delimiter = None
         self._once_character_parameters_prefix = '-'
+
+        self._linux_targets_cmd = config.get('subprocesses.linux_target_commands')
+        self._remote_cmd = remote_cmd
+
+        if self._linux_targets_cmd not in self.TARGETS_PLATFORMS_CMD:
+            raise Exception(f'Remote targets not supported ({self._linux_targets_cmd}).')
+
+    def set_command_is_remote(self, enable: bool):
+        self._remote_cmd = enable
 
     def set_multi_character_parameters_delimiter(self, delimiter: str):
         self._multi_character_parameters_delimiter = delimiter
@@ -85,6 +102,12 @@ class AbstractSubprocess(ABC):
 
         return formated
 
+    def __get_command(self) -> List[str]:
+        if self._remote_cmd and self._linux_targets_cmd == self.TARGET_PLATFORM_CMD_WSL:
+            return ['wsl', self._command]
+
+        return [self._command]
+
     def run(self, subcommands: Optional[list] = None, parameters: Optional[dict] = None, options: dict = None) -> Tuple[bool, str]:
         options = options or {}
 
@@ -94,7 +117,12 @@ class AbstractSubprocess(ABC):
         if parameters is None:
             parameters = {}
 
-        cmd = [self._command, *subcommands, *self.__create_parameters(parameters), *(options.get('additional') or [])]
+        cmd = [
+            *self.__get_command(),
+            *subcommands,
+            *self.__create_parameters(parameters),
+            *(options.get('additional') or [])
+        ]
 
         self._log.debug(f"Running subprocess: '{' '.join(cmd)}'", {'object': self})
 

@@ -35,10 +35,7 @@ class ScanImage(AbstractSubprocess):
         x, y = DocumentsRealSizes.size(media)
         parameters.pop(ScanImage.SCANIMAGE_PARAMETER_MEDIA)
 
-        parameters.update({
-            self.SCANIMAGE_PARAMETER_X: x,
-            self.SCANIMAGE_PARAMETER_Y: y,
-        })
+        parameters.update({self.SCANIMAGE_PARAMETER_X: x, self.SCANIMAGE_PARAMETER_Y: y})
 
         return parameters
 

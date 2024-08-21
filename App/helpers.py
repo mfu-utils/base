@@ -8,7 +8,7 @@ from App.Core.Network import NetworkManager
 from App.Core.Console import Output
 from App.Core.DB import Connection
 from App.Core.Logger import Log
-from App.Core import Platform, Machine
+from App.Core import Platform, Machine, Config
 from App import Application
 from App.Core import Event
 from App.Core import MimeType
@@ -29,8 +29,11 @@ def app() -> Application:
     return Application()
 
 
-def config(dot_path: str, value=None):
-    _config = app().get('config')
+def config(dot_path: Optional[str] = None, value=None) -> Union[Config, Any]:
+    _config: Config = app().get('config')
+
+    if dot_path is None:
+        return _config
 
     if value is None:
         return _config.get(dot_path)

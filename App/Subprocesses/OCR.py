@@ -5,9 +5,9 @@ from App.helpers import config, logger
 
 
 class OCR:
-    image_path_replace = "$p"
-    out_file_path_replace = "$o"
-    languages_replace = "$l"
+    IMAGE_PATH_REPLACE = "$p"
+    OUT_FILE_PATH_REPLACE = "$o"
+    LANGUAGES_REPLACE = "$l"
 
     @staticmethod
     def convert(executed: str, template: str, path: str, out: str, langs_sep: str, langs: List[str]) -> int:
@@ -16,13 +16,13 @@ class OCR:
         cmd = " ".join([
             f'"{executed}"',
             template
-            .replace(OCR.image_path_replace, path)
-            .replace(OCR.out_file_path_replace, out)
-            .replace(OCR.languages_replace, langs),
+            .replace(OCR.IMAGE_PATH_REPLACE, path)
+            .replace(OCR.OUT_FILE_PATH_REPLACE, out)
+            .replace(OCR.LANGUAGES_REPLACE, langs),
         ]).replace('\\', '\\\\')
 
         if config('convertor.debug_command'):
-            logger().debug(f"Execute convertor: `{cmd}`", {'object': OCR})
+            logger().debug(f"Execute ocr convertor: `{cmd}`", {'object': OCR})
             return 0
 
         return subprocess.call(cmd)

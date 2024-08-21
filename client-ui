@@ -41,10 +41,10 @@ def windows_dark_mode_palette(_app: QApplication):
 
 def main():
     app = QApplication(sys.argv)
-    os.system('cls')
 
     if platform().is_windows():
         app.setPalette(windows_dark_mode_palette(app))
+        os.system('cls')
 
     # jump_list = JumpList()
     # custom_category = JumpListCustomCategory("Example")

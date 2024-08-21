@@ -76,35 +76,39 @@ class MimeConvertor:
 
         return os.path.exists(path)
 
-    def __get_converted_image_to_pdf(self, path_from: str) -> str:
+    def __get_converted_image_to_pdf(self, path_from: str) -> Optional[str]:
         path_to = self.__get_unique_filepath(path_from, "pdf")
 
         if not self.__exists_path(path_to):
-            Filesystem.write_file(path_to, img2pdf.convert(path_from))
+            if not Filesystem.write_file(path_to, img2pdf.convert(path_from)):
+                return None
 
         return path_to
 
-    def __get_converted_doc_by_aspose(self, path_from: str, extension: str) -> str:
+    def __get_converted_doc_by_aspose(self, path_from: str, extension: str) -> Optional[str]:
         path_to = self.__get_unique_filepath(path_from, extension)
 
         if not self.__exists_path(path_to):
-            self.__aspose_convertor.convert(path_from, path_to)
+            if not self.__aspose_convertor.convert(path_from, path_to):
+                return None
 
         return path_to
 
-    def __get_converted_doc_by_libreoffice(self, path_from: str, extension: str) -> str:
+    def __get_converted_doc_by_libreoffice(self, path_from: str, extension: str) -> Optional[str]:
         path_to = os.path.join(self.__tmp_path, path_from.split('/')[-1].split('.')[0] + f".{extension}")
 
         if not self.__exists_path(path_to):
-            self.__libreoffice_convertor.docx_convert(path_from, self.__tmp_path, extension)
+            return self.__libreoffice_convertor.docx_convert(path_from, self.__tmp_path, extension)
 
         return path_to
 
-    def __get_converted_doc_by_msword(self, path_from: str, extension: str) -> str:
+    def __get_converted_doc_by_msword(self, path_from: str, extension: str) -> Optional[str]:
         path_to = self.__get_unique_filepath(path_from, extension)
 
         if not self.__exists_path(path_to):
             docx2pdf.convert(path_from, path_to)
+
+            return None if not os.path.exists(path_to) else path_to
 
         return path_to
 

@@ -26,7 +26,7 @@ class LibreofficePdfConvert(AbstractSubprocess):
             return self.__determinate_linux_bin_path()
 
     def __determinate_linux_bin_path(self) -> Optional[str]:
-        ok, out = self.run(["command", "-v", self.LINUX_LIBREOFFICE_COMMAND])
+        ok, out = self.run(["command", "v", self.LINUX_LIBREOFFICE_COMMAND])
 
         if not ok:
             return out
@@ -56,3 +56,6 @@ class LibreofficePdfConvert(AbstractSubprocess):
 
         if (not ok) or (not os.path.exists(path)):
             self._log.error(f"Libreoffice failed to convert. {out}", {"object": self})
+            return None
+
+        return path

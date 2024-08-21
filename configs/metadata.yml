@@ -9,12 +9,12 @@ configs.services:
     - db
     - mime
     - printing
-    #: BUILD_TYPE:server
+    - ocr_convertor
     - scan
+    #: BUILD_TYPE:server
     - server
     #: END:BUILD_TYPE:server
     #: BUILD_TYPE:!server
-    - convertor
     - client
     #: END:BUILD_TYPE:!server
     #: BUILD_TYPE:client-ui
