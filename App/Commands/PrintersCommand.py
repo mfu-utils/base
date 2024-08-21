@@ -6,6 +6,9 @@ from App.helpers import logger, config, cache
 
 
 class PrintersCommand(AbstractCommand):
+    signature = "printers"
+    help = "Printers management"
+
     def _parameters(self):
         subparser = self._argument_parser.add_subparsers(title='subjects')
 
@@ -19,15 +22,19 @@ class PrintersCommand(AbstractCommand):
         #: TODO: Get list by network
         printers = LpstatSubprocess(logger(), config(), cache()).get_printers_list() if local else []
 
+        self._output.endl()
+        self._output.header("Printers:")
+
+        if not len(printers):
+            self._output.line("None")
+
         for printer in printers:
-            self._output.header("Printers:")
-
-            self._output.line(f"{printer['display_name']}:", indent=2)
-            self._output.line(f"Name: {printer['name']}:", indent=4)
-            self._output.line(f"{printer['']}:", indent=2)
-            self._output.line(f"{printer['display_name']}:", indent=2)
-            self._output.line(f"{printer['display_name']}:", indent=2)
-
+            self._output.header(f"- {printer['display_name']}:")
+            self._output.line(f"Index: {' ' * 4}{printer['index']}", indent=2)
+            self._output.line(f"Name: {' ' * 5}{printer['name']}", indent=2)
+            self._output.line(f"Device: {' ' * 3}{printer['device']}", indent=2)
+            self._output.line(f"Connected: {printer['connected']}", indent=2)
+            self._output.endl()
 
     def _execute(self, args: argparse.Namespace):
         pass
