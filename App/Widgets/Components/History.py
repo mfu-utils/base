@@ -11,20 +11,20 @@ from App.helpers import styles, events, platform, lc
 class History(DrawableWidget):
     def __init__(self, parent: QWidget = None):
         super(History, self).__init__(parent)
-        self.setObjectName('HistoryContainer')
+        self.setObjectName("HistoryContainer")
 
-        _styles = ['historyContainer', 'scrollBar', 'scanItem', 'qMenu', 'scanListEmptyStub', 'qMenu']
+        _styles = ["historyContainer", "scrollBar", "scanItem", "qMenu", "scanListEmptyStub", "qMenu"]
 
         if platform().is_darwin():
-            _styles.append('qMenuMacFix')
+            _styles.append("qMenuMacFix")
 
         self.setStyleSheet(styles(_styles))
 
         self.__central_layout = UIHelpers.v_layout((0, 0, 0, 0), 10)
 
-        self.__scroll_area = UIHelpers.create_scroll(self, 'HistoryScrollArea')
+        self.__scroll_area = UIHelpers.create_scroll(self, "HistoryScrollArea")
 
-        self.__history_list = ScanListWidget('History', self.__get_last, {'stub_title': lc('history.empty')}, self)
+        self.__history_list = ScanListWidget("History", self.__get_last, {"stub_title": lc("history.empty")}, self)
 
         self.__scroll_area.setWidget(self.__history_list)
 
@@ -32,7 +32,7 @@ class History(DrawableWidget):
 
         self.setLayout(self.__central_layout)
 
-        events().register_signal('update-history', self, 'update_history')
+        events().register_signal("update-history", self, "update_history")
 
     @staticmethod
     def __get_last():

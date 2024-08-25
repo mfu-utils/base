@@ -19,7 +19,7 @@ class ScanTools:
 
         self.__devices_modal: Optional[DevicesModal] = None
 
-        self.__debug_mode = config('convertor.debug')
+        self.__debug_mode = config('ocr_convertor.debug')
 
     def select(self, device: Optional[str] = None):
         if not ini('devices.auto_choose_device', bool):

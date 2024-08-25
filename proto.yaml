@@ -2,92 +2,94 @@ commands:
     ping:
         return: str
 
-    printing:
-        device:
-            type: int
-            required: true
+    print:
+        return: list
+        parameters:
+            device:
+                type: str
+                required: true
 
-        copies:
-            type: int
+            copies:
+                type: int
 
-        ##################################################################
-        # Paper size                                                     #
-        # See https://www.cups.org/doc/options.html                      #
-        #                                                                #
-        # Letter - US Letter (8.5x11 inches, or 216x279mm)               #
-        # Legal  - US Legal (8.5x14 inches, or 216x356mm)                #
-        # A4     - ISO A4 (8.27x11.69 inches, or 210x297mm)              #
-        # COM10  - US #10 Envelope (9.5x4.125 inches, or 241x105mm)      #
-        # DL     - ISO DL Envelope (8.66x4.33 inches, or 220x110mm)      #
-        ##################################################################
-        paper-size:
-            type: str
-            default: A4
-            variants:
-                - Letter
-                - Legal
-                - A4
-                - COM10
-                - DL
+            ##################################################################
+            # Paper size                                                     #
+            # See https://www.cups.org/doc/options.html                      #
+            #                                                                #
+            # Letter - US Letter (8.5x11 inches, or 216x279mm)               #
+            # Legal  - US Legal (8.5x14 inches, or 216x356mm)                #
+            # A4     - ISO A4 (8.27x11.69 inches, or 210x297mm)              #
+            # COM10  - US #10 Envelope (9.5x4.125 inches, or 241x105mm)      #
+            # DL     - ISO DL Envelope (8.66x4.33 inches, or 220x110mm)      #
+            ##################################################################
+            paper-size:
+                type: str
+                default: A4
+                variants:
+                    - Letter
+                    - Legal
+                    - A4
+                    - COM10
+                    - DL
 
-        ##################################################################
-        # Paper tray                                                     #
-        # See https://www.cups.org/doc/options.html                      #
-        #                                                                #
-        # Upper         - Upper paper tray                               #
-        # Lower         - Lower paper tray                               #
-        # MultiPurpose  - Multi-purpose paper tray                       #
-        # LargeCapacity - Large capacity paper tray                      #
-        ##################################################################
-        paper-tray:
-            type: str
-            variants:
-                - Upper
-                - Lower
-                - MultiPurpose
-                - LargeCapacity
+            ##################################################################
+            # Paper tray                                                     #
+            # See https://www.cups.org/doc/options.html                      #
+            #                                                                #
+            # Upper         - Upper paper tray                               #
+            # Lower         - Lower paper tray                               #
+            # MultiPurpose  - Multi-purpose paper tray                       #
+            # LargeCapacity - Large capacity paper tray                      #
+            ##################################################################
+            paper-tray:
+                type: str
+                variants:
+                    - Upper
+                    - Lower
+                    - MultiPurpose
+                    - LargeCapacity
 
-        pages:
-            type: int
-            number: "*"
+            pages:
+                type: int
+                number: "*"
 
-        #####################################################################################
-        # Banner                                                                            #
-        # See https://www.cups.org/doc/options.html                                         #
-        #                                                                                   #
-        # classified   - A banner page with a "classified" label at the top and bottom.     #
-        # confidential - A banner page with a "confidential" label at the top and bottom.   #
-        # secret       - A banner page with a "secret" label at the top and bottom.         #
-        # standard     - A banner page with no label at the top and bottom.                 #
-        # topsecret    - A banner page with a "top secret" label at the top and bottom.     #
-        # unclassified - A banner page with an "unclassified" label at the top and bottom.  #
-        #####################################################################################
-        banner:
-            type: str
-            variants:
-                - Classified
-                - Confidential
-                - Secret
-                - Standard
-                - Topsecret
-                - Unclassified
+            #####################################################################################
+            # Banner                                                                            #
+            # See https://www.cups.org/doc/options.html                                         #
+            #                                                                                   #
+            # classified   - A banner page with a "classified" label at the top and bottom.     #
+            # confidential - A banner page with a "confidential" label at the top and bottom.   #
+            # secret       - A banner page with a "secret" label at the top and bottom.         #
+            # standard     - A banner page with no label at the top and bottom.                 #
+            # topsecret    - A banner page with a "top secret" label at the top and bottom.     #
+            # unclassified - A banner page with an "unclassified" label at the top and bottom.  #
+            #####################################################################################
+            banner:
+                type: str
+                variants:
+                    - Classified
+                    - Confidential
+                    - Secret
+                    - Standard
+                    - Topsecret
+                    - Unclassified
 
-        order:
-            type: str
-            default: normal
-            variants:
-                - normal
-                - reverse
+            order:
+                type: str
+                default: normal
+                variants:
+                    - normal
+                    - reverse
 
-        mirror:
-            type: bool
+            mirror:
+                type: bool
 
-        landscape:
-            type: bool
+            landscape:
+                type: bool
 
-        file:
-            type: bytes
-            required: true
+            file:
+                type: bytes
+                required: true
 
     scan:
         subcommands:
@@ -130,7 +132,16 @@ commands:
             device:
                 type: str
 
-    lpstat:
+    printers:
         subcommands:
-            devices:
+            # Return pre cached devices. If cache disabled, return new list
+            list:
                 return: list
+                parameters:
+                    # Update cache if cache enabled
+                    update-cache:
+                        type: bool
+
+            # Return flag if using cache for printers
+            use_cache:
+                return: bool

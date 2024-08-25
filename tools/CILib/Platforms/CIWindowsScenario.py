@@ -38,6 +38,7 @@ class CIWindowsScenario(CIAbstractScenario):
         str_version = '.'.join([major, minor, patch, number])
 
         self.copy_platform_file(ffi['source'], ffi.get('target') or ffi['source'], {
+            ''
             'V_MAJOR': major,
             'V_MINOR': minor,
             'V_PATCH': patch,

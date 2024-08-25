@@ -8,6 +8,16 @@
         "multipurpose": "Многоцелевой лоток для бумаги",
         "large_capacity": "Лоток для бумаги большой емкости"
     },
+    "ordering_items": {
+        "normal": "Прямой",
+        "reverse": "Обратный"
+    },
+    "pages_items": {
+        "all": "Все",
+        "even": "Четные",
+        "not_even": "Нечетные",
+        "custom": "Свой порядок"
+    },
     "controls": {
         "device": {
             "title": "Устройство:"

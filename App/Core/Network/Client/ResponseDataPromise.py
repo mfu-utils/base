@@ -1,4 +1,5 @@
-from typing import Optional, Callable
+import time
+from typing import Optional, Callable, Tuple, Union
 
 from App.Core.Network.Protocol import RCL
 from App.Core.Network.Protocol.Responses.AbstractResponse import AbstractResponse
@@ -16,6 +17,17 @@ class ResponseDataPromise:
         self.__error: Optional[str] = None
         self.__on_success: Optional[Callable[[AbstractResponse], None]] = None
         self.__on_error: Optional[Callable[[Optional[str]], None]] = None
+
+    def wait_result(self) -> Tuple[bool, Union[Optional[str], AbstractResponse]]:
+        while self.__status == self.STATUS_WAIT:
+            time.sleep(0.05)
+            continue
+
+        if self.__status == self.STATUS_SUCCESS:
+            return True, self.__rcl.parse_response(self.__data)
+
+        if self.__status == self.STATUS_ERROR:
+            return False, self.__error
 
     def set_result(self, data: bytes):
         self.__data = data

@@ -29,7 +29,7 @@ class MimeType:
 
         if platform.system() == 'Windows':
             with open(file, 'rb') as f:
-                _type = magic.from_buffer(f.read(), mime=True)
+                _type = magic.from_buffer(f.read(2048), mime=True)
         elif isinstance(file, str):
             _type = magic.from_file(file, mime=True)
 

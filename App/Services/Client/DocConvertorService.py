@@ -132,7 +132,7 @@ class DocConvertorService:
         self.__langs_delimiter = langs_delimiter
         self.__execute_parameters = execute_parameters
 
-        self.__debug_mode = config('convertor.debug')
+        self.__debug_mode = config('ocr_convertor.debug')
 
     def get_doc_dir(self) -> str:
         _dir = self.__recognition_dir

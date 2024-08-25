@@ -49,6 +49,6 @@ class ErrorModal(AbstractModal):
 
         self.show()
 
-        UIHelpers.to_center(self)
+        UIHelpers.to_center_screen(self)
 
         self._disable_all_parents()

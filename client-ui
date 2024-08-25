@@ -4,6 +4,11 @@ import sys
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QPalette, QColor
 
+from App import Application
+
+if not Application(Application.ApplicationType.ClientUI):
+    sys.exit(1)
+
 from App.helpers import logger, ini
 from PySide6.QtWidgets import QApplication
 from App.Widgets import MainWindow
@@ -40,16 +45,16 @@ def windows_dark_mode_palette(_app: QApplication):
 
 
 def main():
-    app = QApplication(sys.argv)
+    q_app = QApplication(sys.argv)
 
     if platform().is_windows():
-        app.setPalette(windows_dark_mode_palette(app))
+        q_app.setPalette(windows_dark_mode_palette(q_app))
         os.system('cls')
 
     # jump_list = JumpList()
     # custom_category = JumpListCustomCategory("Example")
 
-    w = MainWindow(app)
+    w = MainWindow(q_app)
 
     if ini('app.show_on_start', bool):
         w.show()
@@ -68,7 +73,7 @@ def main():
     # jump_list.update()
 
     try:
-        app.exec()
+        q_app.exec()
     except BaseException as e:
         logger().error(str(e))
 

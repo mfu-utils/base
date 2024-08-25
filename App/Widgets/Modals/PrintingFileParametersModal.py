@@ -1,6 +1,6 @@
 from typing import Any, Union, Dict, Optional
 
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Signal
 from PySide6.QtPdf import QPdfDocument
 from PySide6.QtPdfWidgets import QPdfView
 from PySide6.QtWidgets import QWidget, QPushButton
@@ -16,7 +16,10 @@ from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import lc, platform, styles
 
 
-class PrintFileParametersModal(AbstractModal):
+class PrintingFileParametersModal(AbstractModal):
+    saved = Signal(dict)
+    canceled = Signal()
+
     PARAMETER_TRANSPARENCY = "transparency"
     PARAMETER_PAGES_POLICY = "pages_policy"
     PARAMETER_PAPER_SIZE = "paper_size"
@@ -28,14 +31,15 @@ class PrintFileParametersModal(AbstractModal):
     PARAMETER_PAGES = "pages"
     PARAMETER_ORDER = "order"
 
-    def __init__(self, path: str, tmp_path: Optional[str], parameters: dict, parent: QWidget = None):
-        super(PrintFileParametersModal, self).__init__(parent)
+    def __init__(self, path: str, tmp_path: Optional[str], devices: dict, parameters: dict, parent: QWidget = None):
+        super(PrintingFileParametersModal, self).__init__(parent)
         self.setWindowFlag(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
-        self.setObjectName("PrintFileParametersModal")
+        self.setObjectName("PrintingFileParametersModal")
         self.setMinimumSize(800, 570)
-        self.setStyleSheet(styles(["printFileParametersModal", "scrollBar"]))
+        self.setStyleSheet(styles(["printingFileParametersModal", "scrollBar"]))
 
         self.__parameters = parameters.copy()
+        self.__devices = devices
 
         self.setWindowTitle(self.__lc("title") % path)
 
@@ -46,11 +50,11 @@ class PrintFileParametersModal(AbstractModal):
 
         self.__parameters_layout = UIHelpers.v_layout((0, 0, 0, 0), 5)
 
-        self.__scroll_area = UIHelpers.create_scroll(self, "PrintFileParametersScrollArea")
+        self.__scroll_area = UIHelpers.create_scroll(self, "PrintingFileParametersScrollArea")
         self.__scroll_area.setFixedWidth(400)
 
         self.__controls = PreferencesControls(path.split("\\" if platform().is_windows() else "/")[-1], self)
-        self.__controls.setObjectName("PrintFileParametersControls")
+        self.__controls.setObjectName("PrintingFileParametersControls")
         self.__controls.add_get_value_callback(self.__get_value)
         self.__controls.add_set_value_callback(self.__set_value)
         self.__init_controls()
@@ -62,14 +66,14 @@ class PrintFileParametersModal(AbstractModal):
 
         self.__buttons_layout = UIHelpers.h_layout(spacing=5)
 
-        self.__cancel_button = QPushButton(lc("printFileParameters.cancel_button"), self)
-        self.__cancel_button.setObjectName("PrintFileParametersCancelButton")
-        self.__cancel_button.clicked.connect(self.close)
+        self.__cancel_button = QPushButton(self.__lc("cancel_button"), self)
+        self.__cancel_button.setObjectName("PrintingFileParametersCancelButton")
+        self.__cancel_button.clicked.connect(self.__canceled)
         self.__buttons_layout.addWidget(self.__cancel_button)
 
-        self.__cancel_button = QPushButton(lc("printFileParameters.save_button"), self)
-        self.__cancel_button.setObjectName("PrintFileParametersSaveButton")
-        self.__cancel_button.clicked.connect(self.close)
+        self.__cancel_button = QPushButton(self.__lc("save_button"), self)
+        self.__cancel_button.setObjectName("PrintingFileParametersSaveButton")
+        self.__cancel_button.clicked.connect(self.__saved)
         self.__buttons_layout.addWidget(self.__cancel_button)
 
         self.__parameters_layout.addLayout(self.__buttons_layout)
@@ -82,17 +86,32 @@ class PrintFileParametersModal(AbstractModal):
         self.centralWidget().setLayout(self.__central_layout)
 
         self.show()
+        UIHelpers.set_disabled_parent_recursive(self, "MainWindow", True)
+        self.setEnabled(True)
 
         UIHelpers.to_center_screen(self)
 
         self.raise_()
+
+    def closeEvent(self, event):
+        UIHelpers.set_disabled_parent_recursive(self, "MainWindow", False)
+
+        super(PrintingFileParametersModal, self).closeEvent(event)
+
+    def __canceled(self):
+        self.canceled.emit()
+        self.close()
+
+    def __saved(self):
+        self.saved.emit(self.__parameters)
+        self.close()
 
     def __create_document(self, path: str):
         self.__document = QPdfDocument()
         self.__document.load(path)
 
         self.__doc_view = QPdfView()
-        self.__doc_view.setObjectName("PrintFileParametersPDFView")
+        self.__doc_view.setObjectName("PrintingFileParametersPDFView")
         self.__doc_view.setPageMode(QPdfView.PageMode.MultiPage)
         self.__doc_view.setZoomMode(QPdfView.ZoomMode.FitInView)
         self.__doc_view.setDocument(self.__document)
@@ -110,21 +129,22 @@ class PrintFileParametersModal(AbstractModal):
 
     @staticmethod
     def __lc(name: str) -> Union[str, Dict[str, str]]:
-        return lc(f"printFileParameters.{name}")
+        return lc(f"printingFileParametersModal.{name}")
 
     @staticmethod
     def __clc(control: str, item: str) -> Union[str, Dict[str, str]]:
-        return PrintFileParametersModal.__lc(f"controls.{control}.{item}")
+        return PrintingFileParametersModal.__lc(f"controls.{control}.{item}")
 
     def __init_controls(self):
         label_width = 140
         target_width = 200
 
         # DEVICE
-        device = self.__controls.create_combo_box(self.PARAMETER_DEVICE, self.__clc(self.PARAMETER_DEVICE, "title"), {
-            "0": "Xerox WorkCentre 3025",
-            "1": "Cannon Direct A4",
-        })
+        device = self.__controls.create_combo_box(
+            self.PARAMETER_DEVICE,
+            self.__clc(self.PARAMETER_DEVICE, "title"),
+            self.__devices
+        )
         device.label().setFixedWidth(label_width)
         device.target().setFixedWidth(target_width)
 
@@ -161,7 +181,7 @@ class PrintFileParametersModal(AbstractModal):
         order = self.__controls.create_combo_box(
             self.PARAMETER_ORDER,
             self.__clc(self.PARAMETER_ORDER, "title"),
-            Casts.enum2dict(DocumentOrder),
+            Casts.enum2dict(DocumentOrder, self.__lc("ordering_items")),
         )
         order.label().setFixedWidth(label_width)
         order.target().setFixedWidth(target_width)
@@ -172,7 +192,7 @@ class PrintFileParametersModal(AbstractModal):
         pages_policy = self.__controls.create_combo_box(
             self.PARAMETER_PAGES_POLICY,
             self.__clc(self.PARAMETER_PAGES_POLICY, "title"),
-            printing_pages_policies := Casts.enum2dict(PrintingPagePolicy)
+            printing_pages_policies := Casts.enum2dict(PrintingPagePolicy, self.__lc("pages_items"))
         )
         pages_policy.label().setFixedWidth(label_width)
         pages_policy.target().setFixedWidth(target_width)

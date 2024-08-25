@@ -1,4 +1,10 @@
 #!.venv/bin/python
+import sys
+
+from App import Application
+
+if not Application(Application.ApplicationType.Server):
+    sys.exit(1)
 
 from App import helpers
 

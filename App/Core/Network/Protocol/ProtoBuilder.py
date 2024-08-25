@@ -119,7 +119,7 @@ class ProtoBuilder:
             return ProtoBuilder.__decode_float(value)
 
         if _type is bool:
-            return True if value == "\x01" else False
+            return False if value == b"\x00" else True
 
         if _type is list:
             return ProtoBuilder.__decode_list(value)
@@ -220,7 +220,7 @@ class ProtoBuilder:
             subcommand_data = subcommands_data.get(name)
             subcommands_names.append(name)
 
-            parameters_codes_data = subcommands_codes_data.get("parameters")
+            parameters_codes_data = subcommand_code_data.get("parameters")
             parameters_data = subcommand_data.get("parameters")
             defaults = subcommand_data.get("defaults")
 
@@ -235,7 +235,7 @@ class ProtoBuilder:
             parameter_code_data = parameters_codes_data.get(parameter)
 
             if not parameter_code_data:
-                raise Exception(f"Unknown subcommand code '{parameter}'")
+                raise Exception(f"Unknown subcommand parameter code '{parameter}'")
 
             name = parameter_code_data['name']
 

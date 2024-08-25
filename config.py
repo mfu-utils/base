@@ -5,11 +5,12 @@ from os.path import dirname, abspath
 
 ROOT = dirname(abspath(__file__))
 HOME = pathlib.Path.home()
+BUILD_TYPE = None
 CWD = ROOT
 
 if getattr(sys, 'frozen', False):
     CWD = os.path.dirname(sys.executable)
-
+    BUILD_TYPE = "@BUILD_TYPE@"
 
 RCL_PROTOCOL_VERSION = 1
 
@@ -76,9 +77,12 @@ CONTROLLERS_NAMESPACES = {
 # Console commands
 COMMANDS_NAMESPACES = {
     'App.Commands',
-    #: BUILD_TYPE:client-ui
+    #: BUILD_TYPE:!server
     'App.Commands.Client',
-    #: END:BUILD_TYPE:client-ui
+    #: END:BUILD_TYPE:!server
+    #: DELETE
+    'App.Commands.Develop',
+    #: END:DELETE
 }
 
 # Assets paths

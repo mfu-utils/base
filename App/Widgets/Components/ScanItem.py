@@ -13,17 +13,17 @@ from App.Services.Client.Ui.FileManagerService import FileManagerService
 
 
 class ScanItem(DrawableWidget):
-    PARAMETER_TYPE = "type"
-    PARAMETER_TITLE = "title"
+    PARAMETER_ACTION_ON_DELETE = "on_delete"
+    PARAMETER_DOCUMENTS_LIST = "documents"
+    PARAMETER_ACTION_ON_LINK = "on_link"
+    PARAMETER_ACTION_ON_SHOW = "on_show"
     PARAMETER_DATETIME = "datetime"
+    PARAMETER_FORMAT = "format"
+    PARAMETER_TITLE = "title"
+    PARAMETER_TYPE = "type"
     PARAMETER_TAGS = "tags"
     PARAMETER_PATH = "tags"
-    PARAMETER_ACTION_ON_LINK = "on_link"
-    PARAMETER_ACTION_ON_DELETE = "on_delete"
-    PARAMETER_ACTION_ON_SHOW = "on_show"
-    PARAMETER_FORMAT = "format"
     PARAMETER_MENU = "menu"
-    PARAMETER_DOCUMENTS_LIST = "documents"
 
     def __init__(self, parameters: dict, parent: QWidget = None):
         super(ScanItem, self).__init__(parent)

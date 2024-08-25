@@ -39,7 +39,7 @@ class MimeConvertor:
         self.__images_mime_types = self.__mime_config["images_mime_types"]
 
         self.__debug = _config.get("printing.debug")
-        self.__check_previous = _config.get("printing.check_previous")
+        self.__use_cached_docs = _config.get("printing.use_cached_docs")
 
     @staticmethod
     def suits(none: bool = True) -> List[OfficeSuit]:
@@ -71,7 +71,7 @@ class MimeConvertor:
         return os.path.join(self.__tmp_path, filename + f".{extension}")
 
     def __exists_path(self, path: str) -> bool:
-        if not self.__check_previous:
+        if not self.__use_cached_docs:
             return False
 
         return os.path.exists(path)

@@ -10,7 +10,12 @@ class CacheManager:
         self.__logger: logger
 
     def get(self, key: str, default: Any = None) -> Any:
-        return self.__driver.get(key) or default
+        res = self.__driver.get(key)
+
+        if res is None:
+            return default
+
+        return res
 
     def has(self, key: str) -> bool:
         return bool(self.get(key, False))

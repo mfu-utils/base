@@ -1,8 +1,0 @@
-#PrintParametersModal {
-	background-color: #2B2D30;
-}
-
-#PrintParametersScrollArea, #PrintParametersScrollWidget {
-	background-color: transparent;
-    border: none;
-}

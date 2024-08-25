@@ -7,9 +7,10 @@ class ResponseMessageSuccessResolver(AbstractMessageResolver):
     TYPE_CODE_STR = 0x01
     TYPE_CODE_JSON = 0x02
     TYPE_CODE_BYTES = 0x03
+    TYPE_CODE_BOOL = 0x04
 
     @staticmethod
-    def __get_type_code(data: Union[str, list, dict, bytes, None]):
+    def __get_type_code(data: Union[str, list, dict, bytes, bool, None]):
         _type = type(data)
 
         if _type is str:
@@ -21,9 +22,12 @@ class ResponseMessageSuccessResolver(AbstractMessageResolver):
         if _type is bytes:
             return ResponseMessageSuccessResolver.TYPE_CODE_BYTES
 
+        if _type is bool:
+            return ResponseMessageSuccessResolver.TYPE_CODE_BOOL
+
         raise Exception(f"Unknown type '{_type}' for response")
 
-    def __encode_data(self, data: Union[str, list, dict, bytes], _type: int) -> bytes:
+    def __encode_data(self, data: Union[str, list, dict, bytes, bool], _type: int) -> bytes:
         if _type == self.TYPE_CODE_STR:
             return data.encode("utf-8")
 
@@ -33,7 +37,10 @@ class ResponseMessageSuccessResolver(AbstractMessageResolver):
         if _type is self.TYPE_CODE_BYTES:
             return data
 
-    def __decode_data(self, data: bytes, _type: int) -> Union[str, list, dict, bytes]:
+        if _type is self.TYPE_CODE_BOOL:
+            return b"\x01" if data else b"\x00"
+
+    def __decode_data(self, data: bytes, _type: int) -> Union[str, list, dict, bytes, bool]:
         if _type == self.TYPE_CODE_STR:
             return data.decode("utf-8")
 
@@ -42,6 +49,9 @@ class ResponseMessageSuccessResolver(AbstractMessageResolver):
 
         if _type is self.TYPE_CODE_BYTES:
             return data
+
+        if _type is self.TYPE_CODE_BOOL:
+            return False if b"\x00" == data else True
 
     def parse(self, data: bytes) -> Union[dict, list, str, bytes, None]:
         if data == b'':

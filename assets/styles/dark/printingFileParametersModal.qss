@@ -1,21 +1,21 @@
-#PrintFileParametersModal {}
+#PrintingFileParametersModal {}
 
-#PrintFileParametersScrollArea {
+#PrintingFileParametersScrollArea {
 	background-color: transparent;
 	border: none;
 }
 
-#PrintFileParametersControls {
+#PrintingFileParametersControls {
 	border-bottom: 1px solid #1E1F22;
 }
 
-#PrintFileParametersPDFView {
+#PrintingFileParametersPDFView {
     background-color: transparent;
     border: none;
     border-right: 1px solid #1E1F22;
 }
 
-#PrintFileParametersCancelButton, #PrintFileParametersSaveButton {
+#PrintingFileParametersCancelButton, #PrintingFileParametersSaveButton {
 	background-color: transparent;
     border-radius: 5px;
     border: 1px solid #43454A;
@@ -25,7 +25,7 @@
     color: white;
 }
 
-#PrintFileParametersSaveButton {
+#PrintingFileParametersSaveButton {
 	background-color: #3574F0;
     border-color: #3574F0;
 }

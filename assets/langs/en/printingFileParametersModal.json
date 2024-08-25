@@ -8,6 +8,16 @@
         "multipurpose": "Multi-purpose paper tray",
         "large_capacity": "Large capacity paper tray"
     },
+    "ordering_items": {
+        "normal": "Normal",
+        "reverse": "Reverse"
+    },
+    "pages_items": {
+        "all": "All",
+        "even": "Even",
+        "not_even": "Not even",
+        "custom": "Custom"
+    },
     "controls": {
         "device": {
             "title": "Device:"

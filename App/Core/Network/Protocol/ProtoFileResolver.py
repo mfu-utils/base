@@ -12,20 +12,21 @@ class ProtoFileResolver(YamlDataFile):
     PREG_SUB_TYPE = re.compile(r'^(\?)?([^[$]+)$')
 
     TYPES_MAP = {
-        "int": int,
+        "bytes": bytes,
         "float": float,
         "bool": bool,
+        "int": int,
         "str": str,
     }
 
     # 'name': [can be null, has key, has value]
     OBJECT_TYPES_MAP = {
+        'float': [True, False, False],
+        'array': [False, False, True],
+        'bool': [True, False, False],
         'int': [True, False, False],
         'str': [True, False, False],
-        'float': [True, False, False],
-        'bool': [True, False, False],
         'map': [False, True, True],
-        'array': [False, False, True],
     }
 
     def __init__(self, config: Config):

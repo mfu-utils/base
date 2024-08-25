@@ -4,5 +4,5 @@ __CONFIG__ = {
     'debug': env('SUBPROCESSES_DEBUG', False),
 
     # host, wsl
-    'linux_target_commands': env('LINUX_TARGET_COMMANDS', 'host'),
+    'target_platform_cmd': env('TARGET_PLATFORM_CMD', 'host'),
 }

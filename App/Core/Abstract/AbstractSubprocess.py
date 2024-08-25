@@ -27,11 +27,11 @@ class AbstractSubprocess(ABC):
         self._once_character_parameters_delimiter = None
         self._once_character_parameters_prefix = '-'
 
-        self._linux_targets_cmd = config.get('subprocesses.linux_target_commands')
+        self._target_platform_cmd = self._config.get('target_platform_cmd')
         self._remote_cmd = remote_cmd
 
-        if self._linux_targets_cmd not in self.TARGETS_PLATFORMS_CMD:
-            raise Exception(f'Remote targets not supported ({self._linux_targets_cmd}).')
+        if self._target_platform_cmd not in self.TARGETS_PLATFORMS_CMD:
+            raise Exception(f'Remote targets not supported ({self._target_platform_cmd}).')
 
     def set_command_is_remote(self, enable: bool):
         self._remote_cmd = enable
@@ -103,10 +103,19 @@ class AbstractSubprocess(ABC):
         return formated
 
     def __get_command(self) -> List[str]:
-        if self._remote_cmd and self._linux_targets_cmd == self.TARGET_PLATFORM_CMD_WSL:
+        if self._remote_cmd and self._target_platform_cmd == self.TARGET_PLATFORM_CMD_WSL:
             return ['wsl', self._command]
 
         return [self._command]
+
+    @staticmethod
+    def __to_str(parameters: List[str]) -> str:
+        wrapped = []
+
+        for parameter in parameters:
+            wrapped.append(f'"{parameter}"' if ' ' in parameter else parameter)
+
+        return " ".join(wrapped)
 
     def run(self, subcommands: Optional[list] = None, parameters: Optional[dict] = None, options: dict = None) -> Tuple[bool, str]:
         options = options or {}
@@ -124,7 +133,7 @@ class AbstractSubprocess(ABC):
             *(options.get('additional') or [])
         ]
 
-        self._log.debug(f"Running subprocess: '{' '.join(cmd)}'", {'object': self})
+        self._log.debug(f"Running subprocess: `{self.__to_str(cmd)}`", {'object': self})
 
         if self._config['debug']:
             self._log.warning(f'Subprocess debug mode enabled. Command NOT EXECUTED!!!.')
@@ -140,13 +149,15 @@ class AbstractSubprocess(ABC):
             err = result.stderr.decode("utf-8").strip()
             data = f"\n@Stdout:\n{out}\n\n@Stderr:\n{err}"
         else:
-            data = result.__getattribute__(
-                out_name or 'stderr' if result.returncode > 0 else 'stdout'
-            ).decode("utf-8").strip()
+            data = (
+                result.__getattribute__(out_name or 'stderr' if result.returncode > 0 else 'stdout')
+                .decode("utf-8")
+                .strip()
+            )
 
         if result.returncode > 0:
             self._log.error(f'Error. {data}', {'object': self})
             return False, data
 
-        self._log.success(f"Success process. '{' '.join(cmd)}'", {'object': self})
+        self._log.success(f"Success process. `{self.__to_str(cmd)}`", {'object': self})
         return True, data
