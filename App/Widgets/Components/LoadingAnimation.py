@@ -26,15 +26,25 @@ class LoadingAnimation(DrawableWidget):
 
         self.__center_pos = (self.width() / 2, self.height() / 2)
 
+    def hideEvent(self, event):
+        self.__animation.stop()
+
+        super(LoadingAnimation, self).hideEvent(event)
+
+    def showEvent(self, event):
+        self.__animation.start()
+
+        super(LoadingAnimation, self).showEvent(event)
+
     def __create_animation(self, widget: QWidget):
-        animation = QVariantAnimation(widget)
-        animation.setDuration(1000)
-        animation.setStartValue(360)
-        animation.setEndValue(0)
-        animation.valueChanged.connect(lambda x: self.__rotate_angle(widget, x))
-        animation.setEasingCurve(QEasingCurve.Type.InOutSine)
-        animation.setLoopCount(-1)
-        animation.start()
+        self.__animation = QVariantAnimation(widget)
+        self.__animation.setDuration(1000)
+        self.__animation.setStartValue(360)
+        self.__animation.setEndValue(0)
+        self.__animation.valueChanged.connect(lambda x: self.__rotate_angle(widget, x))
+        self.__animation.setEasingCurve(QEasingCurve.Type.InOutSine)
+        self.__animation.setLoopCount(-1)
+        self.__animation.start()
 
     def __rotate_angle(self, widget: QWidget, angle: int):
         pos = self.__start_pos

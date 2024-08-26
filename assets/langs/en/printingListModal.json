@@ -6,5 +6,6 @@
     "cancel_button": "Cancel",
     "loading_devices_label": "Loading printers...",
     "error_loading_devices": "Error loading printers. %s",
-    "reload_devices_button": "Reload printers"
+    "reload_devices_button": "Reload printers",
+    "cannot_load_printers_message": "Cannot load printers. Please try again."
 }

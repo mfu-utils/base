@@ -6,5 +6,6 @@
     "cancel_button": "Отмена",
     "loading_devices_label": "Загрузка списка принтеров...",
     "error_loading_devices": "Ошибка загрузки списка принтеров. %s",
-    "reload_devices_button": "Обновить список принтеров"
+    "reload_devices_button": "Обновить список принтеров",
+    "cannot_load_printers_message": "Ошибка загрузки списка принтеров. Повторите попытку."
 }

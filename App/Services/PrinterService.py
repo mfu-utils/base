@@ -1,8 +1,9 @@
+import os
 import re
 from enum import Enum
 from typing import List
 
-from App.Core import Config
+from App.Core import Config, Filesystem
 from App.Core.Cache import CacheManager
 from App.Core.Console import Output
 from App.Core.Logger import Log
@@ -12,6 +13,7 @@ from App.Core.Network.Protocol import CallRequest
 from App.Core.Utils.Ui import Patterns
 from App.Subprocesses import LpstatSubprocess
 from App.Subprocesses.LpinfoSubprocess import LpinfoSubprocess
+from config import CWD
 
 
 class PrinterService:
@@ -45,6 +47,7 @@ class PrinterService:
         self._console = console
 
         self.__use_cache_devices = config.get("printing.use_cached_devices")
+        self.__debug = config.get("printing.debug")
 
     class Scope(Enum):
         Network = 1
@@ -161,9 +164,12 @@ class PrinterService:
         return True
 
     def get_printers(self) -> List[dict]:
-        devices = self._cache.get(self.CACHE_PRINTER_DATA)
+        if self.__debug:
+            return Filesystem.read_json(os.path.join(CWD, "tests", "dictionaries", "devices.json"))
 
-        if (devices is None) or (not self.__use_cache_devices):
+        has_devices = self._cache.has(self.CACHE_PRINTER_DATA)
+
+        if (not has_devices) or (not self.__use_cache_devices):
             if not self.update_printers_cache():
                 return []
 

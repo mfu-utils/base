@@ -19,6 +19,7 @@ from App.helpers import styles, mime, lc, platform, config, network_manager
 class PrintingListModal(AbstractModal):
     error_loading_devices_signal = Signal(str)
     checkout_loading_animation_signal = Signal(bool)
+    set_visible_errors_widget_signal = Signal(bool)
 
     def __init__(self, files: List[QUrl], accepted: List[QUrl], parent: QWidget = None):
         super().__init__(parent)
@@ -58,6 +59,30 @@ class PrintingListModal(AbstractModal):
         self.__scroll_area.setWidget(self.__scroll_widget)
 
         self.__central_layout.addWidget(self.__scroll_area)
+
+        # Errors >>>
+        self.__errors_widget = QWidget(self)
+        self.__errors_widget.setObjectName("PrintingListErrorsWidget")
+
+        self.__errors_layout = UIHelpers.h_layout((10, 0, 10, 0), 10)
+
+        self.__error_image = UIHelpers.image("error_sign_16x16@2x.png")
+        self.__error_image.setObjectName("PrintingFileItemErrorTypeIcon")
+        self.__errors_layout.addWidget(self.__error_image)
+
+        self.__error_message = QLabel(self)
+        self.__error_message.setObjectName("PrintingListErrorMessage")
+        self.__error_message.setText(lc("printingListModal.cannot_load_printers_message"))
+        self.__errors_layout.addWidget(self.__error_message)
+
+        self.__errors_layout.addStretch()
+
+        self.__errors_widget.setLayout(self.__errors_layout)
+
+        self.__errors_widget.hide()
+
+        self.__central_layout.addWidget(self.__errors_widget)
+        # <<< Errors
 
         self.__buttons_layout = UIHelpers.h_layout((10, 10, 10, 0), 5)
 
@@ -129,10 +154,12 @@ class PrintingListModal(AbstractModal):
         message = lc("printingListModal.error_loading_devices") % message
         self.__err_modal = ErrorModal(title, message, self)
 
-
     def __set_enable_loading_animation(self, enable: bool):
         self.__loading_devices_widget.setVisible(enable)
         self.__reload_devices_button.setVisible(not enable)
+
+    def __set_visible_errors_widget(self, enable: bool):
+        self.__errors_widget.setVisible(enable)
 
     def __start_loading_devices(self, update_server_cache: bool = False):
         self.__set_enable_loading_animation(True)
@@ -149,6 +176,7 @@ class PrintingListModal(AbstractModal):
 
             self.error_loading_devices_signal.disconnect()
             self.checkout_loading_animation_signal.disconnect()
+            self.set_visible_errors_widget_signal.disconnect()
 
         def success_loading_devices(response: AbstractResponse):
             self.__devices_loaded = True
@@ -158,14 +186,18 @@ class PrintingListModal(AbstractModal):
                 PrinterService.filter_hidden_devices(response.data() or [])
             ))
 
+            self.set_visible_errors_widget_signal.emit(False)
+
             stop_loading_devices()
 
         def error_loading_devices(message: str):
             self.error_loading_devices_signal.emit(message)
+            self.set_visible_errors_widget_signal.emit(True)
             stop_loading_devices()
 
         self.error_loading_devices_signal.connect(self.__open_error_loading_devices)
         self.checkout_loading_animation_signal.connect(self.__set_enable_loading_animation)
+        self.set_visible_errors_widget_signal.connect(self.__set_visible_errors_widget)
 
         promise.then(success_loading_devices)
         promise.catch(error_loading_devices)

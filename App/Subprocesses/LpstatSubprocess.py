@@ -1,11 +1,9 @@
-import os
 from typing import List, Tuple
 import re
 
-from App.Core import Config, Filesystem
+from App.Core import Config
 from App.Core.Abstract import AbstractSubprocess
 from App.Core.Logger import Log
-from config import CWD
 
 
 class LpstatSubprocess(AbstractSubprocess):
@@ -16,9 +14,6 @@ class LpstatSubprocess(AbstractSubprocess):
 
     def get_printers_list(self) -> Tuple[bool, List[str]]:
         ok, out = self.run(parameters={"v": True})
-
-        if self._config['debug']:
-            return True, Filesystem.read_json(os.path.join(CWD, "tests", "dictionaries", "devices.json"))
 
         if not ok:
             self._log.error(f"Cannot get list of printers. {out}", {"object": self})

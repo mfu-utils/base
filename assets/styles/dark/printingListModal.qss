@@ -2,12 +2,16 @@
 	background-color: #2B2D30;
 }
 
-#PrintingListScrollArea, #PrintingListScrollWidget, #PrintingListLoadingDevicesWidget {
+#PrintingListScrollArea,
+#PrintingListScrollWidget,
+#PrintingListLoadingDevicesWidget,
+#PrintingListErrorsWidget,
+#PrintingListErrorMessage {
 	background-color: transparent;
 	border: none;
 }
 
-#PrintingListLoadingDevicesLabel {
+#PrintingListLoadingDevicesLabel, #PrintingListErrorMessage {
 	background-color: transparent;
 	color: #7A7A7A;
 	font-size: 14px;
