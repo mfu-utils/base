@@ -2,6 +2,7 @@
     "title": "Printing Parameters (%s)",
     "cancel_button": "Cancel",
     "save_button": "Save",
+    "no_view": "Preview not available.",
     "paper_tray_items": {
         "upper": "Upper paper tray",
         "lower": "Lower paper tray",

@@ -25,4 +25,3 @@ class TagService(AbstractListService):
             tag_models.append(model)
 
         return tag_models
-

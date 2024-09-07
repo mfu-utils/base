@@ -79,7 +79,7 @@ class CIAbstractScenario(ABC):
 
     def __run_scenario(self, commands: list):
         for command in commands:
-            print(command)
+            command)
 
             if not self._test:
                 self._call(command)

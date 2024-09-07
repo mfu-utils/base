@@ -4,8 +4,10 @@ from App.Core import Config
 
 import magic
 
+from App.Core.Utils import MimeType
 
-class MimeType:
+
+class MimeTypeConfig:
     CONFIG_FILE = 'mime'
 
     def __init__(self, _config: Config):
@@ -13,7 +15,7 @@ class MimeType:
         self.__mime_types = {}
 
     def get_mime_types(self, key: str) -> List[str]:
-        key = f"{MimeType.CONFIG_FILE}.{key}"
+        key = f"{MimeTypeConfig.CONFIG_FILE}.{key}"
 
         if not (data := self.__mime_types.get(key)):
             self.__mime_types[key] = self.__config.get(key)
@@ -35,8 +37,15 @@ class MimeType:
 
         return _type
 
+    @staticmethod
+    def get_mime_enum(file: Union[str, bytes]) -> MimeType:
+        if not (mime_type := MimeTypeConfig.get_mime(file)) in MimeType.values():
+            return MimeType.UNDEFINED
+
+        return MimeType(mime_type)
+
     def has_type(self, file: Union[str, bytes], types: str) -> bool:
-        _type = MimeType.get_mime(file)
+        _type = MimeTypeConfig.get_mime(file)
 
         if _type is None:
             return False

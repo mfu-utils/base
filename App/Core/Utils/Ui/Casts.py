@@ -1,5 +1,5 @@
 import json
-from typing import List, Type, Dict, Union
+from typing import List, Type, Dict, Union, Any
 from enum import Enum
 
 
@@ -27,6 +27,13 @@ class Casts:
         return "True" if value else "False"
 
     @staticmethod
+    def str2float(value: str) -> float:
+        if value.isdecimal():
+            return float(value)
+
+        return 0.0
+
+    @staticmethod
     def str2int(value: str) -> int:
         if value.isdigit():
             return int(value)
@@ -34,22 +41,54 @@ class Casts:
         return 0
 
     @staticmethod
-    def str_to(value: str, _type: type):
+    def str2list(value: str) -> List[Any]:
+        return json.loads(value or '[]')
+
+    @staticmethod
+    def str2int_list(value: str) -> list:
+        return list(map(lambda x: int(x), Casts.str2list(value)))
+
+    @staticmethod
+    def list2str(value: List[Any]) -> str:
+        return json.dumps(value)
+
+    @staticmethod
+    def str_to(value: str, _type: Union[bool, float, list, int, str, Type[Enum], type], nullable: bool = False):
+        if _type == str:
+            return value
+
+        if nullable and value == '':
+            return None
+
         if _type == bool:
             return Casts.str2bool(value)
 
         if _type == int:
             return Casts.str2int(value)
 
+        if _type == float:
+            return Casts.str2float(value)
+
         if _type == list:
             return Casts.str2list(value)
 
-        return _type(value)
+        if issubclass(_type, Enum):
+            return _type(value)
+
+        return value
 
     @staticmethod
-    def str2list(value: str) -> List[str]:
-        return json.loads(value or '[]')
+    def to_str(value: Union[bool, float, list, int, str, Enum]) -> str:
+        if isinstance(value, bool):
+            return Casts.bool2str(value)
 
-    @staticmethod
-    def str2int_list(value: str) -> list:
-        return list(map(lambda x: int(x), Casts.str2list(value)))
+        if isinstance(value, int):
+            return str(value)
+
+        if isinstance(value, Enum):
+            return value.value
+
+        if isinstance(value, list):
+            return Casts.list2str(value)
+
+        return value

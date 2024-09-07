@@ -3,11 +3,11 @@ from typing import Optional
 from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QWidget, QLabel, QPushButton
 
-from App.Core.Utils import DocumentMediaType, DocumentOrder
-from App.Core.Utils.Ui.PrintingPagePolicy import PrintingPagePolicy
+from App.Core.Utils import MimeType
 from App.Services.MimeConvertor import MimeConvertor
 from App.Widgets.Components.DrawableWidget import DrawableWidget
 from App.Widgets.Components.LoadingAnimation import LoadingAnimation
+from App.DTO.Client import PrintingDocumentDTO
 from App.Widgets.Modals.PrintingFileParametersModal import PrintingFileParametersModal
 from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import icon, mime_convertor, ini, styles, in_thread, lc, logger
@@ -19,18 +19,9 @@ class PrintingFileItem(DrawableWidget):
     PARAMETER_TYPE_ERROR = "type_error"
     PARAMETER_PATH = "path"
     PARAMETER_MIME = "mime"
+    PARAMETER_TYPE = "type"
 
-    PRINTING_PARAMETERS = {
-        PrintingFileParametersModal.PARAMETER_DEVICE: "",
-        PrintingFileParametersModal.PARAMETER_PAGES: "",
-        PrintingFileParametersModal.PARAMETER_COPIES: 1,
-        PrintingFileParametersModal.PARAMETER_PAPER_TRAY: None,
-        PrintingFileParametersModal.PARAMETER_PAGES_POLICY: PrintingPagePolicy.All.value,
-        PrintingFileParametersModal.PARAMETER_PAPER_SIZE: DocumentMediaType.A4.value,
-        PrintingFileParametersModal.PARAMETER_ORDER: DocumentOrder.Normal.value,
-        PrintingFileParametersModal.PARAMETER_MIRROR: "False",
-        PrintingFileParametersModal.PARAMETER_LANDSCAPE: "False",
-    }
+    printing_doc = PrintingDocumentDTO()
 
     def __init__(self, parameters: dict, parent: QWidget = None):
         super(PrintingFileItem, self).__init__(parent)
@@ -40,11 +31,12 @@ class PrintingFileItem(DrawableWidget):
         self.__devices = {}
         self.__converted_path: Optional[str] = self.__parameters[self.PARAMETER_PATH][:]
 
-        type_error = parameters.get(self.PARAMETER_TYPE_ERROR) or False
+        self.__type_error = parameters.get(self.PARAMETER_TYPE_ERROR) or False
+        self.__has_error = bool(self.__type_error)
 
         self.__need_converting = False
 
-        if (not type_error) and (ini('printing.view_tool') in MimeConvertor.suits_values(False)):
+        if (not self.__type_error) and (ini('printing.view_tool') in MimeConvertor.suites_values(False)):
             self.__need_converting = True
 
         self.__central_layout = UIHelpers.h_layout((10, 3, 10, 3), 5)
@@ -54,14 +46,14 @@ class PrintingFileItem(DrawableWidget):
         self.__title = QLabel(parameters[self.PARAMETER_PATH], self)
         self.__title.setObjectName('PrintingFileItemTitle')
 
-        if type_error:
+        if self.__has_error:
             self.__title.setDisabled(True)
 
         self.__content_layout.addWidget(self.__title)
 
         self.__parameters_layout = UIHelpers.h_layout((0, 0, 0, 0), 2)
 
-        if type_error:
+        if self.__has_error:
             self.__error_type_icon = UIHelpers.image("error_sign_16x16@2x.png")
             self.__error_type_icon.setObjectName("PrintingFileItemErrorTypeIcon")
             self.__error_type_icon.setDisabled(True)
@@ -78,19 +70,17 @@ class PrintingFileItem(DrawableWidget):
             self.__loading_block = self.__create_loading_block()
             self.__parameters_layout.addWidget(self.__loading_block)
 
-            self.__mime_widget = QLabel(parameters[self.PARAMETER_MIME], self)
+            self.__mime_widget = QLabel(parameters[self.PARAMETER_TYPE], self)
             self.__mime_widget.setObjectName('PrintingFileItemMime')
             self.__parameters_layout.addWidget(self.__mime_widget)
 
         self.__parameters_layout.addStretch()
 
         self.__content_layout.addLayout(self.__parameters_layout)
-
         self.__central_layout.addLayout(self.__content_layout)
-
         self.__central_layout.addStretch()
 
-        if not type_error:
+        if not self.__has_error:
             self.__parameters_button = self.__create_button(
                 "PrintingFileItemParametersButton", "gear.png", self.__open_parameters_modal
             )
@@ -101,15 +91,34 @@ class PrintingFileItem(DrawableWidget):
 
         self.setLayout(self.__central_layout)
 
-        self.setProperty("warning", bool(type_error))
+        self.setProperty("warning", self.__has_error)
 
-        if not type_error:
+        if not self.__has_error:
             self.setDisabled(True)
 
             if self.__need_converting:
                 self.__start_converting()
 
             UIHelpers.update_style(self)
+
+        self.__must_be_enabled = True
+        self.__enabling_lock = self.__need_converting
+        self.__ready_to_print = not self.__has_error
+
+    def get_path(self) -> str:
+        return self.__parameters[self.PARAMETER_PATH][:]
+
+    def get_converted_path(self) -> Optional[str]:
+        return self.__converted_path
+
+    def get_ready_to_print(self) -> bool:
+        return self.__ready_to_print
+
+    def set_enabled(self, enable: bool):
+        if not self.__enabling_lock:
+            self.__set_parameters_button_enabled(enable)
+
+        self.__must_be_enabled = enable
 
     def get_need_converting(self) -> bool:
         return self.__need_converting
@@ -118,7 +127,10 @@ class PrintingFileItem(DrawableWidget):
         self.__devices = devices
 
         if len(self.__devices) > 0:
-            self.PRINTING_PARAMETERS[PrintingFileParametersModal.PARAMETER_DEVICE] = list(self.__devices.keys())[0]
+            self.printing_doc.device = list(self.__devices.keys())[0]
+
+    def get_mime(self) -> MimeType:
+        return self.__parameters[self.PARAMETER_MIME]
 
     def __create_loading_block(self) -> QWidget:
         widget = DrawableWidget(self)
@@ -144,12 +156,12 @@ class PrintingFileItem(DrawableWidget):
         path = self.__parameters[self.PARAMETER_PATH]
 
         modal = PrintingFileParametersModal(
-            path, self.__converted_path, self.__devices, self.PRINTING_PARAMETERS, self
+            path, self.__converted_path, self.__devices, self.printing_doc, self
         )
 
-        def save(data: dict):
-            self.PRINTING_PARAMETERS = data
-            logger().debug(f"Saved parameters ({path}) {self.PRINTING_PARAMETERS}")
+        def save(data: PrintingDocumentDTO):
+            self.printing_doc = data
+            logger().debug(f"Saved parameters ({path}) {self.printing_doc.as_dict()}")
 
         modal.saved.connect(save)
 
@@ -170,17 +182,31 @@ class PrintingFileItem(DrawableWidget):
 
         return button
 
-    def __start_converting(self):
-        def _worker():
-            suit = MimeConvertor.OfficeSuit(ini("printing.view_tool"))
+    def __set_parameters_button_enabled(self, enable: bool):
+        if not self.__type_error:
+            self.__parameters_button.setEnabled(enable)
 
-            self.__converted_path = mime_convertor().get_pdf(self.__parameters[self.PARAMETER_PATH], suit)
+    def __start_converting(self):
+        self.__ready_to_print = False
+
+        def _worker():
+            suite = MimeConvertor.OfficeSuite(ini("printing.view_tool"))
+
+            self.__converted_path = mime_convertor().get_pdf(self.__parameters[self.PARAMETER_PATH], suite)
+
+            if self.__converted_path:
+                self.__ready_to_print = True
+
             self.setEnabled(True)
+
+            self.__set_parameters_button_enabled(self.__must_be_enabled)
 
             self.__loading_block.deleteLater()
 
             self.converting_stopped.emit()
 
             UIHelpers.update_style(self)
+
+            self.__enabling_lock = False
 
         in_thread(_worker)

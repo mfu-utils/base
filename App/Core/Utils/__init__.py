@@ -8,6 +8,8 @@ from .DocumentBanner import DocumentBanner
 from .DocumentMediaType import DocumentMediaType
 from .DocumentsRealSizes import DocumentsRealSizes
 from .DocumentOrder import DocumentOrder
+from .DocumentPagesUtil import DocumentPagesUtil
+from .MimeType import MimeType
 
 __all__ = {
     "DotPathAccessor",
@@ -20,4 +22,6 @@ __all__ = {
     "DocumentMediaType",
     "DocumentsRealSizes",
     "DocumentOrder",
+    "DocumentPagesUtil",
+    "MimeType"
 }

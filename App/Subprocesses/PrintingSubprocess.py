@@ -8,7 +8,7 @@ class PrintingSubprocess(AbstractSubprocess):
     COMMAND = 'lp'
 
     DEVICE_PRINTING_PARAMETER_PRINTER = "d"
-    DEVICE_PRINTING_PARAMETER_NUM_COPIES = "n"
+    DEVICE_PRINTING_PARAMETER_COPIES = "n"
     DEVICE_PRINTING_PARAMETER_MEDIA = "media"
     DEVICE_PRINTING_PARAMETER_PAGE_RANGES = "page-ranges"
     DEVICE_PRINTING_PARAMETER_JOB_SHEETS = "job-sheets"
@@ -16,13 +16,15 @@ class PrintingSubprocess(AbstractSubprocess):
     DEVICE_PRINTING_PARAMETER_MIRROR = "mirror"
     DEVICE_PRINTING_PARAMETER_LANDSCAPE = "landscape"
 
-    _DEVICE_PRINTING_PARAMETER_MEDIA_OPTIONS = "media-options"
     _DEVICE_PRINTING_PARAMETER_FILE = "file"
+    _DEVICE_PRINTING_PARAMETER_PAPER_SIZE = "paper-size"
+    _DEVICE_PRINTING_PARAMETER_PAPER_TRAY = "paper-tray"
+    _DEVICE_PRINTING_PARAMETER_TRANSPARENCY = "transparency"
 
     DEVICE_DOCUMENT_PARAMETERS = {
-        DEVICE_PRINTING_PARAMETER_PRINTER: "device",
-        DEVICE_PRINTING_PARAMETER_NUM_COPIES: "copies",
         DEVICE_PRINTING_PARAMETER_MEDIA: "media",
+        DEVICE_PRINTING_PARAMETER_PRINTER: "device",
+        DEVICE_PRINTING_PARAMETER_COPIES: "copies",
         DEVICE_PRINTING_PARAMETER_PAGE_RANGES: "pages",
         DEVICE_PRINTING_PARAMETER_JOB_SHEETS: "banner",
         DEVICE_PRINTING_PARAMETER_OUTPUT_ORDER: "order",
@@ -46,13 +48,19 @@ class PrintingSubprocess(AbstractSubprocess):
         self.set_multi_character_parameters_delimiter('=')
 
     def __resolve_media_type(self, parameters: dict):
-        media_options = parameters.get(self._DEVICE_PRINTING_PARAMETER_MEDIA_OPTIONS)
-        media = parameters.get(self.DEVICE_PRINTING_PARAMETER_MEDIA)
+        items = []
 
-        if not media or not len(media_options):
-            return
+        if media := parameters.get(self._DEVICE_PRINTING_PARAMETER_PAPER_SIZE):
+            items.append(media)
 
-        parameters.update({self.DEVICE_PRINTING_PARAMETER_MEDIA: ','.join([media, *media_options])})
+        if paper_tray := parameters.get(self._DEVICE_PRINTING_PARAMETER_PAPER_TRAY):
+            items.append(paper_tray)
+
+        if parameters.get(self._DEVICE_PRINTING_PARAMETER_TRANSPARENCY):
+            items.append('Transparency')
+
+        if len(items):
+            parameters.update({self.DEVICE_PRINTING_PARAMETER_MEDIA: ','.join(items)})
 
     def __resolve_file(self, parameters: dict) -> str:
         return parameters.get(self._DEVICE_PRINTING_PARAMETER_FILE)

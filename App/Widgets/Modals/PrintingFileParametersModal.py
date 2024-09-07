@@ -1,23 +1,25 @@
-from typing import Any, Union, Dict, Optional
+from typing import Union, Dict, Optional
 
 from PySide6.QtCore import Qt, Signal
-from PySide6.QtPdf import QPdfDocument
-from PySide6.QtPdfWidgets import QPdfView
-from PySide6.QtWidgets import QWidget, QPushButton
+from PySide6.QtWidgets import QWidget
 
 from App.Core.Utils import DocumentMediaType, DocumentOrder
 from App.Core.Utils.PaperTray import PaperTray
 from App.Core.Utils.Ui import Patterns, Casts
 from App.Core.Utils.Ui.PrintingPagePolicy import PrintingPagePolicy
 from App.Widgets.Components.Controls.LineEditControl import LineEditControl
+from App.Widgets.Components.ModalButton import ModalButton
 from App.Widgets.Components.PreferencesControls import PreferencesControls
+from App.Widgets.Components.PrintingFileParametersModal.DocStub import DocStub
+from App.Widgets.Components.PrintingFileParametersModal.PdfDoc import PdfDoc
+from App.DTO.Client import PrintingDocumentDTO
 from App.Widgets.Modals.AbstractModal import AbstractModal
 from App.Widgets.UIHelpers import UIHelpers
 from App.helpers import lc, platform, styles
 
 
 class PrintingFileParametersModal(AbstractModal):
-    saved = Signal(dict)
+    saved = Signal(PrintingDocumentDTO)
     canceled = Signal()
 
     PARAMETER_TRANSPARENCY = "transparency"
@@ -31,22 +33,22 @@ class PrintingFileParametersModal(AbstractModal):
     PARAMETER_PAGES = "pages"
     PARAMETER_ORDER = "order"
 
-    def __init__(self, path: str, tmp_path: Optional[str], devices: dict, parameters: dict, parent: QWidget = None):
+    def __init__(self, path: str, tmp_path: Optional[str], devices: dict, doc: PrintingDocumentDTO, parent: QWidget = None):
         super(PrintingFileParametersModal, self).__init__(parent)
         self.setWindowFlag(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
         self.setObjectName("PrintingFileParametersModal")
         self.setMinimumSize(800, 570)
         self.setStyleSheet(styles(["printingFileParametersModal", "scrollBar"]))
 
-        self.__parameters = parameters.copy()
+        self.__doc = PrintingDocumentDTO(**doc.as_dict())
         self.__devices = devices
 
         self.setWindowTitle(self.__lc("title") % path)
 
         self.__central_layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
 
-        if tmp_path:
-            self.__create_document(tmp_path)
+        self.__pdf = PdfDoc(tmp_path) if tmp_path else DocStub(self.__lc('no_view'), self)
+        self.__central_layout.addWidget(self.__pdf)
 
         self.__parameters_layout = UIHelpers.v_layout((0, 0, 0, 0), 5)
 
@@ -66,14 +68,14 @@ class PrintingFileParametersModal(AbstractModal):
 
         self.__buttons_layout = UIHelpers.h_layout(spacing=5)
 
-        self.__cancel_button = QPushButton(self.__lc("cancel_button"), self)
-        self.__cancel_button.setObjectName("PrintingFileParametersCancelButton")
-        self.__cancel_button.clicked.connect(self.__canceled)
+        self.__cancel_button = ModalButton(
+            self, "PrintingFileParametersCancelButton", self.__lc("cancel_button"), callback=self.__canceled
+        )
         self.__buttons_layout.addWidget(self.__cancel_button)
 
-        self.__cancel_button = QPushButton(self.__lc("save_button"), self)
-        self.__cancel_button.setObjectName("PrintingFileParametersSaveButton")
-        self.__cancel_button.clicked.connect(self.__saved)
+        self.__save_button = ModalButton(
+            self, "PrintingFileParametersSaveButton", self.__lc("save_button"), callback=self.__saved
+        )
         self.__buttons_layout.addWidget(self.__cancel_button)
 
         self.__parameters_layout.addLayout(self.__buttons_layout)
@@ -93,6 +95,12 @@ class PrintingFileParametersModal(AbstractModal):
 
         self.raise_()
 
+    def get_count_pages(self) -> int:
+        if isinstance(self.__pdf, PdfDoc):
+            return self.__pdf.pageCount()
+
+        return -1
+
     def closeEvent(self, event):
         UIHelpers.set_disabled_parent_recursive(self, "MainWindow", False)
 
@@ -103,29 +111,18 @@ class PrintingFileParametersModal(AbstractModal):
         self.close()
 
     def __saved(self):
-        self.saved.emit(self.__parameters)
+        self.saved.emit(self.__doc)
         self.close()
 
-    def __create_document(self, path: str):
-        self.__document = QPdfDocument()
-        self.__document.load(path)
+    def __get_value(self, name: str) -> str:
+        return Casts.to_str(self.__doc.__getattribute__(name))
 
-        self.__doc_view = QPdfView()
-        self.__doc_view.setObjectName("PrintingFileParametersPDFView")
-        self.__doc_view.setPageMode(QPdfView.PageMode.MultiPage)
-        self.__doc_view.setZoomMode(QPdfView.ZoomMode.FitInView)
-        self.__doc_view.setDocument(self.__document)
+    def __set_value(self, name: str, value: str) -> None:
+        if isinstance(value, str):
+            nullable, _type = self.__doc.type_of(name)
+            value = Casts.str_to(value, _type, nullable)
 
-        self.__central_layout.addWidget(self.__doc_view)
-
-    def __get_value(self, name: str) -> Any:
-        return self.__parameters.get(name)
-
-    def __set_value(self, name: str, value: Any) -> None:
-        if isinstance(value, bool):
-            value = Casts.bool2str(value)
-
-        self.__parameters[name] = value
+        self.__doc.__setattr__(name, value)
 
     @staticmethod
     def __lc(name: str) -> Union[str, Dict[str, str]]:
@@ -200,9 +197,9 @@ class PrintingFileParametersModal(AbstractModal):
         printing_pages_policies_keys = list(printing_pages_policies.keys())
 
         # noinspection PyUnresolvedReferences
-        pages_policy.target().currentIndexChanged.connect(
-            lambda x: pages.setVisible(printing_pages_policies_keys[x] == PrintingPagePolicy.Custom.value)
-        )
+        pages_policy.target().currentIndexChanged.connect(lambda x: pages.setVisible(
+            printing_pages_policies_keys[x] == PrintingPagePolicy.Custom.value
+        ))
 
         # PAGES
         pages = self.__controls.create_line_edit(self.PARAMETER_PAGES, "")
@@ -212,7 +209,7 @@ class PrintingFileParametersModal(AbstractModal):
         )
         pages.pattern_enable("cups_format")
         pages.label().setFixedWidth(label_width)
-        pages.setVisible(self.__parameters[self.PARAMETER_PAGES_POLICY] == PrintingPagePolicy.Custom.value)
+        pages.setVisible(self.__doc.pages_policy == PrintingPagePolicy.Custom.value)
 
         # MIRROR
         self.__controls.create_check_box(self.PARAMETER_MIRROR, self.__clc(self.PARAMETER_MIRROR, "title"))

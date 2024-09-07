@@ -10,7 +10,10 @@ from App.Core.Logger import Log
 from App.Core.Network import NetworkManager
 from App.Core.Network.Client import ClientConfig, ResponseDataPromise
 from App.Core.Network.Protocol import CallRequest
+from App.Core.Utils import DocumentPagesUtil, DocumentOrder
 from App.Core.Utils.Ui import Patterns
+from App.Core.Utils.Ui.PrintingPagePolicy import PrintingPagePolicy
+from App.DTO.Client import PrintingDocumentDTO
 from App.Subprocesses import LpstatSubprocess
 from App.Subprocesses.LpinfoSubprocess import LpinfoSubprocess
 from config import CWD
@@ -151,26 +154,76 @@ class PrinterService:
         if not ok:
             return False
 
-        ok, direct_devices = LpinfoSubprocess(self._logger, self._config).get_direct_devices()
+        ok, dev = LpinfoSubprocess(self._logger, self._config).get_direct_devices()
 
         if not ok:
             return False
 
-        self._cache.set(
-            self.CACHE_PRINTER_DATA,
-            list(map(lambda x: self.__create_device_object(x, direct_devices), devices))
-        )
+        self._cache.set(self.CACHE_PRINTER_DATA, list(map(lambda x: self.__create_device_object(x, dev), devices)))
 
         return True
 
-    def get_printers(self) -> List[dict]:
+    def get_printers(self, force_cache_update: bool = False) -> List[dict]:
         if self.__debug:
             return Filesystem.read_json(os.path.join(CWD, "tests", "dictionaries", "devices.json"))
 
         has_devices = self._cache.has(self.CACHE_PRINTER_DATA)
 
-        if (not has_devices) or (not self.__use_cache_devices):
+        if (not has_devices) or (not self.__use_cache_devices) or force_cache_update:
             if not self.update_printers_cache():
                 return []
 
         return self._cache.get(self.CACHE_PRINTER_DATA)
+
+    @staticmethod
+    def __resolve_pages_parameters(policy: PrintingPagePolicy, pages: str, max_page: int) -> List[int]:
+        if policy == PrintingPagePolicy.Custom and len(ints := DocumentPagesUtil.cups_unpack(pages, max_page)) > 0:
+            return ints
+
+        elif policy == PrintingPagePolicy.Even and len(ints := [*range(2, max_page + 1)]) > 0:
+            return ints
+
+        elif policy == PrintingPagePolicy.NotEven and len(ints := [*range(1, max_page + 1)]) > 0:
+            return ints
+
+        return []
+
+    def send_to_print_one(
+        self, manager: NetworkManager, doc: PrintingDocumentDTO, max_page: int, client: ClientConfig
+    ) -> ResponseDataPromise:
+        if not doc.file:
+            raise Exception("Cannot send document to printer without a file")
+
+        if not doc.mime_type:
+            raise Exception("Cannot send document to printer without a mime type")
+
+        parameters = {
+            "device": doc.device,
+            "copies": doc.copies,
+            "paper_size": doc.paper_size.name,
+            "file": doc.file
+        }
+
+        if tray := doc.paper_tray:
+            parameters.update({"paper_tray": tray.name})
+
+        if pages_policy := doc.pages_policy:
+            if ints := self.__resolve_pages_parameters(pages_policy, doc.pages, max_page):
+                parameters.update({"pages": ints})
+
+        if doc.order != DocumentOrder.Normal:
+            parameters.update({"order": doc.order.name})
+
+        if doc.mirror:
+            parameters.update({"mirror": True})
+
+        if doc.landscape:
+            parameters.update({"landscape": True})
+
+        if doc.transparency:
+            parameters.update({"transparency": True})
+
+        if mime_type := doc.mime_type:
+            parameters.update({"mime_type": mime_type.name})
+
+        return manager.request(CallRequest("print", parameters=parameters), client)

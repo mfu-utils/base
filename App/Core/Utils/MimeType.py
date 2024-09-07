@@ -1,0 +1,54 @@
+from enum import Enum
+from typing import List
+
+MIME_MS_WORD = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+MIME_PDF = "application/pdf"
+
+# MIME_TEXT = "text/plain"
+
+MIME_TIFF = "image/tiff"
+MIME_PNG = "image/png"
+MIME_JPEG = "image/jpeg"
+
+_UNDEFINED = 'undefined'
+
+MIME_NAMES = {
+    MIME_MS_WORD: 'Microsoft word',
+    MIME_PDF: 'PDF',
+    MIME_TIFF: 'TIFF',
+    MIME_PNG: 'PNG',
+    MIME_JPEG: 'JPEG',
+}
+
+
+class MimeType(Enum):
+    # Type not
+    UNDEFINED = _UNDEFINED
+
+    # Documents
+    MSWORD = MIME_MS_WORD
+    PDF = MIME_PDF
+
+    # Text
+    # TEXT = MIME_TEXT
+
+    # Images
+    TIFF = MIME_TIFF
+    PNG = MIME_PNG
+    JPEG = MIME_JPEG
+
+    @staticmethod
+    def values() -> List[str]:
+        return list(map(lambda x: x.value, MimeType))
+
+    @staticmethod
+    def doc_group() -> List['MimeType']:
+        return [MimeType.MSWORD, MimeType.PDF]
+
+    @staticmethod
+    def image_group() -> List['MimeType']:
+        return [MimeType.TIFF, MimeType.PNG, MimeType.JPEG]
+
+    @staticmethod
+    def alias(_type: 'MimeType') -> str:
+        return MIME_NAMES[_type.name]

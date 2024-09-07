@@ -7,57 +7,55 @@ from typing import List, Optional
 import img2pdf
 import docx2pdf
 
-from App.Core import Filesystem, Config, MimeType, Platform
+from App.Core import Filesystem, Config, MimeTypeConfig, Platform
 from App.Core.Logger import Log
+from App.Core.Utils import MimeType
 from App.Subprocesses import LibreofficePdfConvert
 
 from App.Subprocesses.AsposeConvert import AsposeConvert
 
 
 class MimeConvertor:
-    class OfficeSuit(Enum):
+    class OfficeSuite(Enum):
         NONE = "none"
         MSWORD = "msword"
         LIBREOFFICE = "libreoffice"
         ASPOSE_LIBRAY = "aspose_lib"
 
-    OFFICE_SUIT_NAMES = {
-        OfficeSuit.MSWORD.value: "Microsoft Word",
-        OfficeSuit.LIBREOFFICE.value: "Libreoffice",
-        OfficeSuit.ASPOSE_LIBRAY.value: "Aspose (Restricted)"
+    OFFICE_SUITE_NAMES = {
+        OfficeSuite.MSWORD.value: "Microsoft Word",
+        OfficeSuite.LIBREOFFICE.value: "Libreoffice",
+        OfficeSuite.ASPOSE_LIBRAY.value: "Aspose (Restricted)"
     }
 
-    def __init__(self, log: Log, _config: Config, mime: MimeType, platform: Platform):
+    def __init__(self, log: Log, _config: Config, mime: MimeTypeConfig, platform: Platform):
         self.__mime_type = mime
 
         self.__libreoffice_convertor = LibreofficePdfConvert(log, _config, platform)
         self.__aspose_convertor = AsposeConvert(log, _config, platform)
 
         self.__tmp_path = tempfile.gettempdir()
-        self.__mime_config: dict = _config.get('mime')
-        self.__doc_mime_types = self.__mime_config["doc_mime_types"]
-        self.__images_mime_types = self.__mime_config["images_mime_types"]
 
         self.__debug = _config.get("printing.debug")
         self.__use_cached_docs = _config.get("printing.use_cached_docs")
 
     @staticmethod
-    def suits(none: bool = True) -> List[OfficeSuit]:
-        suits = [MimeConvertor.OfficeSuit.NONE] if none else []
+    def suites(none: bool = True) -> List[OfficeSuite]:
+        suites = [MimeConvertor.OfficeSuite.NONE] if none else []
 
-        suits += [
-            MimeConvertor.OfficeSuit.LIBREOFFICE,
-            MimeConvertor.OfficeSuit.ASPOSE_LIBRAY,
+        suites += [
+            MimeConvertor.OfficeSuite.LIBREOFFICE,
+            MimeConvertor.OfficeSuite.ASPOSE_LIBRAY,
         ]
 
         if not Platform.system_is(Platform.LINUX):
-            suits.append(MimeConvertor.OfficeSuit.MSWORD)
+            suites.append(MimeConvertor.OfficeSuite.MSWORD)
 
-        return suits
+        return suites
 
     @staticmethod
-    def suits_values(none: bool = True) -> List[str]:
-        return list(map(lambda x: x.value, MimeConvertor.suits(none)))
+    def suites_values(none: bool = True) -> List[str]:
+        return list(map(lambda x: x.value, MimeConvertor.suites(none)))
 
     @staticmethod
     def __get_unique_filename(path: str) -> str:
@@ -112,29 +110,29 @@ class MimeConvertor:
 
         return path_to
 
-    def __get_converted_doc(self, path_from: str, extension: str, suit: OfficeSuit) -> Optional[str]:
-        if suit == MimeConvertor.OfficeSuit.ASPOSE_LIBRAY:
+    def __get_converted_doc(self, path_from: str, extension: str, suite: OfficeSuite) -> Optional[str]:
+        if suite == MimeConvertor.OfficeSuite.ASPOSE_LIBRAY:
             return self.__get_converted_doc_by_aspose(path_from, extension)
 
-        if suit == MimeConvertor.OfficeSuit.MSWORD:
+        if suite == MimeConvertor.OfficeSuite.MSWORD:
             return self.__get_converted_doc_by_msword(path_from, extension)
 
-        if suit == MimeConvertor.OfficeSuit.LIBREOFFICE:
+        if suite == MimeConvertor.OfficeSuite.LIBREOFFICE:
             return self.__get_converted_doc_by_libreoffice(path_from, extension)
 
         return None
 
-    def convert_to_pdf(self, path: str, mime_type: str, suit: OfficeSuit) -> Optional[str]:
-        if mime_type in self.__doc_mime_types:
-            return self.__get_converted_doc(path, 'pdf', suit)
+    def convert_to_pdf(self, path: str, mime_type: MimeType, suite: OfficeSuite) -> Optional[str]:
+        if mime_type in MimeType.doc_group():
+            return self.__get_converted_doc(path, 'pdf', suite)
 
-        if mime_type in self.__images_mime_types:
+        if mime_type in MimeType.image_group():
             return self.__get_converted_image_to_pdf(path)
 
-    def get_pdf(self, path: str, suit: OfficeSuit = OfficeSuit.NONE) -> Optional[str]:
-        mime_type = self.__mime_type.get_mime(path)
+    def get_pdf(self, path: str, suite: OfficeSuite = OfficeSuite.NONE) -> Optional[str]:
+        mime_type = self.__mime_type.get_mime_enum(path)
 
-        if mime_type == 'application/pdf':
+        if mime_type == MimeType.PDF:
             return path
 
-        return self.convert_to_pdf(path, mime_type, suit)
+        return self.convert_to_pdf(path, mime_type, suite)

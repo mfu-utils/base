@@ -37,3 +37,23 @@ class DocumentPagesUtil:
             packed.append(DocumentPagesUtil.__cups_pack_block(block))
 
         return ",".join(packed)
+
+    @staticmethod
+    def cups_unpack(string: str, max_page: int = 0) -> List[int]:
+        numbers = string.split(",")
+        ints = []
+
+        for number in numbers:
+            if '-' not in number:
+                ints.append(int(number))
+                continue
+
+            segments = number.split('-')
+            ints += [*range(int(segments[0]), int(segments[1]) + 1)]
+
+        ints = sorted(ints)
+
+        if max_page > 0:
+            ints = list(filter(lambda x: x <= max_page, ints))
+
+        return ints

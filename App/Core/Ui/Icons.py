@@ -25,7 +25,8 @@ class Icons:
 
         return True
 
-    def path(self, name: str) -> str:
+    @staticmethod
+    def path(name: str) -> str:
         return f'{ICONS_PATH}/{name}'.replace('\\', '/')
 
     def get_image(self, name: str) -> QImage:

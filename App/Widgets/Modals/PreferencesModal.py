@@ -38,10 +38,10 @@ class PreferencesModal(AbstractSettingsModal):
             return self._convertor_service.get_doc_dir()
 
         if key == "printing.view_tool":
-            if (suit := super(PreferencesModal, self)._get_value(key)) not in MimeConvertor.suits_values():
-                return MimeConvertor.OfficeSuit.NONE.value
+            if (suite := super(PreferencesModal, self)._get_value(key)) not in MimeConvertor.suites_values():
+                return MimeConvertor.OfficeSuite.NONE.value
 
-            return suit
+            return suite
 
         return super(PreferencesModal, self)._get_value(key)
 
@@ -194,9 +194,9 @@ class PreferencesModal(AbstractSettingsModal):
         _view_tool = tab.create_combo_box(
             "printing.view_tool",
             self.printing_lc("view_tool.title"),
-            Casts.enum2dict(MimeConvertor.suits(), {
-                MimeConvertor.OfficeSuit.NONE.value: self.printing_lc("view_tool.none_item"),
-                **MimeConvertor.OFFICE_SUIT_NAMES
+            Casts.enum2dict(MimeConvertor.suites(), {
+                MimeConvertor.OfficeSuite.NONE.value: self.printing_lc("view_tool.none_item"),
+                **MimeConvertor.OFFICE_SUITE_NAMES
             })
         )
         _view_tool.set_description(self.printing_lc("view_tool.description"))

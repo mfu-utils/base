@@ -5,6 +5,7 @@ from .AbstractLogChannel import AbstractLogChannel
 from .AbstractSubprocess import AbstractSubprocess
 from .AbstractDbDriver import AbstractDbDriver
 from .AbstractCommand import AbstractCommand
+from .AbstractDTO import AbstractDTO
 #: BUILD_TYPE:server
 from .AbstractConnectionHandler import AbstractConnectionHandler
 from .AbstractReceiveDataHandler import AbstractReceiveDataHandler
@@ -19,6 +20,7 @@ __all__ = [
     'AbstractLogChannel',
     'AbstractDbDriver',
     'AbstractCommand',
+    'AbstractDTO',
     #: BUILD_TYPE:server
     'AbstractConnectionHandler',
     'AbstractReceiveDataHandler',

@@ -11,7 +11,7 @@ from App.Core.DB import Connection
 from App.Core.Logger import Log
 from App.Core import Platform, Machine, Config
 from App.Core import Event
-from App.Core import MimeType
+from App.Core import MimeTypeConfig
 #: BUILD_TYPE:client-ui
 from PySide6.QtGui import QImage, QIcon, QPixmap
 from App.Core.Ui import Ini
@@ -74,7 +74,7 @@ def network_manager() -> NetworkManager:
     return app().get('network.manager')
 
 
-def later(microseconds: int, func: callable):
+def later(microseconds: float, func: callable):
     ExecLater(microseconds, func).start()
 
 
@@ -102,7 +102,7 @@ def machine() -> Machine:
     return app().get('machine')
 
 
-def mime() -> MimeType:
+def mime() -> MimeTypeConfig:
     return app().get('mime')
 
 

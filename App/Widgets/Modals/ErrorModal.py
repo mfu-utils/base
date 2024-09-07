@@ -8,7 +8,7 @@ from App.Widgets.Modals.AbstractModal import AbstractModal
 
 
 class ErrorModal(AbstractModal):
-    def __init__(self, title: str, text: str, widget: QWidget = None):
+    def __init__(self, title: str, text: str, widget: QWidget = None, disabled: str = "MainWindow"):
         super(ErrorModal, self).__init__(widget)
         self._frameless_window(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
         self.setStyleSheet(styles(['errorModal', 'contextMenu', 'windowlessTitle']))
@@ -51,4 +51,4 @@ class ErrorModal(AbstractModal):
 
         UIHelpers.to_center_screen(self)
 
-        self._disable_all_parents()
+        self._disable_all_parents(disabled)

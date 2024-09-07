@@ -7,7 +7,6 @@ configs.services:
     - rcl
     - subprocesses
     - db
-    - mime
     - printing
     - ocr_convertor
     - scan
