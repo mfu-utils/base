@@ -3,7 +3,7 @@ import re
 
 
 class PDFService:
-    COUNT_PAGES_REGEX = re.compile(r"/Type\s*/Page([^s]|$)", re.MULTILINE | re.DOTALL)
+    COUNT_PAGES_REGEX = re.compile(rb"/Type\s*/Page([^s]|$)", re.MULTILINE | re.DOTALL)
 
     @staticmethod
     def count_pages(file: Union[str, bytes]):

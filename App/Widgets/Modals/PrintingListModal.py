@@ -105,7 +105,7 @@ class PrintingListModal(AbstractModal):
             self,
             "PrintingListSendButton",
             lc("printingListModal.send_button"),
-            callback=self.close
+            callback=self.__send_to_print
         )
         self.__buttons_layout.addWidget(self.__send_button)
 
@@ -165,7 +165,7 @@ class PrintingListModal(AbstractModal):
         def stop_loading_devices():
             self.checkout_loading_animation_signal.emit(False)
 
-            if not self.__loading_items and self.__devices_loaded:
+            if self.__loading_items and self.__devices_loaded:
                 self.__send_button.setDisabled(False)
 
             self.__fill_devices()
@@ -261,10 +261,9 @@ class PrintingListModal(AbstractModal):
             count_pages = 1
 
             if mime_type in MimeType.doc_group():
-                count_pages = PDFService.count_pages(file.printing_doc)
+                count_pages = PDFService.count_pages(file.printing_doc.file)
 
             file.printing_doc.mime_type = mime_type
-            file.printing_doc.file = file.get_converted_path()
 
             self.__printers_service.send_to_print(file.printing_doc, count_pages, file.get_path())
 

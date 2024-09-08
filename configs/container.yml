@@ -104,7 +104,7 @@ services:
     singleton: true
     alias: machine
 
-  App.Core.MimeType~:
+  App.Core.MimeTypeConfig~:
     alias: mime
 
   App.Services.MimeConvertor~:

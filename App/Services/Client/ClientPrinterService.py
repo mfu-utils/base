@@ -1,5 +1,6 @@
 from typing import Optional
 
+from App.Core import Filesystem
 from App.Core.Network.Client import ClientConfig
 from App.Core.Network.Protocol.Responses.AbstractResponse import AbstractResponse
 from App.DTO.Client import PrintingDocumentDTO
@@ -20,6 +21,8 @@ class ClientPrinterService(PrinterService):
         self._logger.error(f"Cannot send to printing ({device}). {message or ''}")
 
     def send_to_print(self, printing_doc: PrintingDocumentDTO, count_pages: int, path: str):
+        printing_doc.file = Filesystem.read_file(path, True)
+
         (
             super(ClientPrinterService, self)
             .send_to_print_one(self._network_manager, printing_doc, count_pages, ClientConfig.client_ui())

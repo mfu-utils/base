@@ -20,6 +20,14 @@ MIME_NAMES = {
     MIME_JPEG: 'JPEG',
 }
 
+AVAILABLE_PRINTING_TYPES = [
+    MIME_MS_WORD,
+    MIME_PDF,
+    MIME_TIFF,
+    MIME_PNG,
+    MIME_JPEG,
+]
+
 
 class MimeType(Enum):
     # Type not
@@ -51,4 +59,8 @@ class MimeType(Enum):
 
     @staticmethod
     def alias(_type: 'MimeType') -> str:
-        return MIME_NAMES[_type.name]
+        return MIME_NAMES[_type.value]
+
+    @staticmethod
+    def available_printing_types() -> List[str]:
+        return AVAILABLE_PRINTING_TYPES

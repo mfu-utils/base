@@ -87,8 +87,11 @@ class ProtoBuilder:
         return values
 
     @staticmethod
-    def __encode_value(value: Union[str, int, float, bool, list]) -> bytes:
+    def __encode_value(value: Union[str, bytes, int, float, bool, list]) -> bytes:
         _type = type(value)
+
+        if _type is bytes:
+            return value
 
         if _type is str:
             return value.encode('utf-8')
@@ -108,7 +111,10 @@ class ProtoBuilder:
         raise Exception(f"Cannot encode data")
 
     @staticmethod
-    def __decode_value(value: bytes, _type: type) -> Union[str, int, float, bool, list]:
+    def __decode_value(value: bytes, _type: type) -> Union[str, bytes, int, float, bool, list]:
+        if _type is bytes:
+            return value
+
         if _type is str:
             return value.decode('utf-8')
 
@@ -123,6 +129,8 @@ class ProtoBuilder:
 
         if _type is list:
             return ProtoBuilder.__decode_list(value)
+
+        raise Exception(f"Cannot decode data")
 
     def __prepare_parameter(self, name: str, value: Any, parameters_data: dict) -> dict:
         if not (parameters_data := parameters_data.get(name)):

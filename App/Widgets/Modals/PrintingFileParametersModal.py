@@ -1,6 +1,8 @@
 from typing import Union, Dict, Optional
 
 from PySide6.QtCore import Qt, Signal
+from PySide6.QtPdf import QPdfDocument
+from PySide6.QtPdfWidgets import QPdfView
 from PySide6.QtWidgets import QWidget
 
 from App.Core.Utils import DocumentMediaType, DocumentOrder
@@ -11,7 +13,6 @@ from App.Widgets.Components.Controls.LineEditControl import LineEditControl
 from App.Widgets.Components.ModalButton import ModalButton
 from App.Widgets.Components.PreferencesControls import PreferencesControls
 from App.Widgets.Components.PrintingFileParametersModal.DocStub import DocStub
-from App.Widgets.Components.PrintingFileParametersModal.PdfDoc import PdfDoc
 from App.DTO.Client import PrintingDocumentDTO
 from App.Widgets.Modals.AbstractModal import AbstractModal
 from App.Widgets.UIHelpers import UIHelpers
@@ -47,8 +48,10 @@ class PrintingFileParametersModal(AbstractModal):
 
         self.__central_layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
 
-        self.__pdf = PdfDoc(tmp_path) if tmp_path else DocStub(self.__lc('no_view'), self)
-        self.__central_layout.addWidget(self.__pdf)
+        if tmp_path:
+            self.__create_document(tmp_path)
+        else:
+            self.__central_layout.addWidget(DocStub(self.__lc('no_view'), self))
 
         self.__parameters_layout = UIHelpers.v_layout((0, 0, 0, 0), 5)
 
@@ -76,7 +79,7 @@ class PrintingFileParametersModal(AbstractModal):
         self.__save_button = ModalButton(
             self, "PrintingFileParametersSaveButton", self.__lc("save_button"), callback=self.__saved
         )
-        self.__buttons_layout.addWidget(self.__cancel_button)
+        self.__buttons_layout.addWidget(self.__save_button)
 
         self.__parameters_layout.addLayout(self.__buttons_layout)
 
@@ -95,9 +98,21 @@ class PrintingFileParametersModal(AbstractModal):
 
         self.raise_()
 
+    def __create_document(self, path: str):
+        self.__document = QPdfDocument()
+        self.__document.load(path)
+
+        self.__doc_view = QPdfView()
+        self.__doc_view.setObjectName("PrintingFileParametersPDFView")
+        self.__doc_view.setPageMode(QPdfView.PageMode.MultiPage)
+        self.__doc_view.setZoomMode(QPdfView.ZoomMode.FitInView)
+        self.__doc_view.setDocument(self.__document)
+
+        self.__central_layout.addWidget(self.__doc_view)
+
     def get_count_pages(self) -> int:
-        if isinstance(self.__pdf, PdfDoc):
-            return self.__pdf.pageCount()
+        if hasattr(self, '__document'):
+            return self.__document.pageCount()
 
         return -1
 

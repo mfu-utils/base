@@ -1,5 +1,5 @@
 from abc import ABC
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Union
 
 from App.Core import Config
 from App.Core.Logger import Log
@@ -15,8 +15,11 @@ class AbstractSubprocess(ABC):
         TARGET_PLATFORM_CMD_WSL,
     ]
 
-    def __init__(self, log: Log, config: Config, command: str, remote_cmd: bool = True):
-        self._command = command
+    def __init__(self, log: Log, config: Config, command: Union[List[str], str], remote_cmd: bool = True):
+        self._command: Union[List[str], str] = command
+
+        if isinstance(command, str):
+            self._command = [command]
 
         self._log = log
         self._config = config.get('subprocesses')
@@ -104,9 +107,9 @@ class AbstractSubprocess(ABC):
 
     def __get_command(self) -> List[str]:
         if self._remote_cmd and self._target_platform_cmd == self.TARGET_PLATFORM_CMD_WSL:
-            return ['wsl', self._command]
+            return ['wsl', *self._command]
 
-        return [self._command]
+        return self._command
 
     @staticmethod
     def __to_str(parameters: List[str]) -> str:
