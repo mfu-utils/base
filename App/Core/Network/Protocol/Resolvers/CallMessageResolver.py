@@ -36,8 +36,8 @@ class CallMessageResolver(AbstractMessageResolver):
             Size byte is REQUIRED.
             Encoded data block is OPTIONAL.
 
-            [0xXX][0xXX][Encoded Data] - 1 bytes is a parameter. Parameter must be specified in proto file.
-                2 byte is size of data. [3 … 2 + size] - bytes is data
+            [0xXX][0xXX0xYY][Encoded Data] - 1 bytes is a parameter. Parameter must be specified in proto file.
+                2 ... 3 byte is size of data. [4 … 3 + size] - bytes is data
     """
 
     COMMAND_BLOCK_START_BYTE = 0
@@ -72,13 +72,14 @@ class CallMessageResolver(AbstractMessageResolver):
             return {}
 
         params = {}
-        start = self.__get_start_pos_parameters_block(data) + 1
+        start_block = self.__get_start_pos_parameters_block(data) + 1
 
         for i in range(size):
-            parameter, size = data[start:start + self.PARAMETER_BLOCK_START_BYTE]
-            start += self.PARAMETER_BLOCK_START_BYTE
-            params[parameter] = data[start:start + size]
-            start += size
+            parameter = data[start_block]
+            size = int.from_bytes(data[start_block + 1:start_block + self.PARAMETER_BLOCK_START_BYTE + 1])
+            start_block += self.PARAMETER_BLOCK_START_BYTE + 1
+            params[parameter] = data[start_block:start_block + size]
+            start_block += size
 
         return params
 
@@ -99,7 +100,7 @@ class CallMessageResolver(AbstractMessageResolver):
         data += len(parameters.keys()).to_bytes(1, byteorder='big')
 
         for key, val in parameters.items():
-            data += key.to_bytes(1, byteorder='big') + len(val).to_bytes(1, byteorder='big') + val
+            data += key.to_bytes(1, byteorder='big') + len(val).to_bytes(2, byteorder='big') + val
 
         return data
 

@@ -13,6 +13,9 @@ class LpstatSubprocess(AbstractSubprocess):
         super(LpstatSubprocess, self).__init__(log, config, "lpstat")
 
     def get_printers_list(self) -> Tuple[bool, List[str]]:
+        if self._config['debug']:
+            return False, []
+
         ok, out = self.run(parameters={"v": True})
 
         if not ok:
