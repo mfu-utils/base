@@ -12,8 +12,7 @@ if not Application(Application.ApplicationType.Client):
 from App.Core.Network.Client import ResponseDataPromise, ClientConfig
 from App.Core.Network.Protocol import CallRequest
 from App.Core.Network.Protocol.Responses import AbstractResponse
-from App.Core.Utils import DocumentMediaType
-from App.Core.Utils import DocumentsRealSizes
+from App.Core.Utils import DocumentMediaType, DocumentsRealSizes
 from App.Core.Utils.Ui import Casts
 from App.Services import PrinterService
 from App.helpers import config, console, cache, logger

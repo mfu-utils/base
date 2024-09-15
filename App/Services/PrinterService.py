@@ -200,12 +200,12 @@ class PrinterService:
         parameters = {
             "device": doc.device,
             "copies": doc.copies,
-            "paper_size": doc.paper_size.name,
+            "paper-size": doc.paper_size.name,
             "file": doc.file
         }
 
         if tray := doc.paper_tray:
-            parameters.update({"paper_tray": tray.name})
+            parameters.update({"paper-tray": tray.name})
 
         if pages_policy := doc.pages_policy:
             if ints := self.__resolve_pages_parameters(pages_policy, doc.pages, max_page):
@@ -224,6 +224,6 @@ class PrinterService:
             parameters.update({"transparency": True})
 
         if mime_type := doc.mime_type:
-            parameters.update({"mime_type": mime_type.name})
+            parameters.update({"mime-type": mime_type.name})
 
         return manager.request(CallRequest("print", parameters=parameters), client)

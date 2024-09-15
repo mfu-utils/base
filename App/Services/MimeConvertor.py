@@ -1,27 +1,19 @@
 import hashlib
 import os
-import tempfile
 from enum import Enum
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import img2pdf
 import docx2pdf
 
 from App.Core import Filesystem, Config, MimeTypeConfig, Platform
 from App.Core.Logger import Log
-from App.Core.Utils import MimeType
-from App.Subprocesses import LibreofficePdfConvert
-
+from App.Core.Utils import MimeType, OfficeSuite
+from App.Subprocesses.LibreofficePdfConvert import LibreofficePdfConvert
 from App.Subprocesses.AsposeConvert import AsposeConvert
 
 
 class MimeConvertor:
-    class OfficeSuite(Enum):
-        NONE = "none"
-        MSWORD = "msword"
-        LIBREOFFICE = "libreoffice"
-        ASPOSE_LIBRAY = "aspose_lib"
-
     OFFICE_SUITE_NAMES = {
         OfficeSuite.MSWORD.value: "Microsoft Word",
         OfficeSuite.LIBREOFFICE.value: "Libreoffice",
@@ -31,25 +23,23 @@ class MimeConvertor:
     def __init__(self, log: Log, _config: Config, mime: MimeTypeConfig, platform: Platform):
         self.__mime_type = mime
 
-        self.__libreoffice_convertor = LibreofficePdfConvert(log, _config, platform)
+        self.__libreoffice_convert = LibreofficePdfConvert(log, _config, platform)
         self.__aspose_convertor = AsposeConvert(log, _config, platform)
-
-        self.__tmp_path = tempfile.gettempdir()
 
         self.__debug = _config.get("printing.debug")
         self.__use_cached_docs = _config.get("printing.use_cached_docs")
 
     @staticmethod
-    def suites(none: bool = True) -> List[OfficeSuite]:
-        suites = [MimeConvertor.OfficeSuite.NONE] if none else []
+    def suites(none: bool = True) -> List[Union[OfficeSuite, Enum]]:
+        suites = [OfficeSuite.NONE] if none else []
 
         suites += [
-            MimeConvertor.OfficeSuite.LIBREOFFICE,
-            MimeConvertor.OfficeSuite.ASPOSE_LIBRAY,
+            OfficeSuite.LIBREOFFICE,
+            OfficeSuite.ASPOSE_LIBRAY,
         ]
 
         if not Platform.system_is(Platform.LINUX):
-            suites.append(MimeConvertor.OfficeSuite.MSWORD)
+            suites.append(OfficeSuite.MSWORD)
 
         return suites
 
@@ -65,8 +55,7 @@ class MimeConvertor:
         return _hash
 
     def __get_unique_filepath(self, path_from: str, extension: str) -> str:
-        filename = self.__get_unique_filename(path_from)
-        return os.path.join(self.__tmp_path, filename + f".{extension}")
+        return Filesystem.create_tmp_path(self.__get_unique_filename(path_from) + f".{extension}")
 
     def __exists_path(self, path: str) -> bool:
         if not self.__use_cached_docs:
@@ -93,10 +82,10 @@ class MimeConvertor:
         return path_to
 
     def __get_converted_doc_by_libreoffice(self, path_from: str, extension: str) -> Optional[str]:
-        path_to = os.path.join(self.__tmp_path, path_from.split('/')[-1].split('.')[0] + f".{extension}")
+        path_to = Filesystem.create_tmp_path(path_from.split('/')[-1].split('.')[0] + f".{extension}")
 
         if not self.__exists_path(path_to):
-            return self.__libreoffice_convertor.docx_convert(path_from, self.__tmp_path, extension)
+            return self.__libreoffice_convert.docx_convert(path_from, Filesystem.get_tmp_path(), extension)
 
         return path_to
 
@@ -111,13 +100,13 @@ class MimeConvertor:
         return path_to
 
     def __get_converted_doc(self, path_from: str, extension: str, suite: OfficeSuite) -> Optional[str]:
-        if suite == MimeConvertor.OfficeSuite.ASPOSE_LIBRAY:
+        if suite == OfficeSuite.ASPOSE_LIBRAY:
             return self.__get_converted_doc_by_aspose(path_from, extension)
 
-        if suite == MimeConvertor.OfficeSuite.MSWORD:
+        if suite == OfficeSuite.MSWORD:
             return self.__get_converted_doc_by_msword(path_from, extension)
 
-        if suite == MimeConvertor.OfficeSuite.LIBREOFFICE:
+        if suite == OfficeSuite.LIBREOFFICE:
             return self.__get_converted_doc_by_libreoffice(path_from, extension)
 
         return None

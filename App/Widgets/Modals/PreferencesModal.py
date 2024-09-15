@@ -2,6 +2,7 @@ from typing import Any
 
 from PySide6.QtWidgets import QWidget
 
+from App.Core.Utils.OfficeSuite import OfficeSuite
 from App.Core.Utils.Ui import Patterns, Casts
 from App.Services.Client.Ui.UiDocConvertorService import UiDocConvertorService
 from App.Services.Client.Ui.UiScanService import UiScanService
@@ -39,7 +40,7 @@ class PreferencesModal(AbstractSettingsModal):
 
         if key == "printing.view_tool":
             if (suite := super(PreferencesModal, self)._get_value(key)) not in MimeConvertor.suites_values():
-                return MimeConvertor.OfficeSuite.NONE.value
+                return OfficeSuite.NONE.value
 
             return suite
 
@@ -195,7 +196,7 @@ class PreferencesModal(AbstractSettingsModal):
             "printing.view_tool",
             self.printing_lc("view_tool.title"),
             Casts.enum2dict(MimeConvertor.suites(), {
-                MimeConvertor.OfficeSuite.NONE.value: self.printing_lc("view_tool.none_item"),
+                OfficeSuite.NONE.value: self.printing_lc("view_tool.none_item"),
                 **MimeConvertor.OFFICE_SUITE_NAMES
             })
         )

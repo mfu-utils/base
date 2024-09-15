@@ -22,7 +22,7 @@ commands:
             # COM10  - US #10 Envelope (9.5x4.125 inches, or 241x105mm)      #
             # DL     - ISO DL Envelope (8.66x4.33 inches, or 220x110mm)      #
             ##################################################################
-            paper_size:
+            paper-size:
                 type: str
                 default: A4
                 variants:
@@ -41,7 +41,7 @@ commands:
             # MultiPurpose  - Multi-purpose paper tray                       #
             # LargeCapacity - Large capacity paper tray                      #
             ##################################################################
-            paper_tray:
+            paper-tray:
                 type: str
                 variants:
                     - Upper
@@ -94,7 +94,7 @@ commands:
                 type: bytes
                 required: true
 
-            mime_type:
+            mime-type:
                 type: str
                 required: true
                 variants:

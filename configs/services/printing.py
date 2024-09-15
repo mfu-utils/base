@@ -1,4 +1,4 @@
-from App.helpers import env
+from App.helpers import env, platform
 
 
 __CONFIG__ = {
@@ -10,5 +10,10 @@ __CONFIG__ = {
 
     # Save printer in cache for slow commands. Example: macOS local using.
     "use_cached_devices": env("PRINTING_USE_CACHED_DEVICES", False),
+
+    "server_side_convert_tool": env(
+        "PRINTING_SERVER_SIDE_CONVERT_TOOL",
+        "msword" if platform().is_windows() else "libreoffice"
+    ),
 }
 

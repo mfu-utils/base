@@ -28,6 +28,10 @@ AVAILABLE_PRINTING_TYPES = [
     MIME_JPEG,
 ]
 
+SERVER_SIDE_CONVERT = [
+    MIME_MS_WORD
+]
+
 
 class MimeType(Enum):
     # Type not
@@ -64,3 +68,7 @@ class MimeType(Enum):
     @staticmethod
     def available_printing_types() -> List[str]:
         return AVAILABLE_PRINTING_TYPES
+
+    @staticmethod
+    def is_server_side_convert_type(_type: str) -> bool:
+        return _type in SERVER_SIDE_CONVERT

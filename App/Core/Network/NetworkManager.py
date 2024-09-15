@@ -54,7 +54,11 @@ class NetworkManager:
             if config.debug:
                 self.__debug(f"Client started")
 
-            return client.send(self.__protocol.create_request(request))
+            _data = self.__protocol.create_request(request)
+
+            self.__logger.debug(f"Sending request with len: '{len(_data)}'")
+
+            return client.send(_data)
         except KeyboardInterrupt:
             if config.debug:
                 self.__logger.debug(f"Client stopped.")

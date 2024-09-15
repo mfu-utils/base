@@ -4,6 +4,7 @@ from PySide6.QtCore import Signal
 from PySide6.QtWidgets import QWidget, QLabel, QPushButton
 
 from App.Core.Utils import MimeType
+from App.Core.Utils.OfficeSuite import OfficeSuite
 from App.Services.MimeConvertor import MimeConvertor
 from App.Widgets.Components.DrawableWidget import DrawableWidget
 from App.Widgets.Components.LoadingAnimation import LoadingAnimation
@@ -190,7 +191,7 @@ class PrintingFileItem(DrawableWidget):
         self.__ready_to_print = False
 
         def _worker():
-            suite = MimeConvertor.OfficeSuite(ini("printing.view_tool"))
+            suite = OfficeSuite(ini("printing.view_tool"))
 
             self.__converted_path = mime_convertor().get_pdf(self.__parameters[self.PARAMETER_PATH], suite)
 
