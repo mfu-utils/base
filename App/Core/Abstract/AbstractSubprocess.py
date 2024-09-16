@@ -25,6 +25,7 @@ class AbstractSubprocess(ABC):
         self._config = config.get('subprocesses')
 
         self._multi_character_parameters_delimiter = None
+        self._multi_character_parameters_wrap = True
         self._multi_character_parameters_prefix = '--'
         
         self._once_character_parameters_delimiter = None
@@ -41,6 +42,11 @@ class AbstractSubprocess(ABC):
 
     def set_multi_character_parameters_delimiter(self, delimiter: str):
         self._multi_character_parameters_delimiter = delimiter
+
+        return self
+
+    def set_multi_character_parameters_wrap(self, wrap: bool):
+        self._multi_character_parameters_wrap = wrap
 
         return self
 
@@ -68,6 +74,9 @@ class AbstractSubprocess(ABC):
     def __create_multi_character_parameter(self, parameter: str, value: str) -> List[str]:
         parameter = self.__create_multi_character_parameter_name(parameter)
 
+        if value is None:
+            return [parameter] if self._multi_character_parameters_wrap else parameter.split(' ')
+
         if type(value) is bool:
             return [parameter] if value else []
 
@@ -75,8 +84,10 @@ class AbstractSubprocess(ABC):
 
         if not self._multi_character_parameters_delimiter:
             return [parameter, value]
-    
-        return [f"{parameter}{self._multi_character_parameters_delimiter}{str(value)}"]
+
+        res = f"{parameter}{self._multi_character_parameters_delimiter}{str(value)}"
+
+        return res if self._multi_character_parameters_wrap else res.split(' ')
 
     def __create_once_character_parameter(self, parameter: str, value: str) -> List[str]:
         parameter = self.__create_once_character_parameter_name(parameter)
@@ -120,7 +131,12 @@ class AbstractSubprocess(ABC):
 
         return " ".join(wrapped)
 
-    def run(self, subcommands: Optional[list] = None, parameters: Optional[dict] = None, options: dict = None) -> Tuple[bool, str]:
+    def run(
+        self,
+        subcommands: Optional[list] = None,
+        parameters: Optional[dict] = None,
+        options: dict = None
+    ) -> Tuple[bool, str]:
         options = options or {}
 
         if subcommands is None:
@@ -128,6 +144,9 @@ class AbstractSubprocess(ABC):
 
         if parameters is None:
             parameters = {}
+
+        if isinstance(options.get('additional'), str):
+            options['additional'] = [options.get('additional')]
 
         cmd = [
             *self.__get_command(),

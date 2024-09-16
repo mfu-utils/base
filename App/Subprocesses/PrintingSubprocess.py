@@ -59,6 +59,7 @@ class PrintingSubprocess(AbstractSubprocess):
 
         self.set_multi_character_parameters_prefix('-o ')
         self.set_multi_character_parameters_delimiter('=')
+        self.set_multi_character_parameters_wrap(False)
 
         self._convert_tool = _config.get('printing.server_side_convert_tool')
 
@@ -80,7 +81,7 @@ class PrintingSubprocess(AbstractSubprocess):
     def __convert(self, path: str, mime_type: MimeType) -> Tuple[bool, str]:
         suite = OfficeSuite(self._convert_tool)
 
-        path = MimeConvertor(self._log, self._config, self._mime, self._platform).convert_to_pdf(path, mime_type, suite)
+        path = self._convertor.convert_to_pdf(path, mime_type, suite)
 
         if not path:
             return False, "Failed to convert to pdf"
@@ -88,19 +89,21 @@ class PrintingSubprocess(AbstractSubprocess):
         return True, path
 
     def __resolve_file(self, parameters: dict) -> Tuple[bool, str]:
-        path = Filesystem.create_tmp_path(hashlib.md5(str(datetime.now()).encode()).hexdigest() + '.pdf')
+        mime_type = MimeType[parameters[self._DEVICE_PRINTING_PARAMETER_MIME_TYPE]]
+
+        path = Filesystem.create_tmp_path(
+            f"{hashlib.md5(str(datetime.now()).encode()).hexdigest()}.{MimeType.mime_extension(mime_type)}"
+        )
 
         content = parameters.get(self._DEVICE_PRINTING_PARAMETER_FILE)
 
         if not Filesystem.write_file(path, content):
             return False, "Failed to write file"
 
-        mime_type = parameters[self._DEVICE_PRINTING_PARAMETER_MIME_TYPE]
+        if not MimeType.is_server_side_convert_type(mime_type.value):
+            return True, path
 
-        if not MimeType.is_server_side_convert_type(mime_type):
-            return False, path
-
-        return self.__convert(path, MimeType[mime_type])
+        return self.__convert(path, mime_type)
 
     def __resolve_page_ranges(self, parameters: dict):
         page_ranges = parameters.get(self.DEVICE_PRINTING_PARAMETER_PAGE_RANGES)
@@ -131,7 +134,7 @@ class PrintingSubprocess(AbstractSubprocess):
         if not ok:
             return {"result": True, "message": res}
 
-        ok, message = self.run(parameters=cli, options={"additional": res})
+        ok, message = self.run(parameters=cli, options={"additional": [res]})
 
         if self._config['debug']:
             return {"result": True, "message": "Debug mode enabled"}
@@ -139,4 +142,4 @@ class PrintingSubprocess(AbstractSubprocess):
         if not ok:
             self._log.error(message, {"object": self})
 
-        return {"result": ok, "message": message}
+        return {"result": ok, "message": message if not ok else None}

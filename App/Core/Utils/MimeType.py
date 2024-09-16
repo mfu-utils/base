@@ -20,6 +20,14 @@ MIME_NAMES = {
     MIME_JPEG: 'JPEG',
 }
 
+MIME_EXTENSIONS = {
+    MIME_MS_WORD: 'docx',
+    MIME_PDF: 'pdf',
+    MIME_TIFF: 'tiff',
+    MIME_PNG: 'png',
+    MIME_JPEG: 'jpeg',
+}
+
 AVAILABLE_PRINTING_TYPES = [
     MIME_MS_WORD,
     MIME_PDF,
@@ -72,3 +80,7 @@ class MimeType(Enum):
     @staticmethod
     def is_server_side_convert_type(_type: str) -> bool:
         return _type in SERVER_SIDE_CONVERT
+
+    @staticmethod
+    def mime_extension(_type: 'MimeType') -> str:
+        return MIME_EXTENSIONS[_type.value]

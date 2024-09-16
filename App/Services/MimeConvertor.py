@@ -113,7 +113,7 @@ class MimeConvertor:
 
     def convert_to_pdf(self, path: str, mime_type: MimeType, suite: OfficeSuite) -> Optional[str]:
         if mime_type in MimeType.doc_group():
-            return self.__get_converted_doc(path, 'pdf', suite)
+            return self.__get_converted_doc(path, MimeType.mime_extension(MimeType.PDF), suite)
 
         if mime_type in MimeType.image_group():
             return self.__get_converted_image_to_pdf(path)
