@@ -22,7 +22,7 @@ Client-server apps for wireless scanning and printing.
 
 |         | x86_64     | arm64      |
 |---------|------------|------------|
-| Windows | UI         | UI         |
+| Windows | UI         | UI, S      |
 | Linux   | UI, CLI, S | UI, CLI, S |
 | MacOS   | -          | UI, CLI    |
 

@@ -1,9 +1,15 @@
+import sys
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
+
+from App import Application
+
+if not Application(Application.ApplicationType.Client):
+    sys.exit(1)
 
 from App.Core.DB import Connection
 from App.Core.DB.Model import Base

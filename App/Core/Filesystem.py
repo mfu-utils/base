@@ -33,8 +33,8 @@ class Filesystem:
     def create_tmp_path(path: str) -> str:
         tmp_path = Filesystem.get_tmp_path()
 
-        if tmp_path[0] == '/':
-            tmp_path = tmp_path[1:]
+        if path[0] == '/':
+            path = path[1:]
 
         return os.path.join(tmp_path, path)
 
