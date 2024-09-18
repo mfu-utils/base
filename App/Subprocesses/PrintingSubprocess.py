@@ -133,7 +133,7 @@ class PrintingSubprocess(AbstractSubprocess):
         if not ok:
             return False, res
 
-        ok, message = self.run(parameters=cli, options={"additional": [res]})
+        ok, message = self.run(parameters=cli, options={"additional": [self.create_windows_path_for_linux(res)]})
 
         if self._config['debug']:
             return True, "Debug mode enabled"

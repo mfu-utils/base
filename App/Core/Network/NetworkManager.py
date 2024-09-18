@@ -12,7 +12,8 @@ from App.Core import Config, Platform
 from App.Core.Logger import Log
 from App.Core.Network.Protocol import RCL
 
-import msvcrt
+if Platform.system_is('Windows'):
+    import msvcrt
 
 
 class NetworkManager:

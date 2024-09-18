@@ -11,6 +11,8 @@ class AbstractSubprocess(ABC):
     TARGET_PLATFORM_CMD_HOST = 'host'
     TARGET_PLATFORM_CMD_WSL = 'wsl'
 
+    WINDOWS_C_ROOT_DIR = '/mnt/c/'
+
     TARGETS_PLATFORMS_CMD = [
         TARGET_PLATFORM_CMD_HOST,
         TARGET_PLATFORM_CMD_WSL,
@@ -65,6 +67,9 @@ class AbstractSubprocess(ABC):
         self._once_character_parameters_prefix = prefix
 
         return self
+
+    def create_windows_path_for_linux(self, path: str):
+        return path.replace('C:\\', self.WINDOWS_C_ROOT_DIR).replace('\\', '/')
 
     def __create_multi_character_parameter_name(self, parameter: str) -> str:
         return f"{self._multi_character_parameters_prefix}{parameter}"
