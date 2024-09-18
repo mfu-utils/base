@@ -1,7 +1,7 @@
 from typing import Optional
 
 from App.Core import Filesystem
-from App.Core.Network.Client import ClientConfig
+from App.Core.Network.Client import ClientConfig, ResponseDataPromise
 from App.Core.Network.Protocol.Responses.AbstractResponse import AbstractResponse
 from App.DTO.Client import PrintingDocumentDTO
 from App.Services import PrinterService
@@ -20,12 +20,19 @@ class ClientPrinterService(PrinterService):
     def on_error_print(self, device: str, path: str, message: Optional[str]):
         self._logger.error(f"Cannot send to printing ({device}). {message or ''}")
 
-    def send_to_print(self, printing_doc: PrintingDocumentDTO, count_pages: int, path: str):
+    def send_to_print(
+        self, printing_doc: PrintingDocumentDTO, count_pages: int, path: str, sync: bool = False
+    ) -> ResponseDataPromise:
         printing_doc.file = Filesystem.read_file(path, True)
 
-        (
+        promise = (
             super(ClientPrinterService, self)
             .send_to_print_one(self._network_manager, printing_doc, count_pages, ClientConfig.client_ui())
             .then(lambda x: self.on_success_print(printing_doc.device, path, x))
             .catch(lambda x: self.on_error_print(printing_doc.device, path, x))
         )
+
+        if sync:
+            promise.wait_result()
+
+        return promise

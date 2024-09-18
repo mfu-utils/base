@@ -30,12 +30,12 @@ class PrintingSubprocess(AbstractSubprocess):
     _DEVICE_PRINTING_PARAMETER_MIME_TYPE = "mime-type"
 
     DEVICE_DOCUMENT_PARAMETERS = {
-        DEVICE_PRINTING_PARAMETER_MEDIA: "media",
         DEVICE_PRINTING_PARAMETER_PRINTER: "device",
         DEVICE_PRINTING_PARAMETER_COPIES: "copies",
+        DEVICE_PRINTING_PARAMETER_MEDIA: "media",
+        DEVICE_PRINTING_PARAMETER_OUTPUT_ORDER: "order",
         DEVICE_PRINTING_PARAMETER_PAGE_RANGES: "pages",
         DEVICE_PRINTING_PARAMETER_JOB_SHEETS: "banner",
-        DEVICE_PRINTING_PARAMETER_OUTPUT_ORDER: "order",
         DEVICE_PRINTING_PARAMETER_MIRROR: "mirror",
         DEVICE_PRINTING_PARAMETER_LANDSCAPE: "landscape",
     }
@@ -91,11 +91,10 @@ class PrintingSubprocess(AbstractSubprocess):
     def __resolve_file(self, parameters: dict) -> Tuple[bool, str]:
         mime_type = MimeType[parameters[self._DEVICE_PRINTING_PARAMETER_MIME_TYPE]]
 
-        path = Filesystem.create_tmp_path(
-            f"{hashlib.md5(str(datetime.now()).encode()).hexdigest()}.{MimeType.mime_extension(mime_type)}"
-        )
-
         content = parameters.get(self._DEVICE_PRINTING_PARAMETER_FILE)
+
+        name = hashlib.md5(content + hashlib.md5(str(datetime.now()).encode()).digest()).hexdigest()
+        path = Filesystem.create_tmp_path(f"{name}.{MimeType.mime_extension(mime_type)}")
 
         if not Filesystem.write_file(path, content):
             return False, "Failed to write file"
@@ -111,7 +110,7 @@ class PrintingSubprocess(AbstractSubprocess):
         if (page_ranges is not None) and len(page_ranges):
             parameters.update({self.DEVICE_PRINTING_PARAMETER_PAGE_RANGES: DocumentPagesUtil.cups_pack(page_ranges)})
 
-    def print(self, parameters: dict) -> dict:
+    def print(self, parameters: dict) -> Tuple[bool, str]:
         cli = {}
 
         self.__resolve_media_type(parameters)
@@ -132,14 +131,14 @@ class PrintingSubprocess(AbstractSubprocess):
         ok, res = self.__resolve_file(parameters)
 
         if not ok:
-            return {"result": True, "message": res}
+            return False, res
 
         ok, message = self.run(parameters=cli, options={"additional": [res]})
 
         if self._config['debug']:
-            return {"result": True, "message": "Debug mode enabled"}
+            return True, "Debug mode enabled"
 
         if not ok:
             self._log.error(message, {"object": self})
 
-        return {"result": ok, "message": message if not ok else None}
+        return ok, message if not ok else None

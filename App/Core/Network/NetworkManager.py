@@ -8,16 +8,19 @@ from App.Core.Network.Client import ResponseDataPromise, ClientConfig
 from App.Core.Utils.ExecLater import ExecLater
 from App.Core.Network.Protocol.Requests import AbstractRequest
 #: END:BUILD_TYPE:!server
-from App.Core import Config
+from App.Core import Config, Platform
 from App.Core.Logger import Log
 from App.Core.Network.Protocol import RCL
 
+import msvcrt
+
 
 class NetworkManager:
-    def __init__(self, log: Log, config: Config, rcl: RCL):
+    def __init__(self, log: Log, config: Config, rcl: RCL, platform: Platform):
         self.__logger = log
         self.__config = config
         self.__protocol = rcl
+        self.__platform = platform
 
     def __debug(self, message: str):
         self.__logger.debug(message, {'object': self})
@@ -36,12 +39,21 @@ class NetworkManager:
             self.__debug('Server started.')
 
         try:
+            if self.__platform.is_windows():
+                while True:
+                    # Emulate Ctrl+C
+                    if msvcrt.getch() == b'\x03':
+                        server.terminate()
+                        break
+
             server.join()
         except (KeyboardInterrupt, SystemExit):
-            if debug:
-                message = f"Server stopped{' by timeout' if server.is_alive() else ''}"
+            pass
 
-                self.__logger.debug(message, {'object': self})
+        if debug:
+            message = f"Server stopped{' by timeout' if server.is_alive() else ''}"
+
+            self.__logger.debug(message, {'object': self})
     #: END:BUILD_TYPE:server
 
     #: BUILD_TYPE:!server

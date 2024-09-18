@@ -9,18 +9,19 @@ from App.Core.Logger import Log
 class LibreofficePdfConvert(AbstractSubprocess):
     MACOS_LIBREOFFICE_BIN_PATH = "/Applications/LibreOffice.app/Contents/MacOS/soffice"
     LINUX_LIBREOFFICE_COMMAND = "soffice"
+    WINDOWS_LIBREOFFICE_BIN_PATH = "C:\\Program Files\\LibreOffice\\program\\soffice.exe"
 
     def __init__(self, log: Log, config: Config, platform: Platform):
         self.__platform = platform
 
-        super(LibreofficePdfConvert, self).__init__(log, config, self.__determinate_bin_path())
+        super(LibreofficePdfConvert, self).__init__(log, config, self.__determinate_bin_path(), False)
 
     def __determinate_bin_path(self) -> Optional[str]:
         if self.__platform.is_darwin():
             return self.__determinate_macos_bin_path()
 
         if self.__platform.is_windows():
-            return None
+            return self.__determinate_windows_bin_path()
 
         if self.__platform.is_linux():
             return self.__determinate_linux_bin_path()
@@ -32,6 +33,15 @@ class LibreofficePdfConvert(AbstractSubprocess):
             return out
 
         return None
+
+    def __determinate_windows_bin_path(self) -> Optional[str]:
+        if not os.path.exists(self.WINDOWS_LIBREOFFICE_BIN_PATH):
+            return None
+
+        if os.path.isdir(self.WINDOWS_LIBREOFFICE_BIN_PATH):
+            return None
+
+        return self.WINDOWS_LIBREOFFICE_BIN_PATH
 
     def __determinate_macos_bin_path(self) -> Optional[str]:
         if not os.path.exists(self.MACOS_LIBREOFFICE_BIN_PATH):
@@ -52,7 +62,7 @@ class LibreofficePdfConvert(AbstractSubprocess):
             options={"additional": [path], "output": "join"}
         )
 
-        path = os.path.join(tmp_dir, path.split(os.path.sep)[-1].split('.')[0] + f".{extension}")
+        path = os.path.join(tmp_dir, '.'.join(path.split(os.path.sep)[-1].split('.')[:-1]) + f".{extension}")
 
         if (not ok) or (not os.path.exists(path)):
             self._log.error(f"Libreoffice failed to convert. {out}", {"object": self})

@@ -29,6 +29,8 @@ class MimeConvertor:
         self.__debug = _config.get("printing.debug")
         self.__use_cached_docs = _config.get("printing.use_cached_docs")
 
+        self.__log = log
+
     @staticmethod
     def suites(none: bool = True) -> List[Union[OfficeSuite, Enum]]:
         suites = [OfficeSuite.NONE] if none else []
@@ -64,7 +66,7 @@ class MimeConvertor:
         return os.path.exists(path)
 
     def __get_converted_image_to_pdf(self, path_from: str) -> Optional[str]:
-        path_to = self.__get_unique_filepath(path_from, "pdf")
+        path_to = self.__get_unique_filepath(path_from, MimeType.mime_extension(MimeType.PDF))
 
         if not self.__exists_path(path_to):
             if not Filesystem.write_file(path_to, img2pdf.convert(path_from)):
@@ -93,7 +95,11 @@ class MimeConvertor:
         path_to = self.__get_unique_filepath(path_from, extension)
 
         if not self.__exists_path(path_to):
-            docx2pdf.convert(path_from, path_to)
+            try:
+                docx2pdf.convert(path_from, path_to)
+            except BaseException as e:
+                self.__log.error(f"Cannot convert file. {str(e)}")
+                return None
 
             return None if not os.path.exists(path_to) else path_to
 

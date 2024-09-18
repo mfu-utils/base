@@ -7,20 +7,18 @@ from .RCLProtocol import RCLProtocol
 from .ProtoFileResolver import ProtoFileResolver
 from .ProtoBuilder import ProtoBuilder
 
-from .Resolvers.ResponseMessageSuccessResolver import ResponseMessageSuccessResolver
-from .Resolvers.CallMessageResolver import CallMessageResolver
+from .Resolvers import InternalErrorMessageResolver, ResponseMessageSuccessResolver, CallMessageResolver
 
-from .Requests.AbstractRequest import AbstractRequest
-from .Requests.CallRequest import CallRequest
+from .Requests import AbstractRequest, CallRequest
 
-from .Responses.AbstractResponse import AbstractResponse
-from .Responses.ResponseSuccess import ResponseSuccess
+from .Responses import AbstractResponse, ResponseSuccess, ResponseInternalError
 
 
 class RCL:
     RESOLVERS = {
         RCLProtocol.RCL_MESSAGE_TYPE_CALL: CallMessageResolver(),
         RCLProtocol.RCL_MESSAGE_TYPE_RETURN: ResponseMessageSuccessResolver(),
+        RCLProtocol.RCL_MESSAGE_TYPE_INTERNAL_ERROR: InternalErrorMessageResolver(),
     }
 
     REQUESTS = {
@@ -29,6 +27,7 @@ class RCL:
 
     RESPONSES = {
         RCLProtocol.RCL_MESSAGE_TYPE_RETURN: ResponseSuccess,
+        RCLProtocol.RCL_MESSAGE_TYPE_INTERNAL_ERROR: ResponseInternalError,
     }
 
     def __init__(self, logger: Log, config: Config):

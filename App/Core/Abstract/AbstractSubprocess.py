@@ -1,5 +1,6 @@
 from abc import ABC
 from typing import Optional, List, Tuple, Union
+import platform
 
 from App.Core import Config
 from App.Core.Logger import Log
@@ -167,8 +168,9 @@ class AbstractSubprocess(ABC):
         out_name = options.get("output")
 
         if out_name == "join":
-            out = result.stdout.decode("utf-8").strip()
-            err = result.stderr.decode("utf-8").strip()
+            encoding = "cp1251" if platform.system() == 'Windows' else "utf-8"
+            out = result.stdout.decode(encoding).strip()
+            err = result.stderr.decode(encoding).strip()
             data = f"\n@Stdout:\n{out}\n\n@Stderr:\n{err}"
         else:
             data = (

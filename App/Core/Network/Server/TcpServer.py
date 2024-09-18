@@ -35,6 +35,7 @@ class TcpServer(Thread):
         self.__connections: List[Connection] = []
 
         self.__socket = self.create(self.__config)
+        self.__is_running = True
 
     @staticmethod
     def create(config: dict) -> socket:
@@ -51,6 +52,10 @@ class TcpServer(Thread):
     def close(self):
         self.__socket.close()
 
+    def terminate(self):
+        self.__socket.close()
+        self.__is_running = False
+
     def __close_connection_handler(self, connection: Connection, addr: tuple):
         if connection in self.__connections:
             self.__connections.remove(connection)
@@ -58,8 +63,11 @@ class TcpServer(Thread):
         self.__logger.debug(f"Close connection. Address: {addr[0]}; Port: {addr[1]};", {"object": self})
 
     def run(self):
-        while True:
-            sock, (address, port) = self.__socket.accept()
+        while self.__is_running:
+            try:
+                sock, (address, port) = self.__socket.accept()
+            except OSError:
+                break
 
             if not self.__connection_handler.handle(address, port):
                 self.__logger.debug(f"Connection refused: {address}, {port}")
