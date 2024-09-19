@@ -30,7 +30,7 @@ class ScanImage(AbstractSubprocess):
         if not (media := parameters.get(ScanImage.SCANIMAGE_PARAMETER_MEDIA)):
             return parameters
 
-        media = DocumentMediaType(media)
+        media = DocumentMediaType[media]
 
         x, y = DocumentsRealSizes.size(media)
         parameters.pop(ScanImage.SCANIMAGE_PARAMETER_MEDIA)
