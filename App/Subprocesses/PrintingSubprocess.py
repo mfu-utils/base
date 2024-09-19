@@ -5,7 +5,7 @@ from typing import Tuple
 from App.Core import Config, MimeTypeConfig, Platform, Filesystem
 from App.Core.Abstract import AbstractSubprocess
 from App.Core.Logger import Log
-from App.Core.Utils import MimeType
+from App.Core.Utils import MimeType, DocumentOrder
 from App.Core.Utils.DocumentPagesUtil import DocumentPagesUtil
 from App.Core.Utils.OfficeSuite import OfficeSuite
 from App.Services.MimeConvertor import MimeConvertor
@@ -46,7 +46,7 @@ class PrintingSubprocess(AbstractSubprocess):
     ]
 
     DEVICE_PRINTING_PARAMETERS_REQUIRED = {
-        DEVICE_PRINTING_PARAMETER_PRINTER: 'Device parameter is missing',
+        DEVICE_PRINTING_PARAMETER_PRINTER: 'Device parameter is missing.',
     }
 
     def __init__(self, log: Log, _config: Config, mime: MimeTypeConfig, platform: Platform):
@@ -105,16 +105,27 @@ class PrintingSubprocess(AbstractSubprocess):
         return self.__convert(path, mime_type)
 
     def __resolve_page_ranges(self, parameters: dict):
-        page_ranges = parameters.get(self.DEVICE_PRINTING_PARAMETER_PAGE_RANGES)
+        key = self.DEVICE_DOCUMENT_PARAMETERS[self.DEVICE_PRINTING_PARAMETER_PAGE_RANGES]
+
+        page_ranges = parameters.get(key)
 
         if (page_ranges is not None) and len(page_ranges):
-            parameters.update({self.DEVICE_PRINTING_PARAMETER_PAGE_RANGES: DocumentPagesUtil.cups_pack(page_ranges)})
+            parameters.update({key: DocumentPagesUtil.cups_pack(page_ranges)})
+
+    def __resolve_order(self, parameters: dict):
+        key = self.DEVICE_DOCUMENT_PARAMETERS[self.DEVICE_PRINTING_PARAMETER_OUTPUT_ORDER]
+
+        order = parameters.get(key)
+
+        if order is not None:
+            parameters.update({key: DocumentOrder[order].value})
 
     def print(self, parameters: dict) -> Tuple[bool, str]:
         cli = {}
 
         self.__resolve_media_type(parameters)
         self.__resolve_page_ranges(parameters)
+        self.__resolve_order(parameters)
 
         for key, name in self.DEVICE_DOCUMENT_PARAMETERS.items():
             option = parameters.get(name)
@@ -122,7 +133,10 @@ class PrintingSubprocess(AbstractSubprocess):
             if not option and (key in self.DEVICE_PRINTING_PARAMETERS_REQUIRED):
                 self._log.error(self.DEVICE_PRINTING_PARAMETERS_REQUIRED[key], {"object": self})
 
-            if option in self.DEVICE_DOCUMENT_FLAGS:
+            if option is None:
+                continue
+
+            if key in self.DEVICE_DOCUMENT_FLAGS:
                 cli.update({key: True})
                 continue
 

@@ -76,12 +76,12 @@ class ProtoBuilder:
         return data
 
     @staticmethod
-    def __decode_list(value: bytes) -> List[Union[str, int, float, bool]]:
+    def __decode_list(value: bytes, _type: type) -> List[Union[str, int, float, bool]]:
         values = []
 
         while len(value):
             _len = value[0]
-            values.append(value[1:_len + 1])
+            values.append(ProtoBuilder.__decode_value(value[1:_len + 1], _type))
             value = value[_len + 1:]
 
         return values
@@ -111,7 +111,10 @@ class ProtoBuilder:
         raise Exception(f"Cannot encode data")
 
     @staticmethod
-    def __decode_value(value: bytes, _type: type) -> Union[str, bytes, int, float, bool, list]:
+    def __decode_value(value: bytes, _type: type, is_list: bool = False) -> Union[str, bytes, int, float, bool, list]:
+        if is_list:
+            return ProtoBuilder.__decode_list(value, _type)
+
         if _type is bytes:
             return value
 
@@ -126,9 +129,6 @@ class ProtoBuilder:
 
         if _type is bool:
             return False if value == b"\x00" else True
-
-        if _type is list:
-            return ProtoBuilder.__decode_list(value)
 
         raise Exception(f"Cannot decode data")
 
@@ -252,7 +252,7 @@ class ProtoBuilder:
             if variants := parameter_code_data.get("variants"):
                 value = variants.get(value[0])
             else:
-                value = self.__decode_value(value, parameter_data['type'])
+                value = self.__decode_value(value, parameter_data['type'], bool(parameter_data['number']))
 
             parameters_values.update({name: value})
 
