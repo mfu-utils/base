@@ -59,7 +59,7 @@ class ScanHelpers:
         success_obj = QSignalObject()
         success_obj.triggered.connect(lambda x: self.__on_success(x[0], x[1]))
 
-        def success_trigger(x): success_obj.trigger([x, on_success])
+        def success_trigger(res): success_obj.trigger([res, on_success])
 
         return success_trigger
 
@@ -67,7 +67,7 @@ class ScanHelpers:
         error_obj = QSignalObject()
         error_obj.triggered.connect(lambda x: self.__on_error(x[0], x[1]))
 
-        def error_trigger(x): error_obj.trigger([x, self.__widget])
+        def error_trigger(msg): error_obj.trigger([msg, self.__widget])
 
         return error_trigger
 

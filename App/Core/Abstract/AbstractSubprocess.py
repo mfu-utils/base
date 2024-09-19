@@ -93,7 +93,7 @@ class AbstractSubprocess(ABC):
 
         res = f"{parameter}{self._multi_character_parameters_delimiter}{str(value)}"
 
-        return res if self._multi_character_parameters_wrap else res.split(' ')
+        return [res] if self._multi_character_parameters_wrap else res.split(' ')
 
     def __create_once_character_parameter(self, parameter: str, value: str) -> List[str]:
         parameter = self.__create_once_character_parameter_name(parameter)

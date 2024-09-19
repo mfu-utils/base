@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Tuple, Union
 
 from App.Core import Config, Filesystem
 from App.Core.Abstract import AbstractSubprocess
@@ -44,24 +44,28 @@ class ScanImage(AbstractSubprocess):
             self._log.warning(f"Create scan tmp directory '{_dir}'")
             os.makedirs(os.path.dirname(self.__file_path), exist_ok=True)
 
-    def scan(self, parameters: dict) -> Optional[bytes]:
-        parameters.update({ScanImage.SCANIMAGE_PARAMETER_OUTPUT: self.__file_path})
+    def scan(self, parameters: dict) -> Tuple[bool, Union[str, bytes]]:
+        parameters.update({ScanImage.SCANIMAGE_PARAMETER_OUTPUT: self.create_windows_path_for_linux(self.__file_path)})
 
-        ok, message = self.run([], self.__resolve_media_type(parameters))
+        try:
+            ok, message = self.run(parameters=self.__resolve_media_type(parameters))
+        except Exception as e:
+            self._log.error(message := f"Cannot run scanimage. {e}")
+            return False, message
 
         if self.__scan_debug:
             self._log.warning(f'Scan debug mode enabled. Return test data. Scanning parameters: {parameters}')
 
-            return Filesystem.read_file(str(os.path.join(CWD, "tests", "images", f"demo.{parameters['format']}")), True)
+            return True, Filesystem.read_file(str(os.path.join(CWD, "tests", "images", f"demo.{parameters['format']}")), True)
 
         self.__create_scan_tmp_dir()
 
         if ok:
-            return Filesystem.read_file(self.__file_path, True)
+            return True, Filesystem.read_file(self.__file_path, True)
 
-        self._log.error(f'Failed to scan: {message}')
+        self._log.error(message := f'Failed to scan: {message}')
 
-        return None
+        return False, message
 
     def device_list(self) -> list:
         ok, content = self.run(parameters={
