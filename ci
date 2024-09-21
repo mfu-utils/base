@@ -3,6 +3,12 @@
 import argparse
 import datetime
 import os
+import sys
+
+from App import Application
+
+if not Application(Application.ApplicationType.Server):
+    sys.exit(1)
 
 from App.Core import Filesystem
 from App.helpers import platform, config, console, machine

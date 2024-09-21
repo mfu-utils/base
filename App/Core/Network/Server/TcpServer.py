@@ -1,13 +1,15 @@
 from socket import socket, SOL_SOCKET, SOCK_STREAM, AF_INET
-from App.Core.Abstract import AbstractConnectionHandler, AbstractReceiveDataHandler
-from .Connection import Connection
-from App.Core.Logger import Log
-from App.Core import Config
 from threading import Thread
 from typing import List
 
+from App.Core.Abstract import AbstractConnectionHandler, AbstractReceiveDataHandler
+from App.Core.Logger import Log
+from App.Core import Config
+
 from App import Application
 from App.Core import Platform
+
+from .Connection import Connection
 
 platform: Platform = Application().get('platform')
 
