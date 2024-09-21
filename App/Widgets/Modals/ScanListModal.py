@@ -107,7 +107,11 @@ class ScanListModal(AbstractModal):
             params.update({'format': ScanFormat(int(_format))})
 
         if _type := self.__parameters.get('type'):
-            params.update({'type': ScanType(int(_type))})
+            scan_type = ScanType()
+
+            scan_type.id = _type
+
+            params.update({'type': scan_type})
 
         if _tags := self.__parameters.get('tags'):
             params.update({'tags': Casts.str2int_list(_tags)})
