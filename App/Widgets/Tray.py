@@ -13,7 +13,7 @@ class Tray(TrayButton):
 
     def __init__(self, app: QApplication, parent: QWidget = None):
         self.__parent_widget = parent
-        self.__light = (app.styleHints().colorScheme() != Qt.ColorScheme.Dark) or platform().is_darwin()
+        self.__light = app.styleHints().colorScheme() != Qt.ColorScheme.Dark
 
         self.__modals = {}
 
