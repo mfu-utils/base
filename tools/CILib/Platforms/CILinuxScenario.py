@@ -6,7 +6,7 @@ from tools.CILib.Platforms.CIAbstractScenario import CIAbstractScenario
 class CILinuxScenario(CIAbstractScenario):
     def _build_type_scenario(self):
         return {
-            CIBuildType.SERVER: self.__build_server
+            CIBuildType.SERVER: self.__build_server,
         }
 
     def _platform(self) -> CIPlatform:

@@ -1,7 +1,7 @@
 from typing import List, Dict
 
 from PySide6.QtGui import QDragEnterEvent, QDropEvent, QDragLeaveEvent, QCloseEvent
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QWidget, QLabel
 from PySide6.QtCore import QUrl, Qt, Signal
 
 from App.Core.Network.Client import ClientConfig
@@ -17,7 +17,7 @@ from App.Widgets.Components.PrintingListModal.LoadingDevicesBlock import Loading
 from App.Widgets.Modals.AbstractModal import AbstractModal
 from App.Widgets.Modals.ErrorModal import ErrorModal
 from App.Widgets.UIHelpers import UIHelpers
-from App.helpers import styles, mime, lc, platform, network_manager
+from App.helpers import styles, mime, lc, platform, network_manager, later
 
 
 class PrintingListModal(AbstractModal):
@@ -25,11 +25,12 @@ class PrintingListModal(AbstractModal):
     checkout_loading_animation_signal = Signal(bool)
     set_visible_errors_widget_signal = Signal(bool)
     set_enabled_file_signal = Signal(bool)
+    update_view = Signal()
 
     def __init__(self, files: List[QUrl], accepted: List[QUrl], parent: QWidget = None):
         super().__init__(parent)
         self.setWindowFlag(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
-        self.setWindowTitle(lc("printingListModal.title"))
+        self.setWindowTitle(self._lc("title"))
         self.setMinimumSize(800, 600)
         self.setObjectName("PrintingFileParametersModal")
         self.setStyleSheet(styles(["printingListModal", "printingFileItem", "printingLoading"]))
@@ -41,9 +42,30 @@ class PrintingListModal(AbstractModal):
         self.__devices: Dict = {}
         self.__printers_service = UiPrinterService()
 
-        self.__error_type_message = lc("printingListModal.unsupported_type_file")
+        self.__error_type_message = self._lc("unsupported_type_file")
 
         self.__central_layout = UIHelpers.v_layout((0, 0, 0, 10), 5)
+
+        # Empty stub >>>
+        self.__stub = QWidget(self)
+        self.__stub.setDisabled(True)
+        self.__stub.setObjectName("PrintingListModalStub")
+
+        self.__stub_h_layout = UIHelpers.h_layout()
+        self.__stub_v_layout = UIHelpers.v_layout()
+
+        self.__stub_v_layout.addStretch()
+        self.__stub_v_layout.addWidget(QLabel(lc("printingModal.instruction"), self.__stub))
+        self.__stub_v_layout.addStretch()
+
+        self.__stub_h_layout.addStretch()
+        self.__stub_h_layout.addLayout(self.__stub_v_layout)
+        self.__stub_h_layout.addStretch()
+
+        self.__stub.setLayout(self.__stub_h_layout)
+
+        self.__central_layout.addWidget(self.__stub)
+        # <<< Empty stub
 
         self.__scroll_area = UIHelpers.create_scroll(self, "PrintingListScrollArea")
 
@@ -64,10 +86,11 @@ class PrintingListModal(AbstractModal):
         self.__scroll_area.setWidget(self.__scroll_widget)
 
         self.__central_layout.addWidget(self.__scroll_area)
+        self.__scroll_area.setHidden(True)
 
         # Errors >>>
         self.__errors_widget = Errors(self)
-        self.__errors_widget.set_message(lc("printingListModal.cannot_load_printers_message"))
+        self.__errors_widget.set_message(self._lc("cannot_load_printers_message"))
         self.__errors_widget.hide()
 
         self.__central_layout.addWidget(self.__errors_widget)
@@ -76,7 +99,7 @@ class PrintingListModal(AbstractModal):
         self.__buttons_layout = UIHelpers.h_layout((10, 10, 10, 0), 5)
 
         # Loading devices block >>>
-        self.__loading_devices_widget = LoadingDevicesBlock(lc("printingListModal.loading_devices_label"), self)
+        self.__loading_devices_widget = LoadingDevicesBlock(self._lc("loading_devices_label"), self)
         self.__buttons_layout.addWidget(self.__loading_devices_widget)
         # <<< Loading devices block
 
@@ -84,7 +107,7 @@ class PrintingListModal(AbstractModal):
         self.__reload_devices_button = ModalButton(
             self,
             "PrintingListReloadDevicesButton",
-            lc("printingListModal.reload_devices_button"),
+            self._lc("reload_devices_button"),
             callback=lambda: self.__start_loading_devices(True)
         )
         self.__reload_devices_button.hide()
@@ -93,25 +116,18 @@ class PrintingListModal(AbstractModal):
 
         self.__buttons_layout.addStretch()
 
-        self.__cancel_button = ModalButton(
-            self,
-            "PrintingListCancelButton",
-            lc("printingListModal.cancel_button"),
-            callback=self.close
-        )
+        self.__cancel_button = ModalButton(self, "PrintingListCancelButton", self._lc("cancel_button"), None, self.close)
         self.__buttons_layout.addWidget(self.__cancel_button)
 
-        self.__send_button = ModalButton(
-            self,
-            "PrintingListSendButton",
-            lc("printingListModal.send_button"),
-            callback=self.__send_to_print
-        )
+        self.__send_button = ModalButton(self, "PrintingListSendButton", self._lc("send_button"), None, self.__send_to_print)
         self.__buttons_layout.addWidget(self.__send_button)
 
         self.__central_layout.addLayout(self.__buttons_layout)
 
         self.centralWidget().setLayout(self.__central_layout)
+
+        self.__update_view()
+        self.update_view.connect(self.__update_view)
 
         self.show()
 
@@ -126,6 +142,16 @@ class PrintingListModal(AbstractModal):
 
         UIHelpers.set_disabled_parent_recursive(self, "MainWindow", True)
         self.setEnabled(True)
+
+    @staticmethod
+    def _lc(name: str) -> str:
+        return lc(f"printingListModal.{name}")
+
+    def __update_view(self):
+        enable = bool(len(list(self.findChildren(PrintingFileItem))) > 0)
+
+        self.__stub.setHidden(enable)
+        self.__scroll_area.setVisible(enable)
 
     def closeEvent(self, event: QCloseEvent):
         UIHelpers.set_disabled_parent_recursive(self, "MainWindow", False)
@@ -147,7 +173,7 @@ class PrintingListModal(AbstractModal):
             return
 
         title = lc("errorModal.titles.network")
-        message = lc("printingListModal.error_loading_devices") % message
+        message = self._lc("error_loading_devices") % message
         self.__err_modal = ErrorModal(title, message, self, self.objectName())
 
     def __set_enable_loading_animation(self, enable: bool):
@@ -165,8 +191,8 @@ class PrintingListModal(AbstractModal):
         def stop_loading_devices():
             self.checkout_loading_animation_signal.emit(False)
 
-            if self.__loading_items and self.__devices_loaded:
-                self.__send_button.setDisabled(False)
+            if (self.__loading_items == 0) and self.__devices_loaded:
+                self.__send_button.setEnabled(True)
 
             self.__fill_devices()
 
@@ -237,6 +263,8 @@ class PrintingListModal(AbstractModal):
         if not self.__devices_loaded:
             item.set_enabled(False)
 
+        item.deleted.connect(lambda: later(50, self.update_view.emit))
+
         return item
 
     def __fill_items(self, files: List[QUrl]):
@@ -251,6 +279,7 @@ class PrintingListModal(AbstractModal):
         for file in self.__scroll_widget.findChildren(PrintingFileItem):
             file: PrintingFileItem
             mime_type = file.get_mime()
+            file.enable_warning(False)
 
             if not file.get_ready_to_print():
                 continue
@@ -265,7 +294,13 @@ class PrintingListModal(AbstractModal):
 
             file.printing_doc.mime_type = mime_type
 
-            self.__printers_service.send_to_print(file.printing_doc, count_pages, file.get_path())
+            self.__printers_service.send_to_print(
+                file.printing_doc,
+                count_pages,
+                file.get_path(),
+                file.deleteLater,
+                lambda: file.enable_warning(True)
+            )
 
     def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls():
@@ -288,6 +323,8 @@ class PrintingListModal(AbstractModal):
             item.set_devices(self.__devices)
 
             self.__files_layout.addWidget(item)
+
+        self.__update_view()
 
         self.__clear_urls()
 

@@ -2,7 +2,6 @@ import os
 from typing import Dict
 
 from App.Core import Filesystem
-from App.helpers import platform
 from config import ROOT
 from tools.build import static, filtering_files
 
@@ -13,20 +12,20 @@ def copy_with_mkdirs(_from: str, _to: str):
     Filesystem.copy(_from, _to)
 
 
-def get_disabled_before_build_items(build_type: str) -> Dict:
+def get_disabled_before_build_items(build_type: str, platform_name: str) -> Dict:
     items = static.DISABLED_BUILD_ITEMS['_'].copy()
 
     items.update(static.DISABLED_BUILD_ITEMS['build-types'][build_type])
-    items.update(static.DISABLED_BUILD_ITEMS['platforms'][platform().name])
+    items.update(static.DISABLED_BUILD_ITEMS['platforms'][platform_name])
 
     return items
 
 
-def create_files_struct_recursive(build_type: str, path: str = ROOT, struct: dict = None) -> Dict:
+def create_files_struct_recursive(build_type: str, platform_name: str, path: str = ROOT, struct: dict = None) -> Dict:
     _dir = os.listdir(path)
     struct = struct or {}
 
-    disabled = get_disabled_before_build_items(build_type)
+    disabled = get_disabled_before_build_items(build_type, platform_name)
 
     for item in _dir:
         item_path = os.path.join(path, item)
@@ -46,7 +45,7 @@ def create_files_struct_recursive(build_type: str, path: str = ROOT, struct: dic
         uri = item_path.split(os.path.join(ROOT, ""))[1]
 
         if os.path.isdir(item_path):
-            create_files_struct_recursive(build_type, item_path, struct)
+            create_files_struct_recursive(build_type, platform_name, item_path, struct)
             continue
 
         struct.update({item_path: uri})

@@ -8,7 +8,7 @@ from App.Widgets.Helpers.WindowsHelpers import WindowsHelpers
 from App.Widgets.Modals.ConfirmModal import ConfirmModal
 from App.Widgets.UIHelpers import UIHelpers
 
-from App.helpers import icon, lc
+from App.helpers import icon, lc, ini
 from App.Services.Client.Ui.FileManagerService import FileManagerService
 
 
@@ -100,6 +100,8 @@ class ScanItem(DrawableWidget):
         return callback
 
     def contextMenuEvent(self, event):
+        convert_enabled = ini('ocr.enable', bool)
+
         menu = QMenu(self)
         menu.setObjectName("ScanItemContextMenu")
         menu.setMinimumWidth(200)
@@ -113,7 +115,7 @@ class ScanItem(DrawableWidget):
         docs_action.setMenu(docs_menu)
 
         if not documents:
-            docs_action.setEnabled(False)
+            docs_action.setDisabled(True)
             docs_action.setText('Documents (Empty)')
 
         for document in documents:
@@ -125,18 +127,21 @@ class ScanItem(DrawableWidget):
             action.triggered.connect(self.__create_link_callback(document))
 
         convertors_menu = QMenu(menu)
-        convertors_action = menu.addAction("Convert at")
+        convertors_action = menu.addAction("Convert at" + ("" if convert_enabled else " (Disabled)"))
         convertors_action.setMenu(convertors_menu)
 
         _doc_types = list(map(lambda x: x.type, documents))
 
-        for _type, convertor in convertors.items():
-            c_item = convertors_menu.addAction(f"(.{convertor['extension']}) {convertor['name']}")
+        if convert_enabled:
+            for _type, convertor in convertors.items():
+                c_item = convertors_menu.addAction(f"(.{convertor['extension']}) {convertor['name']}")
 
-            if _type in _doc_types:
-                c_item.setIcon(icon('enabled.png'))
+                if _type in _doc_types:
+                    c_item.setIcon(icon('enabled.png'))
 
-            c_item.triggered.connect(lambda: convertor['name'])
+                c_item.triggered.connect(lambda: convertor['name'])
+        else:
+            convertors_action.setDisabled(True)
 
         menu.show()
 

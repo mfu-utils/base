@@ -46,7 +46,6 @@ client-ui:
       - echo ASPOSE BUILD ^> %BUILD_LOGS%\aspose_build_logs.txt
       - call %PYI% %SPEC_FILE% --workpath %BUILD_LOGS% --distpath . > "%BUILD_LOGS%\aspose_build_logs.txt" 2>&1
 
-
     build.bat:
       - "@echo off"
       - set "VENV_NAME=.venv"

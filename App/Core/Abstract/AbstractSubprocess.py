@@ -166,7 +166,7 @@ class AbstractSubprocess(ABC):
         if self._config['debug']:
             self._log.warning(f'Subprocess debug mode enabled. Command NOT EXECUTED!!!.')
 
-            return False, ""
+            return True, ""
 
         result = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, input=options.get('input'))
 

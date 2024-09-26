@@ -16,6 +16,7 @@ from App.helpers import icon, mime_convertor, ini, styles, in_thread, lc, logger
 
 class PrintingFileItem(DrawableWidget):
     converting_stopped = Signal()
+    deleted = Signal()
 
     PARAMETER_TYPE_ERROR = "type_error"
     PARAMETER_PATH = "path"
@@ -92,7 +93,7 @@ class PrintingFileItem(DrawableWidget):
 
         self.setLayout(self.__central_layout)
 
-        self.setProperty("warning", self.__has_error)
+        self.enable_warning(self.__has_error)
 
         if not self.__has_error:
             self.setDisabled(True)
@@ -105,6 +106,10 @@ class PrintingFileItem(DrawableWidget):
         self.__must_be_enabled = True
         self.__enabling_lock = self.__need_converting
         self.__ready_to_print = not self.__has_error
+
+    def enable_warning(self, enable: bool):
+        self.setProperty("warning", enable)
+        UIHelpers.update_style(self)
 
     def get_path(self) -> str:
         return self.__parameters[self.PARAMETER_PATH][:]
@@ -211,3 +216,7 @@ class PrintingFileItem(DrawableWidget):
             self.__enabling_lock = False
 
         in_thread(_worker)
+
+    def deleteLater(self):
+        super().deleteLater()
+        self.deleted.emit()

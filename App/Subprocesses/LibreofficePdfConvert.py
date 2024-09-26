@@ -64,6 +64,9 @@ class LibreofficePdfConvert(AbstractSubprocess):
 
         path = os.path.join(tmp_dir, '.'.join(path.split(os.path.sep)[-1].split('.')[:-1]) + f".{extension}")
 
+        if self._config['debug']:
+            return path
+
         if (not ok) or (not os.path.exists(path)):
             self._log.error(f"Libreoffice failed to convert. {out}", {"object": self})
             return None
