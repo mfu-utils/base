@@ -63,14 +63,16 @@ class ToolBar(DrawableWidget):
     def notif_widget_switch():
         events().fire("notification-widget-checkout")
 
-    def __create_tool_button(self, _icon: str, name: str, title: str, handle: callable, _type=QPushButton) -> QPushButton:
+    def __create_tool_button(
+            self, _icon: str, name: str, title: str, handle: callable, _type=QPushButton
+    ) -> QPushButton:
         button = _type(self)
         button.setIcon(icon(_icon))
         button.setIconSize(QSize(32, 32))
-        button.setObjectName(lc(f'toolBar.{name}') or name)
+        button.setObjectName(name)
         button.setFixedSize(32, 32)
         button.clicked.connect(handle)
-        button.setToolTip(title)
+        button.setToolTip(lc(f'toolBar.{title}') or title)
 
         self.__central_layout.addWidget(button)
 

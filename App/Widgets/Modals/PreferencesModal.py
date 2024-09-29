@@ -84,6 +84,14 @@ class PreferencesModal(AbstractSettingsModal):
 
     def app_tab(self):
         tab = self._create_tab('app', self.app_lc('title'))
+
+        on_start = tab.create_check_box('app.show_on_start', self.app_lc('show_on_start.title'))
+        on_start.set_description(self.app_lc('show_on_start.description'))
+        on_start.set_grid_items([
+            ['widget', 'spacing|10|horizontal', 'title', 'stretch|horizontal'],
+            ['', '', 'description']
+        ])
+
         tab.create_combo_box('app.lang', self.app_lc('lang.title'), config('langs'))
 
     def network_tab(self):
@@ -192,7 +200,7 @@ class PreferencesModal(AbstractSettingsModal):
     def printing_tab(self):
         tab = self._create_tab("printing", self.printing_lc("title"))
 
-        _view_tool = tab.create_combo_box(
+        view_tool = tab.create_combo_box(
             "printing.view_tool",
             self.printing_lc("view_tool.title"),
             Casts.enum2dict(MimeConvertor.suites(), {
@@ -200,13 +208,15 @@ class PreferencesModal(AbstractSettingsModal):
                 **MimeConvertor.OFFICE_SUITE_NAMES
             })
         )
-        _view_tool.set_description(self.printing_lc("view_tool.description"))
-        _view_tool.set_grid_items([
+        view_tool.set_description(self.printing_lc("view_tool.description"))
+        view_tool.set_grid_items([
             ["title", "stretch|horizontal"],
             ["spacing|10|vertical"],
             ["widget"],
             ["description"],
         ])
+        
+        send_converted = tab.create_check_box("")
 
     def controls(self):
         self.app_tab()

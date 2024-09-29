@@ -4,6 +4,10 @@
         "title": "Appearance",
         "lang": {
             "title": "Language:"
+        },
+        "show_on_start": {
+            "title": "Show app on start",
+            "description": "Show main window after starting app"
         }
     },
     "network": {

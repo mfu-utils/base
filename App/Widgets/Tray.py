@@ -5,7 +5,7 @@ from App.Core.Ui.TrayButton import TrayButton
 from App.Widgets.Components.Tools.ScanTools import ScanTools
 from App.Widgets.Modals.DragAndDropPrintModal import DragAndDropPrintModal
 from App.Widgets.UIHelpers import UIHelpers
-from App.helpers import lc, platform, config
+from App.helpers import lc, config
 
 
 class Tray(TrayButton):
