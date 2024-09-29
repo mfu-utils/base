@@ -80,6 +80,12 @@
             "title": "Средство просмотра MS Word:",
             "description": "Используется для просмотра документов 'docx' в превью.",
             "none_item": "Нет"
+        },
+        "send_converted_icons_by_default": {
+            "title": "По умолчанию отравлять cконвертированные изображения"
+        },
+        "send_converted_docs_by_default": {
+            "title": "По умолчанию отравлять cконвертированные документы"
         }
     }
 }

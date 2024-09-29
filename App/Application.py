@@ -76,7 +76,7 @@ class Application(YamlDataFile, metaclass=SingletonMeta):
 
         alias = Import.create_controller_alias(name)
 
-        self.register(f"{namespace}.{name}~", False, {}, {}, f"controller.{alias}")
+        self.register(f"{namespace}.{name}!", False, {}, {}, f"controller.{alias}")
 
     def __get_abstract(self, namespace: str):
         namespace = self.__get_full_namespace(namespace)

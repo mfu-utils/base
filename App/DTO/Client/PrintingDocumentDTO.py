@@ -19,6 +19,7 @@ class PrintingDocumentDTO(AbstractDTO):
     transparency: bool = False
     file: bytes = b""
     mime_type: Optional[MimeType] = None
+    send_converted: bool = False
 
     def as_dict(self) -> dict:
         res = super(PrintingDocumentDTO, self).as_dict().copy()

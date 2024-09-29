@@ -11,7 +11,7 @@ from App.Widgets.Components.LoadingAnimation import LoadingAnimation
 from App.DTO.Client import PrintingDocumentDTO
 from App.Widgets.Modals.PrintingFileParametersModal import PrintingFileParametersModal
 from App.Widgets.UIHelpers import UIHelpers
-from App.helpers import icon, mime_convertor, ini, styles, in_thread, lc, logger
+from App.helpers import icon, mime_convertor, ini, styles, in_thread, lc, logger, config
 
 
 class PrintingFileItem(DrawableWidget):
@@ -22,12 +22,15 @@ class PrintingFileItem(DrawableWidget):
     PARAMETER_PATH = "path"
     PARAMETER_MIME = "mime"
     PARAMETER_TYPE = "type"
+    PARAMETER_SEND_CONVERTED = "send_converted"
 
     printing_doc = PrintingDocumentDTO()
 
     def __init__(self, parameters: dict, parent: QWidget = None):
         super(PrintingFileItem, self).__init__(parent)
         self.setObjectName('PrintingFileItem')
+
+        self.printing_doc.send_converted = parameters[self.PARAMETER_SEND_CONVERTED]
 
         self.__parameters = parameters
         self.__devices = {}
@@ -161,9 +164,7 @@ class PrintingFileItem(DrawableWidget):
     def __open_parameters_modal(self):
         path = self.__parameters[self.PARAMETER_PATH]
 
-        modal = PrintingFileParametersModal(
-            path, self.__converted_path, self.__devices, self.printing_doc, self
-        )
+        modal = PrintingFileParametersModal(path, self.__converted_path, self.__devices, self.printing_doc, self)
 
         def save(data: PrintingDocumentDTO):
             self.printing_doc = data

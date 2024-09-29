@@ -33,6 +33,7 @@ class PrintingFileParametersModal(AbstractModal):
     PARAMETER_COPIES = "copies"
     PARAMETER_PAGES = "pages"
     PARAMETER_ORDER = "order"
+    PARAMETER_SEND_CONVERTED = "send_converted"
 
     def __init__(self, path: str, tmp_path: Optional[str], devices: dict, doc: PrintingDocumentDTO, parent: QWidget = None):
         super(PrintingFileParametersModal, self).__init__(parent)
@@ -43,6 +44,7 @@ class PrintingFileParametersModal(AbstractModal):
 
         self.__doc = PrintingDocumentDTO(**doc.as_dict())
         self.__devices = devices
+        self.__tmp_path = tmp_path
 
         self.setWindowTitle(self.__lc("title") % path)
 
@@ -234,3 +236,10 @@ class PrintingFileParametersModal(AbstractModal):
 
         # TRANSPARENCY
         self.__controls.create_check_box(self.PARAMETER_TRANSPARENCY, self.__clc(self.PARAMETER_TRANSPARENCY, "title"))
+
+        # SEND CONVERTED
+        send_converted = self.__controls.create_check_box(
+            self.PARAMETER_SEND_CONVERTED,
+            self.__clc(self.PARAMETER_SEND_CONVERTED, "title")
+        )
+        send_converted.setEnabled(bool(self.__tmp_path))

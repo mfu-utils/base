@@ -17,7 +17,7 @@ from App.Widgets.Components.PrintingListModal.LoadingDevicesBlock import Loading
 from App.Widgets.Modals.AbstractModal import AbstractModal
 from App.Widgets.Modals.ErrorModal import ErrorModal
 from App.Widgets.UIHelpers import UIHelpers
-from App.helpers import styles, mime, lc, platform, network_manager, later
+from App.helpers import styles, mime, lc, platform, network_manager, later, ini
 
 
 class PrintingListModal(AbstractModal):
@@ -34,6 +34,9 @@ class PrintingListModal(AbstractModal):
         self.setMinimumSize(800, 600)
         self.setObjectName("PrintingFileParametersModal")
         self.setStyleSheet(styles(["printingListModal", "printingFileItem", "printingLoading"]))
+
+        self.__send_converted_icons_by_default = ini('printing.send_converted_icons_by_default', bool)
+        self.__send_converted_docs_by_default = ini('printing.send_converted_docs_by_default', bool)
 
         self.__urls = []
         self.__accepted = accepted
@@ -248,12 +251,20 @@ class PrintingListModal(AbstractModal):
         is_windows = platform().is_windows()
         path = file.toLocalFile()
         mime_type = mime().get_mime_enum(path)
+        send_converted = False
+
+        if mime_type in MimeType.image_group():
+            send_converted = self.__send_converted_icons_by_default
+
+        if mime_type in MimeType.doc_group():
+            send_converted = self.__send_converted_docs_by_default
 
         item = PrintingFileItem({
             PrintingFileItem.PARAMETER_PATH: path.replace(":/", ":\\").replace("/", "\\") if is_windows else path,
             PrintingFileItem.PARAMETER_MIME: mime_type,
             PrintingFileItem.PARAMETER_TYPE: MimeType.alias(mime_type),
             PrintingFileItem.PARAMETER_TYPE_ERROR: False if file in self.__accepted else self.__error_type_message,
+            PrintingFileItem.PARAMETER_SEND_CONVERTED: send_converted,
         }, self)
 
         if item.get_need_converting():
@@ -289,8 +300,8 @@ class PrintingListModal(AbstractModal):
 
             count_pages = 1
 
-            if mime_type in MimeType.doc_group():
-                count_pages = PDFService.count_pages(file.printing_doc.file)
+            if (converted := file.get_converted_path()) and (mime_type in MimeType.doc_group()):
+                count_pages = PDFService.count_pages(converted)
 
             file.printing_doc.mime_type = mime_type
 
@@ -298,6 +309,7 @@ class PrintingListModal(AbstractModal):
                 file.printing_doc,
                 count_pages,
                 file.get_path(),
+                converted,
                 file.deleteLater,
                 lambda: file.enable_warning(True)
             )

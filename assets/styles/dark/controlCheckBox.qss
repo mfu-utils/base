@@ -6,6 +6,7 @@ QCheckBox {
 
 QCheckBox:disabled {
     border: 1px solid #43454A;
+    background-color: #43454A;
 }
 
 QCheckBox:indicator {

@@ -216,7 +216,15 @@ class PreferencesModal(AbstractSettingsModal):
             ["description"],
         ])
         
-        send_converted = tab.create_check_box("")
+        tab.create_check_box(
+            "printing.send_converted_icons_by_default",
+            self.printing_lc("send_converted_icons_by_default.title"),
+        )
+
+        tab.create_check_box(
+            "printing.send_converted_docs_by_default",
+            self.printing_lc("send_converted_docs_by_default.title"),
+        )
 
     def controls(self):
         self.app_tab()

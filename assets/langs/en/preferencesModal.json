@@ -80,6 +80,12 @@
             "title": "Use tool for MS Word view:",
             "description": "Using for display 'docx' document in preview.",
             "none_item": "None"
+        },
+        "send_converted_icons_by_default": {
+            "title": "Send converted icons by default"
+        },
+        "send_converted_docs_by_default": {
+            "title": "Send converted docs by default"
         }
     }
 }

@@ -52,6 +52,9 @@
         },
         "transparency": {
             "title": "Transparency media type or source"
+        },
+        "send_converted": {
+            "title": "Send converted file"
         }
     }
 }

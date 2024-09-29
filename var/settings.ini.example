@@ -35,3 +35,5 @@ use_system = true
 
 [printing]
 view_tool = aspose_lib
+send_converted_icons_by_default = True
+send_converted_docs_by_default = False
