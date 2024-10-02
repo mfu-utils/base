@@ -1,24 +1,24 @@
-#HistoryItem {
+#ScanItem {
     background-color: transparent;
     border: none;
     border-radius: 10px;
 }
 
-#HistoryItem:hover {
+#ScanItem:hover {
     background-color: #4E5157;
 }
 
-#HistoryItem[primary="true"] {
+#ScanItem[primary="true"] {
     background-color: #4E5157;
 }
 
-#HistoryItemTitle {
+#ScanItemTitle {
     color: white;
     font-size: 15px;
     font-weight: bold;
 }
 
-#HistoryItemTag {
+#ScanItemTag {
     font-size: 11px;
     margin-right: 3px;
     background-color: #2860B3;
@@ -26,30 +26,30 @@
     color: white;
 }
 
-#HistoryItemTag:disabled {
+#ScanItemTag:disabled {
     background-color: transparent;
     border: 1px solid #8C8C8C;
     color: #8C8C8C;
 }
 
-#HistoryItemFormat {
+#ScanItemFormat {
     font-size: 11px;
     border: 1px solid #3C9353;
     border-radius: 3px;
     color: #3C9353;
 }
 
-/*#HistoryItemFormat:hover {*/
+/*#ScanItemFormat:hover {*/
 /*    background-color: #3C9353;*/
 /*    color: white;*/
 /*}*/
 
-#HistoryItemFormat:disabled {
+#ScanItemFormat:disabled {
     border-color: #8C8C8C;
     color: #8C8C8C;
 }
 
-#HistoryItemType {
+#ScanItemType {
     border-radius: 5px;
     color: #5F93D6;
     padding: 0 5px 0 5px;
@@ -57,44 +57,44 @@
     border: 1px solid #5F93D6;
 }
 
-#HistoryItemType:disabled {
+#ScanItemType:disabled {
     color: #8C8C8C;
     border-color: #8C8C8C;
 }
 
-/*#HistoryItemType:hover {*/
+/*#ScanItemType:hover {*/
 /*    background-color: #5F93D6;*/
 /*    color: white;*/
 /*}*/
 
-#HistoryItemDatetime {
+#ScanItemDatetime {
     font-size: 11px;
     color: #A8A8A8;
 }
 
-#HistoryItemDatetime:disabled {
+#ScanItemDatetime:disabled {
     color: #8C8C8C;
 }
 
-#HistoryItemSubText {
+#ScanItemSubText {
     font-size: 11px;
     color: #8C8C8C;
 }
 
-#HistoryItemSubText:disabled, #HistoryItemText:disabled, #HistoryItemTitle:disabled {
+#ScanItemSubText:disabled, #ScanItemText:disabled, #ScanItemTitle:disabled {
     color: #8C8C8C;
 }
 
-#HistoryItemShowButton, #HistoryItemLinkButton, #HistoryItemDeleteButton {
+#ScanItemShowButton, #ScanItemLinkButton, #ScanItemDeleteButton {
     background-color: transparent;
     border-radius: 10px;
 }
 
-#HistoryItemShowButton:hover, #HistoryItemLinkButton:hover {
+#ScanItemShowButton:hover, #ScanItemLinkButton:hover {
     background-color: #3574F0;
 }
 
-#HistoryItemDeleteButton:hover {
+#ScanItemDeleteButton:hover {
     background-color: #ED5157;
 }
 

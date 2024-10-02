@@ -6,7 +6,7 @@ class Import:
     def parse_import(namespace: str):
         segments = namespace.split('.')
 
-        if segments[-1][-1] == '~':
+        if segments[-1][-1] == '!':
             segments[-1] = segments[-1][:-1]
             segments.append(segments[-1][:])
 

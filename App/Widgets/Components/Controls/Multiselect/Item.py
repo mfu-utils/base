@@ -22,7 +22,7 @@ class Item(DrawableWidget):
         self.__label.setSizePolicy(QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Fixed)
         self.__central_layout.addWidget(self.__label)
 
-        self.__delete_button = QPushButton("X", self)
+        self.__delete_button = QPushButton("\u2715", self)
         self.__delete_button.setObjectName("MultiselectItemDeleteButton")
         self.__delete_button.setFixedSize(16, 16)
         self.__delete_button.setFocusPolicy(Qt.FocusPolicy.ClickFocus)

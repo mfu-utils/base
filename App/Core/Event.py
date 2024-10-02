@@ -31,7 +31,7 @@ class Event:
 
         obj = get_namespace(recipient)
 
-        callbacks.update({get_namespace(recipient): callback})
+        callbacks.update({obj: callback})
         self.log.debug(f"Registered event '{obj}.{name}'", {'object': self})
 
     def unregister(self, name: str, recipient: object = None):
@@ -43,6 +43,7 @@ class Event:
             return
 
         self.metadata[name].pop(get_namespace(recipient))
+        self.log.debug(f"Unregistered event '{name}'", {'object': self})
 
     def fire(self, name: str, *args, **kw):
         if not self.metadata.get(name):
@@ -58,5 +59,5 @@ class Event:
 
         signal.triggered.connect(lambda x: recipient.__getattribute__(callback)(*x[0], **x[1]))
 
-        self.register(name, signal, lambda *args, **kw: signal.trigger([args, kw]))
+        self.register(name, recipient, lambda *args, **kw: signal.trigger([args, kw]))
     #: END:BUILD_TYPE:client-ui

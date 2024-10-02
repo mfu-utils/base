@@ -4,9 +4,7 @@ from PySide6.QtCore import Qt
 from PySide6.QtGui import QAction
 from PySide6.QtWidgets import QMenuBar, QMenu, QWidget
 
-from App.Core.Utils import Str
 from App.helpers import config, lc, icon, shortcut, platform, styles
-from config import STATIC_APP_NAME
 
 
 def determinate_shortcut(action_name: str) -> Union[str, None]:

@@ -59,8 +59,6 @@ class NotificationTransparentBlock(QWidget):
         self.show()
         self.adjustSize()
 
-        timeout = ini('notifications.timeout', float) * 1000
-
-        later(timeout, lambda: self.__disable_notify(notify))
+        later(ini('notifications.timeout', float) * 1000, lambda: self.__disable_notify(notify))
 
         self.update_rect()

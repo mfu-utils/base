@@ -16,13 +16,20 @@ Client-server apps for wireless scanning and printing.
 
 **Platforms and architectures:**
 
-* UI - Ui Client
-* CLI - CLI Client
-* S - Server
+| Windows | x86_64 |    arm64     |
+|---------|:------:|:------------:|
+| Server  | `Yes`  | `In Feature` |
+| CLI     |  `No`  |     `No`     |
+| UI      | `Yes`  | `In Feature` |
 
-|         | x86_64     | arm64      |
-|---------|------------|------------|
-| Windows | UI         | UI         |
-| Linux   | UI, CLI, S | UI, CLI, S |
-| MacOS   | -          | UI, CLI    |
+| Linux  |     x86_64     |     arm64      |
+|--------|:--------------:|:--------------:|
+| Server |  `In Feature`  |  `In Feature`  |
+| CLI    |  `In Feature`  |  `In Feature`  |
+| UI     |  `In Feature`  |  `In Feature`  |
 
+| Macos  |     x86_64     |     arm64      |
+|--------|:--------------:|:--------------:|
+| Server |      `No`      |      `No`      |
+| CLI    |      `No`      |      `No`      |
+| UI     |  `In Feature`  |  `In Feature`  |

@@ -8,26 +8,26 @@ from App.Widgets.Helpers.WindowsHelpers import WindowsHelpers
 from App.Widgets.Modals.ConfirmModal import ConfirmModal
 from App.Widgets.UIHelpers import UIHelpers
 
-from App.helpers import icon, lc
+from App.helpers import icon, lc, ini
 from App.Services.Client.Ui.FileManagerService import FileManagerService
 
 
 class ScanItem(DrawableWidget):
-    PARAMETER_TYPE = "type"
-    PARAMETER_TITLE = "title"
+    PARAMETER_ACTION_ON_DELETE = "on_delete"
+    PARAMETER_DOCUMENTS_LIST = "documents"
+    PARAMETER_ACTION_ON_LINK = "on_link"
+    PARAMETER_ACTION_ON_SHOW = "on_show"
     PARAMETER_DATETIME = "datetime"
+    PARAMETER_FORMAT = "format"
+    PARAMETER_TITLE = "title"
+    PARAMETER_TYPE = "type"
     PARAMETER_TAGS = "tags"
     PARAMETER_PATH = "tags"
-    PARAMETER_ACTION_ON_LINK = "on_link"
-    PARAMETER_ACTION_ON_DELETE = "on_delete"
-    PARAMETER_ACTION_ON_SHOW = "on_show"
-    PARAMETER_FORMAT = "format"
     PARAMETER_MENU = "menu"
-    PARAMETER_DOCUMENTS_LIST = "documents"
 
     def __init__(self, parameters: dict, parent: QWidget = None):
         super(ScanItem, self).__init__(parent)
-        self.setObjectName("HistoryItem")
+        self.setObjectName("ScanItem")
 
         self.__parameters = parameters
         self.__title = parameters[self.PARAMETER_TITLE]
@@ -42,10 +42,10 @@ class ScanItem(DrawableWidget):
         self.__headers_layout = UIHelpers.h_layout((0, 0, 0, 0), 3)
 
         if parameters[self.PARAMETER_TYPE]:
-            self.__type = self.__create_label(parameters[self.PARAMETER_TYPE], "HistoryItemType")
+            self.__type = self.__create_label(parameters[self.PARAMETER_TYPE], "ScanItemType")
             self.__headers_layout.addWidget(self.__type)
 
-        self.__title_widget = self.__create_label(self.__title, "HistoryItemTitle")
+        self.__title_widget = self.__create_label(self.__title, "ScanItemTitle")
         self.__headers_layout.addWidget(self.__title_widget)
 
         self.__headers_layout.addStretch()
@@ -54,19 +54,19 @@ class ScanItem(DrawableWidget):
 
         self.__params_layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
 
-        self.__datetime = self.__create_label(parameters[self.PARAMETER_DATETIME], "HistoryItemDatetime")
+        self.__datetime = self.__create_label(parameters[self.PARAMETER_DATETIME], "ScanItemDatetime")
         self.__datetime.setFixedWidth(102)
         self.__params_layout.addWidget(self.__datetime)
         self.__params_layout.addSpacing(10)
 
-        self.__format = self.__create_label(parameters[self.PARAMETER_FORMAT].name, "HistoryItemFormat")
+        self.__format = self.__create_label(parameters[self.PARAMETER_FORMAT].name, "ScanItemFormat")
         self.__params_layout.addWidget(self.__format)
         self.__params_layout.addSpacing(10)
 
         self.__tags = []
 
         for tag in parameters[self.PARAMETER_TAGS]:
-            tag = self.__create_label(tag, "HistoryItemTag")
+            tag = self.__create_label(tag, "ScanItemTag")
             self.__params_layout.addWidget(tag)
             self.__tags.append(tag)
 
@@ -80,13 +80,13 @@ class ScanItem(DrawableWidget):
         self.__buttons_layout = UIHelpers.h_layout((0, 0, 0, 0), 0)
 
         if on_link := self.__parameters.get(self.PARAMETER_ACTION_ON_LINK):
-            self.__create_button("link.png", "HistoryItemLinkButton", on_link)
+            self.__create_button("link.png", "ScanItemLinkButton", on_link)
 
         if on_show := self.__parameters.get(self.PARAMETER_ACTION_ON_SHOW):
-            self.__create_button("visible.png", "HistoryItemShowButton", on_show)
+            self.__create_button("visible.png", "ScanItemShowButton", on_show)
 
         if self.__on_delete:
-            self.__create_button("bin.png", "HistoryItemDeleteButton", self._deleted_button_clicked)
+            self.__create_button("bin.png", "ScanItemDeleteButton", self._deleted_button_clicked)
 
         self.__central_layout.addLayout(self.__buttons_layout)
 
@@ -100,6 +100,8 @@ class ScanItem(DrawableWidget):
         return callback
 
     def contextMenuEvent(self, event):
+        convert_enabled = ini('ocr.enable', bool)
+
         menu = QMenu(self)
         menu.setObjectName("ScanItemContextMenu")
         menu.setMinimumWidth(200)
@@ -113,7 +115,7 @@ class ScanItem(DrawableWidget):
         docs_action.setMenu(docs_menu)
 
         if not documents:
-            docs_action.setEnabled(False)
+            docs_action.setDisabled(True)
             docs_action.setText('Documents (Empty)')
 
         for document in documents:
@@ -125,18 +127,21 @@ class ScanItem(DrawableWidget):
             action.triggered.connect(self.__create_link_callback(document))
 
         convertors_menu = QMenu(menu)
-        convertors_action = menu.addAction("Convert at")
+        convertors_action = menu.addAction("Convert at" + ("" if convert_enabled else " (Disabled)"))
         convertors_action.setMenu(convertors_menu)
 
         _doc_types = list(map(lambda x: x.type, documents))
 
-        for _type, convertor in convertors.items():
-            c_item = convertors_menu.addAction(f"(.{convertor['extension']}) {convertor['name']}")
+        if convert_enabled:
+            for _type, convertor in convertors.items():
+                c_item = convertors_menu.addAction(f"(.{convertor['extension']}) {convertor['name']}")
 
-            if _type in _doc_types:
-                c_item.setIcon(icon('enabled.png'))
+                if _type in _doc_types:
+                    c_item.setIcon(icon('enabled.png'))
 
-            c_item.triggered.connect(lambda: convertor['name'])
+                c_item.triggered.connect(lambda: convertor['name'])
+        else:
+            convertors_action.setDisabled(True)
 
         menu.show()
 

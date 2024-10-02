@@ -10,6 +10,10 @@ class Platform:
     def __init__(self):
         self.name = platform.system()
 
+    @staticmethod
+    def system_is(name: str) -> bool:
+        return platform.system() == name
+
     def list(self) -> List[str]:
         return [self.WINDOWS, self.LINUX, self.DARWIN]
 

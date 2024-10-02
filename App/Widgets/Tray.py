@@ -3,8 +3,9 @@ from PySide6.QtWidgets import QWidget, QApplication
 
 from App.Core.Ui.TrayButton import TrayButton
 from App.Widgets.Components.Tools.ScanTools import ScanTools
-from App.Widgets.Modals.PrintModal import PrintModal
-from App.helpers import lc, platform, config
+from App.Widgets.Modals.DragAndDropPrintModal import DragAndDropPrintModal
+from App.Widgets.UIHelpers import UIHelpers
+from App.helpers import lc, config
 
 
 class Tray(TrayButton):
@@ -12,18 +13,24 @@ class Tray(TrayButton):
 
     def __init__(self, app: QApplication, parent: QWidget = None):
         self.__parent_widget = parent
-        self.__light = (app.styleHints().colorScheme() != Qt.ColorScheme.Dark) or platform().is_darwin()
+        self.__light = app.styleHints().colorScheme() != Qt.ColorScheme.Dark
 
         self.__modals = {}
 
         super(Tray, self).__init__("printer_dark" if self.__light else "printer", parent)
 
-        self.add_action(config('app.name'), callback=parent.show)
+        self.add_action(config('app.name'), callback=self.show_main_window)
         self.add_action(lc('tray.print'), callback=self.open_printing_modal)
         self.add_separator()
         self.add_action(lc('tray.scan'), callback=lambda: ScanTools(parent).create_scan())
         self.add_separator()
         self.add_action(lc('tray.quit'), callback=app.quit)
+
+    def show_main_window(self):
+        main_window = UIHelpers.get_main_window(self.__parent_widget)
+
+        main_window.show()
+        main_window.raise_()
 
     def close_modal(self, win_id: int):
         if win := self.__modals.get(win_id):
@@ -41,7 +48,7 @@ class Tray(TrayButton):
         self.__modals = {}
 
     def open_printing_modal(self):
-        modal = PrintModal(self.__parent_widget)
+        modal = DragAndDropPrintModal(self.__parent_widget)
         modal.closed.connect(lambda: self.close_modal(modal.winId()))
 
         self.__modals.update({modal.winId(): modal})

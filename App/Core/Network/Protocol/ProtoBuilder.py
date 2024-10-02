@@ -76,19 +76,22 @@ class ProtoBuilder:
         return data
 
     @staticmethod
-    def __decode_list(value: bytes) -> List[Union[str, int, float, bool]]:
+    def __decode_list(value: bytes, _type: type) -> List[Union[str, int, float, bool]]:
         values = []
 
         while len(value):
             _len = value[0]
-            values.append(value[1:_len + 1])
+            values.append(ProtoBuilder.__decode_value(value[1:_len + 1], _type))
             value = value[_len + 1:]
 
         return values
 
     @staticmethod
-    def __encode_value(value: Union[str, int, float, bool, list]) -> bytes:
+    def __encode_value(value: Union[str, bytes, int, float, bool, list]) -> bytes:
         _type = type(value)
+
+        if _type is bytes:
+            return value
 
         if _type is str:
             return value.encode('utf-8')
@@ -108,7 +111,13 @@ class ProtoBuilder:
         raise Exception(f"Cannot encode data")
 
     @staticmethod
-    def __decode_value(value: bytes, _type: type) -> Union[str, int, float, bool, list]:
+    def __decode_value(value: bytes, _type: type, is_list: bool = False) -> Union[str, bytes, int, float, bool, list]:
+        if is_list:
+            return ProtoBuilder.__decode_list(value, _type)
+
+        if _type is bytes:
+            return value
+
         if _type is str:
             return value.decode('utf-8')
 
@@ -119,10 +128,9 @@ class ProtoBuilder:
             return ProtoBuilder.__decode_float(value)
 
         if _type is bool:
-            return True if value == "\x01" else False
+            return False if value == b"\x00" else True
 
-        if _type is list:
-            return ProtoBuilder.__decode_list(value)
+        raise Exception(f"Cannot decode data")
 
     def __prepare_parameter(self, name: str, value: Any, parameters_data: dict) -> dict:
         if not (parameters_data := parameters_data.get(name)):
@@ -220,7 +228,7 @@ class ProtoBuilder:
             subcommand_data = subcommands_data.get(name)
             subcommands_names.append(name)
 
-            parameters_codes_data = subcommands_codes_data.get("parameters")
+            parameters_codes_data = subcommand_code_data.get("parameters")
             parameters_data = subcommand_data.get("parameters")
             defaults = subcommand_data.get("defaults")
 
@@ -235,7 +243,7 @@ class ProtoBuilder:
             parameter_code_data = parameters_codes_data.get(parameter)
 
             if not parameter_code_data:
-                raise Exception(f"Unknown subcommand code '{parameter}'")
+                raise Exception(f"Unknown subcommand parameter code '{parameter}'")
 
             name = parameter_code_data['name']
 
@@ -244,7 +252,7 @@ class ProtoBuilder:
             if variants := parameter_code_data.get("variants"):
                 value = variants.get(value[0])
             else:
-                value = self.__decode_value(value, parameter_data['type'])
+                value = self.__decode_value(value, parameter_data['type'], bool(parameter_data['number']))
 
             parameters_values.update({name: value})
 

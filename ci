@@ -3,6 +3,12 @@
 import argparse
 import datetime
 import os
+import sys
+
+from App import Application
+
+if not Application(Application.ApplicationType.Server):
+    sys.exit(1)
 
 from App.Core import Filesystem
 from App.helpers import platform, config, console, machine
@@ -30,7 +36,7 @@ def get_build_ci_data(build_type: str, platform_name: str) -> dict:
 
 
 def create_build_item(build_type: str, platform_name: str, machine_name: str, test: bool, path: str = None):
-    struct = create_files_struct_recursive(build_type)
+    struct = create_files_struct_recursive(build_type, platform_name)
     ci_data = get_build_ci_data(build_type, platform_name)
 
     _dir = os.path.join(os.path.join(path, build_type))
@@ -110,13 +116,17 @@ def main():
     # Info
     info_parser = subparsers.add_parser('info', help='Info about ci')
     info_parser.add_argument(
-        '--current-platform', action='store_true', dest='current', help='Available build types for current platform'
+        '-c',
+        '--current-platform',
+        action='store_true',
+        dest='current',
+        help='Available build types for current platform'
     )
     info_parser.set_defaults(func=info_cmd)
 
     args = parser.parse_args()
 
-    if not vars(args):
+    if not vars(args)['commands']:
         parser.print_usage()
     else:
         args.func(args)

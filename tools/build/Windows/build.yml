@@ -19,6 +19,7 @@ client-ui:
     logo: logo.ico
   copy:
     - logo.ico
+    - build_aspose_convert.spec
     - [ 'requirements.txt', 'win_requirements.txt' ]
     - [ 'settings.ini', 'var/settings.ini' ]
     - [ '.env.client-ui', 'var/.env' ]
@@ -31,7 +32,19 @@ client-ui:
 
     create_archive.bat:
       - "@echo off"
-      - tar -cf archive.zip tests var LICENSE MFUClient.exe
+      - tar -cf archive.tar tests var LICENSE MFUClient.exe aspose_convert.exe
+
+    build_aspose_convert.bat:
+      - "@echo off"
+      - set "VENV_NAME=.venv"
+      - set "BUILD_LOGS=.build_logs"
+      - set "SCRIPTS=.\%VENV_NAME%\Scripts"
+      - set "PY=%SCRIPTS%\python.exe"
+      - set "PYI=%SCRIPTS%\pyinstaller.exe"
+      - set "SPEC_FILE=build_aspose_convert.spec"
+      -
+      - echo ASPOSE BUILD ^> %BUILD_LOGS%\aspose_build_logs.txt
+      - call %PYI% %SPEC_FILE% --workpath %BUILD_LOGS% --distpath . > "%BUILD_LOGS%\aspose_build_logs.txt" 2>&1
 
     build.bat:
       - "@echo off"
@@ -41,7 +54,6 @@ client-ui:
       - set "PY=%SCRIPTS%\python.exe"
       - set "PYI=%SCRIPTS%\pyinstaller.exe"
       - set "SPEC_FILE=build.spec"
-      - set "WORKDIR=.build_logs"
       -
       - echo CREATE VENV ^> %BUILD_LOGS%\venv_log.txt
       - call python -m venv %VENV_NAME% > "%BUILD_LOGS%\venv_log.txt"
@@ -57,7 +69,9 @@ client-ui:
       - call upgrade.bat > "%BUILD_LOGS%\upgrade_db_log.txt" 2>&1
       -
       - echo BUILD ^> %BUILD_LOGS%\build_log.txt
-      - call %PYI% %SPEC_FILE% --workpath %WORKDIR% --distpath . > "%BUILD_LOGS%\build_log.txt" 2>&1
+      - call %PYI% %SPEC_FILE% --workpath %BUILD_LOGS% --distpath . > "%BUILD_LOGS%\build_log.txt" 2>&1
+      -
+      - call build_aspose_convert.bat
       -
       - echo CREATE ARCHIVE ^> %BUILD_LOGS%\create_archive_log.txt
       - call create_archive.bat > "%BUILD_LOGS%\create_archive_log.txt"

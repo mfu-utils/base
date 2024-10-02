@@ -1,5 +1,5 @@
-from .SeedersCommand import SeedersCommand
+from .PrintersCommand import PrintersCommand
 
 __all__ = [
-    "SeedersCommand",
+    "PrintersCommand",
 ]

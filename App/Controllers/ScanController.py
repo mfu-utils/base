@@ -1,3 +1,4 @@
+from App.Core.Network.Protocol.Responses import ResponseInternalError
 from App.Subprocesses.ScanImage import ScanImage
 from App.Core import Config
 from App.Core.Logger import Log
@@ -8,10 +9,12 @@ from App.helpers import cache
 class ScanController:
     # noinspection PyMethodMayBeStatic
     def invoke(self, parameters: dict, log: Log, config: Config):
-        if data := ScanImage(log, config).scan(parameters):
-            return data
+        ok, res = ScanImage(log, config).scan(parameters)
 
-        return None
+        if ok:
+            return res
+
+        return ResponseInternalError(res)
 
     # noinspection PyMethodMayBeStatic
     def devices(self, log: Log, config: Config, parameters: dict):

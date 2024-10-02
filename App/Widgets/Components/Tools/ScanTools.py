@@ -19,7 +19,7 @@ class ScanTools:
 
         self.__devices_modal: Optional[DevicesModal] = None
 
-        self.__debug_mode = config('convertor.debug')
+        self.__debug_mode = config('ocr_convertor.debug')
 
     def select(self, device: Optional[str] = None):
         if not ini('devices.auto_choose_device', bool):
@@ -37,7 +37,7 @@ class ScanTools:
         DocumentModal(self.__debug_mode, _format, image, self.parent)
 
     def open_document_modal_debug(self):
-        with open(config('convertor.debug_image'), 'rb') as img:
+        with open(config('ocr_convertor.debug_image'), 'rb') as img:
             self.open_document_modal(img.read(), Format.TIFF)
 
     def create_devices_modal(self, devices: list):

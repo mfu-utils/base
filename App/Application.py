@@ -1,3 +1,5 @@
+from enum import Enum
+
 from App.Core.Abstract import SingletonMeta
 from App.Core.DataFiles import YamlDataFile
 from importlib import import_module
@@ -18,7 +20,18 @@ class Application(YamlDataFile, metaclass=SingletonMeta):
 
     instance = None
 
-    def __init__(self):
+    class ApplicationType(Enum):
+        Console = 1
+        Client = 2
+        ClientUI = 3
+        Server = 4
+
+    def __init__(self, _type: ApplicationType = None):
+        if _type is None:
+            raise TypeError('Application type cannot be None In first init.')
+
+        self.__type = _type
+
         super().__init__(CONFIG_FILE_SERVICES)
 
         self.__singletons = {}
@@ -46,6 +59,9 @@ class Application(YamlDataFile, metaclass=SingletonMeta):
             list(map(lambda x: self.__add_controller(x, namespace), files))
         #: END:BUILD_TYPE:server
 
+    def type(self) -> ApplicationType:
+        return self.__type
+
     def __get_full_namespace(self, namespace: str) -> str:
         if concrete := self.__aliases.get(namespace):
             return concrete
@@ -60,7 +76,7 @@ class Application(YamlDataFile, metaclass=SingletonMeta):
 
         alias = Import.create_controller_alias(name)
 
-        self.register(f"{namespace}.{name}~", False, {}, {}, f"controller.{alias}")
+        self.register(f"{namespace}.{name}!", False, {}, {}, f"controller.{alias}")
 
     def __get_abstract(self, namespace: str):
         namespace = self.__get_full_namespace(namespace)

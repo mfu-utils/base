@@ -1,6 +1,5 @@
 from App import Application
 from App.Core.Abstract import AbstractReceiveDataHandler
-from App.Core import Config
 from App.Core.Network.Protocol import RCL
 from App.Core.Network.Protocol.Responses import AbstractResponse
 
@@ -28,7 +27,7 @@ class ReceiveDataHandler(AbstractReceiveDataHandler):
             'request': request,
         })
 
-        if type(response) is AbstractResponse:
+        if isinstance(response, AbstractResponse):
             return self.__rcl.create_response(response)
 
         return self.__rcl.response_success(response)

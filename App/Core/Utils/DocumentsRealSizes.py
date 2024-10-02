@@ -1,4 +1,4 @@
-from typing import Tuple, Dict, List
+from typing import Tuple, Dict
 
 from App.Core.Utils import DocumentMediaType
 
@@ -11,16 +11,6 @@ class DocumentsRealSizes:
         DocumentMediaType.A4: (210, 297),
         DocumentMediaType.DL: (220, 110),
     }
-
-    @staticmethod
-    def available_documents_midia_types() -> List[DocumentMediaType]:
-        return [
-            DocumentMediaType.Letter,
-            DocumentMediaType.Legal,
-            DocumentMediaType.COM10,
-            DocumentMediaType.A4,
-            DocumentMediaType.DL,
-        ]
 
     @staticmethod
     def size(size: DocumentMediaType) -> Tuple[int, int]:

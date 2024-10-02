@@ -8,7 +8,7 @@ from App.Models.Client.Language import Language
 from App.Models.Client.Scan import Scan
 from App.Services.Client.AbstractServiceError import AbstractServiceError
 from App.Services.Client.AbstractServiceWarning import AbstractServiceWarning
-from App.Subprocesses import OCR
+from App.Subprocesses.OCR import OCR
 from App.helpers import platform, config, logger
 from App.Services.Client.DocumentService import DocumentService
 from config import HOME
@@ -132,7 +132,7 @@ class DocConvertorService:
         self.__langs_delimiter = langs_delimiter
         self.__execute_parameters = execute_parameters
 
-        self.__debug_mode = config('convertor.debug')
+        self.__debug_mode = config('ocr_convertor.debug')
 
     def get_doc_dir(self) -> str:
         _dir = self.__recognition_dir

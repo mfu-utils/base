@@ -11,5 +11,7 @@
     "convert_msg": "Error convert '%s' to '%s' format. %s",
     "load_image_title": "Cannot load image",
     "load_image_msg": "Image '%' have wrong format",
-    "execute_engine": "Convertor exec with error code '%s'"
+    "execute_engine": "Convertor exec with error code '%s'",
+    "printing_title": "Printing",
+    "printing_msg": "Error printing '%s'."
 }

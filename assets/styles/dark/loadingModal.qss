@@ -9,12 +9,12 @@
     color: #DFE1E5;
 }
 
-#Container {
+#LoadingContainer {
     background-color: transparent;
     border: none;
 }
 
-#TransformedWidget {
+#LoadingTransformedWidget {
     background-color: #287BDE;
     border-radius: 3px;
     border: none;

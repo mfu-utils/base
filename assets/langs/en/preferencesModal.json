@@ -4,6 +4,10 @@
         "title": "Appearance",
         "lang": {
             "title": "Language:"
+        },
+        "show_on_start": {
+            "title": "Show app on start",
+            "description": "Show main window after starting app"
         }
     },
     "network": {
@@ -68,6 +72,20 @@
             "title": "Save at:",
             "description": "Scans saving directory",
             "pattern_error": "Please type valid directory path"
+        }
+    },
+    "printing": {
+        "title": "Printing",
+        "view_tool": {
+            "title": "Use tool for MS Word view:",
+            "description": "Using for display 'docx' document in preview.",
+            "none_item": "None"
+        },
+        "send_converted_icons_by_default": {
+            "title": "Send converted icons by default"
+        },
+        "send_converted_docs_by_default": {
+            "title": "Send converted docs by default"
         }
     }
 }

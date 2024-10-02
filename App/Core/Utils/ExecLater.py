@@ -3,7 +3,7 @@ from time import sleep
 
 
 class ExecLater(Thread):
-    def __init__(self, microseconds: int, func: callable):
+    def __init__(self, microseconds: float, func: callable):
         super(ExecLater, self).__init__()
 
         self.func = func

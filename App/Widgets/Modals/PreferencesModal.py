@@ -2,9 +2,11 @@ from typing import Any
 
 from PySide6.QtWidgets import QWidget
 
-from App.Core.Utils.Ui import Patterns
+from App.Core.Utils.OfficeSuite import OfficeSuite
+from App.Core.Utils.Ui import Patterns, Casts
 from App.Services.Client.Ui.UiDocConvertorService import UiDocConvertorService
 from App.Services.Client.Ui.UiScanService import UiScanService
+from App.Services.MimeConvertor import MimeConvertor
 from App.Widgets.Components.Controls.CheckBoxControl import CheckBoxControl
 from App.Widgets.Modals.AbstractSettingsModal import AbstractSettingsModal
 from App.Widgets.UIHelpers import UIHelpers
@@ -35,6 +37,12 @@ class PreferencesModal(AbstractSettingsModal):
 
         if key == "recognition.dir":
             return self._convertor_service.get_doc_dir()
+
+        if key == "printing.view_tool":
+            if (suite := super(PreferencesModal, self)._get_value(key)) not in MimeConvertor.suites_values():
+                return OfficeSuite.NONE.value
+
+            return suite
 
         return super(PreferencesModal, self)._get_value(key)
 
@@ -70,8 +78,20 @@ class PreferencesModal(AbstractSettingsModal):
     def scans_lc(name: str) -> str:
         return PreferencesModal.__lc(f"scans.{name}")
 
+    @staticmethod
+    def printing_lc(name: str) -> str:
+        return PreferencesModal.__lc(f"printing.{name}")
+
     def app_tab(self):
         tab = self._create_tab('app', self.app_lc('title'))
+
+        on_start = tab.create_check_box('app.show_on_start', self.app_lc('show_on_start.title'))
+        on_start.set_description(self.app_lc('show_on_start.description'))
+        on_start.set_grid_items([
+            ['widget', 'spacing|10|horizontal', 'title', 'stretch|horizontal'],
+            ['', '', 'description']
+        ])
+
         tab.create_combo_box('app.lang', self.app_lc('lang.title'), config('langs'))
 
     def network_tab(self):
@@ -177,6 +197,35 @@ class PreferencesModal(AbstractSettingsModal):
         _dir.pattern_set("dir", self.__dir_pattern(), self.scans_lc("dir.pattern_error"))
         _dir.pattern_enable("dir")
 
+    def printing_tab(self):
+        tab = self._create_tab("printing", self.printing_lc("title"))
+
+        view_tool = tab.create_combo_box(
+            "printing.view_tool",
+            self.printing_lc("view_tool.title"),
+            Casts.enum2dict(MimeConvertor.suites(), {
+                OfficeSuite.NONE.value: self.printing_lc("view_tool.none_item"),
+                **MimeConvertor.OFFICE_SUITE_NAMES
+            })
+        )
+        view_tool.set_description(self.printing_lc("view_tool.description"))
+        view_tool.set_grid_items([
+            ["title", "stretch|horizontal"],
+            ["spacing|10|vertical"],
+            ["widget"],
+            ["description"],
+        ])
+        
+        tab.create_check_box(
+            "printing.send_converted_icons_by_default",
+            self.printing_lc("send_converted_icons_by_default.title"),
+        )
+
+        tab.create_check_box(
+            "printing.send_converted_docs_by_default",
+            self.printing_lc("send_converted_docs_by_default.title"),
+        )
+
     def controls(self):
         self.app_tab()
         self.network_tab()
@@ -184,5 +233,6 @@ class PreferencesModal(AbstractSettingsModal):
         self.ocr_tab()
         self.recognition_tab()
         self.scans_tab()
+        self.printing_tab()
 
         self.checkout_tab("app")

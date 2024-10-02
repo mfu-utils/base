@@ -1,5 +1,7 @@
 import os
 import json
+import tempfile
+
 import yaml
 from typing import Union, Optional
 
@@ -22,6 +24,23 @@ class Filesystem:
             return None
 
         return os.stat(Filesystem._prepare_path(path))
+
+    @staticmethod
+    def get_tmp_path() -> str:
+        return tempfile.gettempdir()
+
+    @staticmethod
+    def create_tmp_path(path: str) -> str:
+        tmp_path = Filesystem.get_tmp_path()
+
+        if path[0] == '/':
+            path = path[1:]
+
+        return os.path.join(tmp_path, path)
+
+    @staticmethod
+    def write_tmp(path: str, content: Union[str, bytes]) -> bool:
+        return Filesystem.write_file(Filesystem.create_tmp_path(path), content)
 
     @staticmethod
     def write_file(path: str, content: Union[str, bytes]) -> bool:

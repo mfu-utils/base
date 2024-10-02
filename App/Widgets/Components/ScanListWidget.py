@@ -88,6 +88,7 @@ class ScanListWidget(DrawableWidget):
         for scan in items:
             scans.update({scan.id: scan})
 
+            # noinspection PyUnresolvedReferences,PyTypeChecker
             self.__add_item(scan.id, {
                 ScanItem.PARAMETER_TYPE: scan.type.name if scan.type else None,
                 ScanItem.PARAMETER_TITLE: scan.title,

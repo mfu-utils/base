@@ -6,9 +6,7 @@
 
 #ErrorModalTextBrowser {
     background-color: transparent;
-/*    border-radius: 10px;*/
     border: none;
-/*    padding: 10px;*/
 }
 
 #ErrorModalCloseButton {

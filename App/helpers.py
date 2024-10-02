@@ -1,15 +1,17 @@
 import datetime
 from typing import Union, Any, Optional
-from App.Core.Cache import CacheManager
 
+from App import Application
+from App.Core.Cache import CacheManager
+from App.Services.MimeConvertor import MimeConvertor
 from App.Core.Utils.ExecLater import ExecLater
 from App.Core.Network import NetworkManager
 from App.Core.Console import Output
 from App.Core.DB import Connection
 from App.Core.Logger import Log
-from App.Core import Platform, Machine
-from App import Application
+from App.Core import Platform, Machine, Config
 from App.Core import Event
+from App.Core import MimeTypeConfig
 #: BUILD_TYPE:client-ui
 from PySide6.QtGui import QImage, QIcon, QPixmap
 from App.Core.Ui import Ini
@@ -23,12 +25,15 @@ from App.Core.Network.Client import ResponseDataPromise, ClientConfig
 #: END:BUILD_TYPE:!server
 
 
-def app() -> Application:
-    return Application()
+def app(_type: Application.ApplicationType = None) -> Application:
+    return Application(_type)
 
 
-def config(dot_path: str, value=None):
-    _config = app().get('config')
+def config(dot_path: Optional[str] = None, value=None) -> Union[Config, Any]:
+    _config: Config = app().get('config')
+
+    if dot_path is None:
+        return _config
 
     if value is None:
         return _config.get(dot_path)
@@ -39,7 +44,7 @@ def config(dot_path: str, value=None):
 def cache(
     dot_path: Optional[str] = None,
     value: Union[list, str, int, float, dict, tuple, None] = None
-) -> Union[CacheManager, str, None]:
+) -> Union[list, str, int, float, dict, tuple, CacheManager, None]:
     _cache: CacheManager = app().get('cache')
 
     if dot_path is None:
@@ -69,7 +74,7 @@ def network_manager() -> NetworkManager:
     return app().get('network.manager')
 
 
-def later(microseconds: int, func: callable):
+def later(microseconds: float, func: callable):
     ExecLater(microseconds, func).start()
 
 
@@ -95,6 +100,14 @@ def platform() -> Platform:
 
 def machine() -> Machine:
     return app().get('machine')
+
+
+def mime() -> MimeTypeConfig:
+    return app().get('mime')
+
+
+def mime_convertor() -> MimeConvertor:
+    return app().get('mime.convertor')
 
 
 #: BUILD_TYPE:server
@@ -127,7 +140,7 @@ def pixmap(name: str) -> QPixmap:
 
 
 def shortcut(action_name: str) -> str:
-    return config('shortcuts').get(action_name)
+    return config(f'shortcuts.{action_name}')
 
 
 def ini(dot_path: Optional[str] = None, value_or_type=None) -> Any:

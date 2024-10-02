@@ -3,10 +3,10 @@ from typing import Union
 
 
 class AbstractResponse(ABC):
-    def __init__(self, data: Union[str, dict, list, bytes]):
+    def __init__(self, data: Union[str, dict, list, bytes, None]):
         self._data = data
 
-    def data(self) -> Union[str, dict, list, bytes]:
+    def data(self) -> Union[str, dict, list, bytes, None]:
         return self._data
 
     @staticmethod

@@ -83,7 +83,7 @@ DISABLED_UI = {
 
     # Services
     "ui.py": os.path.join(ROOT, "configs", "services"),
-    "convertor.py": os.path.join(ROOT, "configs", "services"),
+    "ocr_convertor.py": os.path.join(ROOT, "configs", "services"),
     "langs.py": os.path.join(ROOT, "configs", "services"),
     "notification.py": os.path.join(ROOT, "configs", "services"),
 
@@ -98,18 +98,17 @@ DISABLED_CLIENT = {
     # App code
     "Client": [
         os.path.join(ROOT, "App", "Core", "Network"),
-        os.path.join(ROOT, "App", "Models"),
-        os.path.join(ROOT, "App", "Services"),
-        os.path.join(ROOT, "db", "seeders"),
-        os.path.join(ROOT, "App", "Commands"),
         os.path.join(ROOT, "App", "Core", "Utils"),
+        os.path.join(ROOT, "App", "Commands"),
+        os.path.join(ROOT, "App", "Services"),
+        os.path.join(ROOT, "App", "Models"),
+        os.path.join(ROOT, "App", "DTO"),
+
+        os.path.join(ROOT, "db", "seeders"),
     ],
 
     # Configs
     "client.py": os.path.join(ROOT, "configs", "services"),
-
-    # Static
-    "console.bat": os.path.join(ROOT, "console.bat"),
 
     **DISABLED_UI
 }
@@ -155,13 +154,13 @@ DISABLED_BUILD_ITEMS = {
     # Platforms specific
     "platforms": {
         "Linux": {
-            "console.bat": ROOT,
+            #
         },
         "Windows": {
             #
         },
         "Darwin": {
-            "console.bat": ROOT,
+            #
         }
     },
     # Build type specific
