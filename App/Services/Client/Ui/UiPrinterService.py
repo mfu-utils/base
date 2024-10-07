@@ -15,3 +15,4 @@ class UiPrinterService(ClientPrinterService):
         super(UiPrinterService, self).on_error_print(device, path, message)
 
         notification().error(lc('errors.printing_title'), lc('errors.printing_msg') % path)
+
