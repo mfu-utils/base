@@ -51,6 +51,10 @@ class PreferencesModal(AbstractSettingsModal):
         return Patterns.DIRECTORY_WINDOWS if platform().is_windows() else Patterns.DIRECTORY_NON_WINDOWS
 
     @staticmethod
+    def __exec_pattern() -> str:
+        return Patterns.EXEC_WINDOWS if platform().is_windows() else Patterns.EXEC_NON_WINDOWS
+
+    @staticmethod
     def __lc(name: str):
         return lc(f"preferencesModal.{name}")
 
@@ -174,7 +178,7 @@ class PreferencesModal(AbstractSettingsModal):
 
         path_to_executable = tab.create_line_edit("ocr.path_to_executable", self.ocr_lc("path.title"))
         path_to_executable.set_description(self.ocr_lc('path.description'))
-        path_to_executable.pattern_set("exec", r"^(/[\w-]+)+$", self.ocr_lc("path.pattern_error"))
+        path_to_executable.pattern_set("exec", self.__exec_pattern(), self.ocr_lc("path.pattern_error"))
         path_to_executable.label().setFixedWidth(labels_width)
         path_to_executable.setEnabled(enabled)
 
