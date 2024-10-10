@@ -82,9 +82,7 @@ COMMANDS_NAMESPACES = {
     #: BUILD_TYPE:!server
     'App.Commands.Client',
     #: END:BUILD_TYPE:!server
-    #: DELETE
     'App.Commands.Develop',
-    #: END:DELETE
 }
 
 # Assets paths
