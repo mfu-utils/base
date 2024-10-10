@@ -7,7 +7,7 @@ from PySide6.QtCore import QUrl, Qt, Signal
 from App.Core.Network.Client import ClientConfig
 from App.Core.Network.Protocol.Responses.AbstractResponse import AbstractResponse
 from App.Core.Utils import MimeType
-from App.Services import PrinterService, PDFService
+from App.Services import PDFService
 from App.Services.Client.MimeFilters import MimeService
 from App.Services.Client.Ui.UiPrinterService import UiPrinterService
 from App.Widgets.Components.ModalButton import ModalButton
@@ -189,7 +189,7 @@ class PrintingListModal(AbstractModal):
     def __start_loading_devices(self, update_server_cache: bool = False):
         self.__set_enable_loading_animation(True)
 
-        promise = PrinterService.get_printers_promise(ClientConfig.client_ui(), network_manager(), update_server_cache)
+        promise = UiPrinterService.get_printers_promise(ClientConfig.client_ui(), network_manager(), update_server_cache)
 
         def stop_loading_devices():
             self.checkout_loading_animation_signal.emit(False)
@@ -207,8 +207,8 @@ class PrintingListModal(AbstractModal):
             self.__devices_loaded = True
 
             self.__devices = dict(map(
-                lambda x: (x[PrinterService.PRINTER_PARAMETER_NAME], x[PrinterService.PRINTER_PARAMETER_DISPLAY_NAME]),
-                PrinterService.filter_hidden_devices(response.data() or [])
+                lambda x: (x[UiPrinterService.PRINTER_PARAMETER_NAME], x[UiPrinterService.PRINTER_PARAMETER_DISPLAY_NAME]),
+                UiPrinterService.filter_hidden_devices(response.data() or [])
             ))
 
             self.set_visible_errors_widget_signal.emit(False)

@@ -5,7 +5,7 @@ from PySide6.QtPdf import QPdfDocument
 from PySide6.QtPdfWidgets import QPdfView
 from PySide6.QtWidgets import QWidget
 
-from App.Core.Utils import DocumentMediaType, DocumentOrder
+from App.Core.Utils import DocumentMediaType, DocumentOrder, MimeType
 from App.Core.Utils.PaperTray import PaperTray
 from App.Core.Utils.Ui import Patterns, Casts
 from App.Core.Utils.Ui.PrintingPagePolicy import PrintingPagePolicy
@@ -35,7 +35,15 @@ class PrintingFileParametersModal(AbstractModal):
     PARAMETER_ORDER = "order"
     PARAMETER_SEND_CONVERTED = "send_converted"
 
-    def __init__(self, path: str, tmp_path: Optional[str], devices: dict, doc: PrintingDocumentDTO, parent: QWidget = None):
+    def __init__(
+        self,
+        path: str,
+        tmp_path: Optional[str],
+        mime_type: MimeType,
+        devices: dict,
+        doc: PrintingDocumentDTO,
+        parent: QWidget = None
+    ):
         super(PrintingFileParametersModal, self).__init__(parent)
         self.setWindowFlag(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
         self.setObjectName("PrintingFileParametersModal")
@@ -45,6 +53,7 @@ class PrintingFileParametersModal(AbstractModal):
         self.__doc = PrintingDocumentDTO(**doc.as_dict())
         self.__devices = devices
         self.__tmp_path = tmp_path
+        self.__mime_type = mime_type
 
         self.setWindowTitle(self.__lc("title") % path)
 
@@ -226,7 +235,13 @@ class PrintingFileParametersModal(AbstractModal):
         )
         pages.pattern_enable("cups_format")
         pages.label().setFixedWidth(label_width)
+        pages.target().setFixedWidth(target_width)
         pages.setVisible(self.__doc.pages_policy == PrintingPagePolicy.Custom.value)
+        pages.set_grid_items([
+            ["title", "spacing|10|horizontal", "widget", "stretch|horizontal"],
+            ["", "", "description", ""],
+            ["", "", "errorWidget", ""],
+        ])
 
         # MIRROR
         self.__controls.create_check_box(self.PARAMETER_MIRROR, self.__clc(self.PARAMETER_MIRROR, "title"))
@@ -243,3 +258,4 @@ class PrintingFileParametersModal(AbstractModal):
             self.__clc(self.PARAMETER_SEND_CONVERTED, "title")
         )
         send_converted.setEnabled(bool(self.__tmp_path))
+        send_converted.setHidden(self.__mime_type == MimeType.PDF)

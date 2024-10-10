@@ -39,6 +39,7 @@ class PreferencesControls(DrawableWidget):
         label.setFont(UIHelpers.font(16, QFont.Weight.DemiBold))
         label.setObjectName('ControlsTitle')
         label.setContentsMargins(10, 10, 10, 10)
+        label.setWordWrap(True)
         self.__scroll_area_layout.addWidget(label)
 
         self.__widgets_layout = UIHelpers.v_layout()

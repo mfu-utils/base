@@ -69,7 +69,7 @@ class NetworkManager:
 
             _data = self.__protocol.create_request(request)
 
-            self.__logger.debug(f"Sending request with len: '{len(_data)}'")
+            self.__logger.debug(f"Sending request len: {len(_data)} bytes")
 
             return client.send(_data)
         except KeyboardInterrupt:
