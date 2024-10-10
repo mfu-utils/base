@@ -1,8 +1,8 @@
 # Build Information
 client-ui:
   repo_name: Github
-  license_url: "https://github.com/mfu-utils/client-windows-ui/blob/master/LICENSE"
-  repo_url: "https://github.com/mfu-utils/client-windows-ui"
+  license_url: "https://github.com/mfu-utils/client-ui-windows/blob/master/LICENSE"
+  repo_url: "https://github.com/mfu-utils/client-ui-windows"
   ffi:
     source: file_version_info.txt
     target: ffi.txt
