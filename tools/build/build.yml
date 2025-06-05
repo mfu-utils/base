@@ -4,7 +4,7 @@ version:
   patch: 0
   number: 0
   branch: Alpha
-  show: 2024.0 (Alpha 2)
+  show: 2024.0 (Alpha 3)
 
 buildTypes:
   client-ui:

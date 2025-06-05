@@ -21,7 +21,7 @@ class OCR:
             .replace(OCR.LANGUAGES_REPLACE, langs),
         ]).replace('\\', '\\\\')
 
-        if config('convertor.debug_command'):
+        if config('ocr_convertor.debug_command'):
             logger().debug(f"Execute ocr convertor: `{cmd}`", {'object': OCR})
             return 0
 
