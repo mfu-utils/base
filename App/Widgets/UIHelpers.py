@@ -1,9 +1,9 @@
-from typing import Optional, Tuple
+from typing import Optional, Tuple, Union
 
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QFont, QColor
-from PySide6.QtWidgets import QGraphicsDropShadowEffect, QScrollArea
-from PySide6.QtWidgets import QMainWindow, QWidget, QLabel, QLayout, QVBoxLayout, QHBoxLayout, QGridLayout
+from PySide6.QtWidgets import QGraphicsDropShadowEffect, QScrollArea, QHBoxLayout, QVBoxLayout
+from PySide6.QtWidgets import QMainWindow, QWidget, QLabel, QLayout, QGridLayout
 
 from App.helpers import platform, pixmap
 
@@ -90,9 +90,9 @@ class UIHelpers:
 
     @staticmethod
     def font(
-            size: int,
-            weight: QFont.Weight = QFont.Weight.Normal,
-            style: QFont.Style = QFont.Style.StyleNormal
+        size: int,
+        weight: QFont.Weight = QFont.Weight.Normal,
+        style: QFont.Style = QFont.Style.StyleNormal
     ) -> QFont:
         font = QFont()
 
@@ -108,7 +108,7 @@ class UIHelpers:
         widget.style().polish(widget)
 
     @staticmethod
-    def layout_for_grid(direction: str) -> QLayout:
+    def layout_for_grid(direction: str) -> Union[QHBoxLayout, QVBoxLayout]:
         if direction == 'vertical':
             layout = UIHelpers.v_layout((0, 0, 0, 0))
         elif direction == 'horizontal':
@@ -119,7 +119,7 @@ class UIHelpers:
         return layout
 
     @staticmethod
-    def spacing_for_grid(size: int, direction: str) -> QHBoxLayout:
+    def spacing_for_grid(size: int, direction: str) -> Union[QHBoxLayout, QVBoxLayout]:
         layout = UIHelpers.layout_for_grid(direction)
         layout.addSpacing(size)
 
