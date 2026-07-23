@@ -2,7 +2,7 @@ PyYAML==6.0.1
 alembic==1.13.2
 SQLAlchemy==2.0.31
 python-magic==0.4.27
-pillow==10.4.0
+// pillow (Deleted, CVE-2026-59199)
 img2pdf==0.5.1
 docx2pdf==0.1.8
 #: BUILD_TYPE:client-ui
